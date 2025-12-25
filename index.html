@@ -3,93 +3,179 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Bonjour - მთავარი</title>
+    <title>Bonjour - Smart Learning</title>
     <link rel="stylesheet" href="style.css">
     <style>
+        body { background: #f8f9fa; font-family: 'Segoe UI', sans-serif; }
         .welcome-banner {
             background: linear-gradient(135deg, #002395 0%, #ed2939 100%);
             padding: 40px 20px; color: white; text-align: center;
-            border-radius: 0 0 40px 40px; margin-bottom: 30px;
+            border-radius: 0 0 35px 35px; margin-bottom: 25px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
         }
-        .stats-row {
-            display: flex; justify-content: space-around; margin-top: 20px;
-            background: rgba(255,255,255,0.1); padding: 15px; border-radius: 20px;
-        }
-        .stat-item span { display: block; font-size: 0.8rem; opacity: 0.8; }
-        .lesson-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 0 20px 40px; }
-        .lesson-card {
-            background: white; padding: 20px; border-radius: 25px;
-            text-decoration: none; color: #2d3436; box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-            display: flex; flex-direction: column; align-items: center; transition: 0.3s; border: 1px solid #f0f0f0;
-        }
-        .lesson-card:active { transform: scale(0.95); }
-        .icon-circle { width: 50px; height: 50px; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 12px; }
-        .lesson-card h3 { margin: 0; font-size: 1rem; }
-        .lesson-card p { margin: 5px 0 0; font-size: 0.75rem; color: #b2bec3; }
+        .welcome-banner h1 { margin: 0; font-size: 2.2rem; }
+        #total-status { font-size: 0.9rem; opacity: 0.9; margin-top: 10px; font-weight: bold; }
 
-        .bg-blue { background: #eef2ff; color: #002395; }
-        .bg-red { background: #fff1f1; color: #ed2939; }
-        .bg-green { background: #e8fdf0; color: #2ecc71; }
-        .bg-purple { background: #f3ebff; color: #6c5ce7; }
-        .bg-orange { background: #fff9e6; color: #f39c12; }
-        .bg-teal { background: #e6fffa; color: #14b8a6; }
+        .lesson-grid { display: grid; grid-template-columns: 1fr; gap: 15px; padding: 0 20px 40px; }
+        
+        .lesson-card {
+            background: white; padding: 18px; border-radius: 22px;
+            text-decoration: none; color: #2d3436; box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+            display: flex; align-items: center; transition: 0.3s; position: relative;
+            border: 2px solid transparent; overflow: hidden;
+        }
+        
+        .lesson-card:active { transform: scale(0.98); }
+
+        /* გამწვანების სტილი ჩაბარებულზე */
+        .lesson-card.completed { border-color: #2ecc71; background: #fafffb; }
+        .lesson-card.completed::after {
+            content: "✓"; position: absolute; right: 20px; top: 20px;
+            background: #2ecc71; color: white; width: 22px; height: 22px;
+            border-radius: 50%; font-size: 14px; display: flex; align-items: center; justify-content: center;
+            font-weight: bold;
+        }
+
+        .icon-box {
+            width: 60px; height: 60px; border-radius: 18px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.8rem; margin-right: 15px; flex-shrink: 0;
+        }
+        
+        .lesson-info { flex-grow: 1; }
+        .lesson-info h3 { margin: 0; font-size: 1.1rem; color: #2d3436; }
+        
+        .percent-text { font-size: 0.8rem; color: #636e72; float: right; margin-top: -20px; }
+
+        /* პროგრეს ბარი ბარათის შიგნით */
+        .mini-progress {
+            width: 100%; height: 6px; background: #eee;
+            border-radius: 3px; margin-top: 8px; overflow: hidden;
+        }
+        .mini-progress-fill { height: 100%; background: #2ecc71; width: 0%; transition: 1s ease-in-out; }
+
+        /* ფერები */
+        .bg-1 { background: #eef2ff; color: #002395; }
+        .bg-2 { background: #fff1f1; color: #ed2939; }
+        .bg-3 { background: #e8fdf0; color: #2ecc71; }
+        .bg-4 { background: #f3ebff; color: #6c5ce7; }
+        .bg-5 { background: #fff9e6; color: #f39c12; }
     </style>
 </head>
 <body>
-    <div class="app-container">
-        <div class="welcome-banner">
-            <h1>Bonjour! 🇫🇷</h1>
-            <p>შენი ფრანგული ენის მეგზური</p>
-            <div class="stats-row">
-                <div class="stat-item"><strong>6</strong><span>გაკვეთილი</span></div>
-                <div class="stat-item"><strong>200+</strong><span>სიტყვა</span></div>
-                <div class="stat-item"><strong>A1</strong><span>დონე</span></div>
-            </div>
-        </div>
-
-        <div class="lesson-grid">
-            <a href="hello.html" class="lesson-card">
-                <div class="icon-circle bg-blue">👋</div>
-                <h3>მისალმება</h3>
-                <p>პირველი ნაბიჯები</p>
-            </a>
-
-            <a href="verbs.html" class="lesson-card">
-                <div class="icon-circle bg-red">⚙️</div>
-                <h3>ზმნები</h3>
-                <p>ყოფნა და ქონა</p>
-            </a>
-
-            <a href="numbers.html" class="lesson-card">
-                <div class="icon-circle bg-green">🔢</div>
-                <h3>რიცხვები</h3>
-                <p>1 - 100 სრულად</p>
-            </a>
-
-            <a href="family.html" class="lesson-card">
-                <div class="icon-circle bg-blue">👨‍👩‍👧</div>
-                <h3>ოჯახი</h3>
-                <p>ხალხი და კავშირები</p>
-            </a>
-
-            <a href="time.html" class="lesson-card">
-                <div class="icon-circle bg-purple">📅</div>
-                <h3>დრო</h3>
-                <p>კალენდარი და საათი</p>
-            </a>
-
-            <a href="food.html" class="lesson-card">
-                <div class="icon-circle bg-orange">🍏</div>
-                <h3>საჭმელი</h3>
-                <p>პროდუქტები და შეკვეთა</p>
-            </a>
-
-            <a href="#" class="lesson-card" style="opacity: 0.6;">
-                <div class="icon-circle bg-teal">🏠</div>
-                <h3>სახლი</h3>
-                <p>მალე დაემატება...</p>
-            </a>
-        </div>
+    <div class="welcome-banner">
+        <h1>Bonjour! 🇫🇷</h1>
+        <div id="total-status">საერთო პროგრესი: 0%</div>
     </div>
+
+    <div class="lesson-grid">
+        <a href="lesson1.html" class="lesson-card" id="card-hello">
+            <div class="icon-box bg-1">👋</div>
+            <div class="lesson-info">
+                <h3>მისალმება</h3>
+                <span class="percent-text" id="txt-hello">0%</span>
+                <div class="mini-progress"><div class="mini-progress-fill" id="fill-hello"></div></div>
+            </div>
+        </a>
+
+        <a href="verbs.html" class="lesson-card" id="card-verbs">
+            <div class="icon-box bg-2">⚙️</div>
+            <div class="lesson-info">
+                <h3>ზმნები (Être / Avoir)</h3>
+                <span class="percent-text" id="txt-verbs">0%</span>
+                <div class="mini-progress"><div class="mini-progress-fill" id="fill-verbs"></div></div>
+            </div>
+        </a>
+
+        <a href="numbers.html" class="lesson-card" id="card-numbers">
+            <div class="icon-box bg-3">🔢</div>
+            <div class="lesson-info">
+                <h3>რიცხვები (1-100)</h3>
+                <span class="percent-text" id="txt-numbers">0%</span>
+                <div class="mini-progress"><div class="mini-progress-fill" id="fill-numbers"></div></div>
+            </div>
+        </a>
+
+        <a href="family.html" class="lesson-card" id="card-family">
+            <div class="icon-box bg-1">👨‍👩‍👧</div>
+            <div class="lesson-info">
+                <h3>ოჯახი და ხალხი</h3>
+                <span class="percent-text" id="txt-family">0%</span>
+                <div class="mini-progress"><div class="mini-progress-fill" id="fill-family"></div></div>
+            </div>
+        </a>
+
+        <a href="time.html" class="lesson-card" id="card-time">
+            <div class="icon-box bg-4">📅</div>
+            <div class="lesson-info">
+                <h3>დრო და კალენდარი</h3>
+                <span class="percent-text" id="txt-time">0%</span>
+                <div class="mini-progress"><div class="mini-progress-fill" id="fill-time"></div></div>
+            </div>
+        </a>
+
+        <a href="food.html" class="lesson-card" id="card-food">
+            <div class="icon-box bg-5">🍏</div>
+            <div class="lesson-info">
+                <h3>საკვები და მენიუ</h3>
+                <span class="percent-text" id="txt-food">0%</span>
+                <div class="mini-progress"><div class="mini-progress-fill" id="fill-food"></div></div>
+            </div>
+        </a>
+    </div>
+
+    <script>
+        const lessons = [
+            { id: 'hello', storage: 'hello_lesson' },
+            { id: 'verbs', storage: ['etre_lesson', 'avoir_lesson'] },
+            { id: 'numbers', storage: 'numbers_lesson' },
+            { id: 'family', storage: 'family_lesson' },
+            { id: 'time', storage: 'time_lesson' },
+            { id: 'food', storage: 'food_lesson' }
+        ];
+
+        function updateUI() {
+            let totalWeightedPercent = 0;
+
+            lessons.forEach(lesson => {
+                let percent = 0;
+                let isCompleted = false;
+
+                if (Array.isArray(lesson.storage)) {
+                    // ზმნების შემთხვევა (Etre + Avoir საშუალო)
+                    let p1 = parseInt(localStorage.getItem(lesson.storage[0] + "_percent")) || 0;
+                    let p2 = parseInt(localStorage.getItem(lesson.storage[1] + "_percent")) || 0;
+                    percent = Math.round((p1 + p2) / 2);
+                    
+                    // თუ ორივე ზმნის ტესტი ჩაბარებულია
+                    if (localStorage.getItem(lesson.storage[0] + "_completed") === "true" && 
+                        localStorage.getItem(lesson.storage[1] + "_completed") === "true") {
+                        isCompleted = true;
+                    }
+                } else {
+                    // სტანდარტული გაკვეთილები
+                    percent = parseInt(localStorage.getItem(lesson.storage + "_percent")) || 0;
+                    isCompleted = localStorage.getItem(lesson.storage + "_completed") === "true";
+                }
+
+                // UI-ს განახლება
+                document.getElementById(`fill-${lesson.id}`).style.width = percent + "%";
+                document.getElementById(`txt-${lesson.id}`).innerText = percent + "%";
+                
+                if (isCompleted) {
+                    document.getElementById(`card-${lesson.id}`).classList.add('completed');
+                }
+
+                totalWeightedPercent += percent;
+            });
+
+            // საერთო პროგრესის გამოთვლა
+            const finalTotal = Math.round(totalWeightedPercent / lessons.length);
+            document.getElementById('total-status').innerText = `საერთო პროგრესი: ${finalTotal}%`;
+        }
+
+        // გვერდის ყოველი ჩატვირთვისას განახლება
+        window.onload = updateUI;
+    </script>
 </body>
 </html>
