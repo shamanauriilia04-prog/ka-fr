@@ -16,80 +16,21 @@
             background: rgba(255,255,255,0.1); padding: 15px; border-radius: 20px;
         }
         .stat-item span { display: block; font-size: 0.8rem; opacity: 0.8; }
+        
         .lesson-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 0 20px 40px; }
         .lesson-card {
             background: white; padding: 20px; border-radius: 25px;
-            text-decoration: none; color: #2d3436; box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-            display: flex; flex-direction: column; align-items: center; transition: 0.3s; border: 1px solid #f0f0f0;
+            text-decoration: none; color: #2d3436;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            transition: 0.3s; display: flex; flex-direction: column; align-items: center;
+            text-align: center; border: 1px solid #eee;
         }
         .lesson-card:active { transform: scale(0.95); }
-        .icon-circle { width: 50px; height: 50px; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 12px; }
-        .lesson-card h3 { margin: 0; font-size: 1rem; }
-        .lesson-card p { margin: 5px 0 0; font-size: 0.75rem; color: #b2bec3; }
-
+        .icon-circle {
+            width: 60px; height: 60px; border-radius: 20px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px; margin-bottom: 15px;
+        }
         .bg-blue { background: #eef2ff; color: #002395; }
-        .bg-red { background: #fff1f1; color: #ed2939; }
-        .bg-green { background: #e8fdf0; color: #2ecc71; }
-        .bg-purple { background: #f3ebff; color: #6c5ce7; }
-        .bg-orange { background: #fff9e6; color: #f39c12; }
-        .bg-teal { background: #e6fffa; color: #14b8a6; }
-    </style>
-</head>
-<body>
-    <div class="app-container">
-        <div class="welcome-banner">
-            <h1>Bonjour! 🇫🇷</h1>
-            <p>შენი ფრანგული ენის მეგზური</p>
-            <div class="stats-row">
-                <div class="stat-item"><strong>6</strong><span>გაკვეთილი</span></div>
-                <div class="stat-item"><strong>200+</strong><span>სიტყვა</span></div>
-                <div class="stat-item"><strong>A1</strong><span>დონე</span></div>
-            </div>
-        </div>
-
-        <div class="lesson-grid">
-            <a href="hello.html" class="lesson-card">
-                <div class="icon-circle bg-blue">👋</div>
-                <h3>მისალმება</h3>
-                <p>პირველი ნაბიჯები</p>
-            </a>
-
-            <a href="verbs.html" class="lesson-card">
-                <div class="icon-circle bg-red">⚙️</div>
-                <h3>ზმნები</h3>
-                <p>ყოფნა და ქონა</p>
-            </a>
-
-            <a href="numbers.html" class="lesson-card">
-                <div class="icon-circle bg-green">🔢</div>
-                <h3>რიცხვები</h3>
-                <p>1 - 100 სრულად</p>
-            </a>
-
-            <a href="family.html" class="lesson-card">
-                <div class="icon-circle bg-blue">👨‍👩‍👧</div>
-                <h3>ოჯახი</h3>
-                <p>ხალხი და კავშირები</p>
-            </a>
-
-            <a href="time.html" class="lesson-card">
-                <div class="icon-circle bg-purple">📅</div>
-                <h3>დრო</h3>
-                <p>კალენდარი და საათი</p>
-            </a>
-
-            <a href="food.html" class="lesson-card">
-                <div class="icon-circle bg-orange">🍏</div>
-                <h3>საჭმელი</h3>
-                <p>პროდუქტები და შეკვეთა</p>
-            </a>
-
-            <a href="#" class="lesson-card" style="opacity: 0.6;">
-                <div class="icon-circle bg-teal">🏠</div>
-                <h3>სახლი</h3>
-                <p>მალე დაემატება...</p>
-            </a>
-        </div>
-    </div>
-</body>
-</html>
+        .bg-red { background: #fff1f2; color: #ed2939; }
+        .bg-green { background: #f0f
