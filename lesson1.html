@@ -3,92 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>გაკვეთილი 1 - მისალმება</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="app-container">
         <div class="progress-container"><div id="progress-bar"></div></div>
+        
         <div class="header">
-            <a href="index.html" style="color:white; float:left; text-decoration:none;">←</a>
-            <h2>L'art de saluer</h2>
-            <p>მისალმება და კულტურა</p>
+            <a href="index.html" style="position:absolute; left:20px; text-decoration:none; color:var(--primary); font-size:1.5rem;">✕</a>
+            <h2>Les Salutations</h2>
+            <p style="color:#86868b; margin-top:5px;">გაკვეთილი 1: კონტაქტი</p>
         </div>
 
-        <div class="word-list" id="word-list"></div>
+        <div class="word-grid" id="grid"></div>
         
-        <a href="test1.html" id="test-trigger">🏆 ჩააბარე ტესტი პროგრესისთვის</a>
+        <a href="test1.html" id="test-trigger">🎯 ჩააბარე ტესტი</a>
     </div>
 
     <script>
-        const vocabulary = [
-            { fr: "Bonjour", ka: "გამარჯობა / დილა მშვიდობისა", type: "formal", tip: "უნივერსალური დღისით." },
-            { fr: "Bonsoir", ka: "საღამო მშვიდობისა", type: "formal", tip: "საღამოს 6 საათის შემდეგ." },
-            { fr: "Salut", ka: "სალამი / პრივეტ", type: "informal", tip: "მეგობრული და შინაურული." },
-            { fr: "Coucou", ka: "ჰეი!", type: "informal", tip: "ძალიან ახლო მეგობრული." },
-            { fr: "Comment allez-vous ?", ka: "როგორ ბრძანდებით?", type: "formal", tip: "ზრდილობიანი ფორმა." },
-            { fr: "Ça va ?", ka: "როგორ ხარ?", type: "informal", tip: "ყველაზე ხშირი მეგობრებში." },
-            { fr: "Enchanté", ka: "სასიამოვნოა გაცნობა", type: "neutral", tip: "გაცნობის პირველ წამებში." },
-            { fr: "Merci beaucoup", ka: "დიდი მადლობა", type: "neutral", tip: "" },
-            { fr: "De rien", ka: "არაფრის", type: "neutral", tip: "" },
-            { fr: "S'il vous plaît", ka: "თუ შეიძლება", type: "formal", tip: "თქვენობით." },
-            { fr: "Au revoir", ka: "ნახვამდის", type: "formal", tip: "" },
-            { fr: "À plus tard", ka: "მოგვიანებით შეხვედრამდე", type: "informal", tip: "" }
+        const words = [
+            { fr: "Bonjour", ka: "გამარჯობა", type: "formal" },
+            { fr: "Bonsoir", ka: "საღამო მშვიდობისა", type: "formal" },
+            { fr: "Salut", ka: "სალამი", type: "informal" },
+            { fr: "Coucou", ka: "ჰეი", type: "informal" },
+            { fr: "Ça va ?", ka: "როგორ ხარ?", type: "informal" },
+            { fr: "Merci", ka: "მადლობა", type: "neutral" },
+            { fr: "De rien", ka: "არაფრის", type: "neutral" },
+            { fr: "Au revoir", ka: "ნახვამდის", type: "formal" },
+            { fr: "À bientôt", ka: "მალე შეხვედრამდე", type: "neutral" },
+            { fr: "À demain", ka: "ხვალამდე", type: "neutral" },
+            { fr: "Enchanté", ka: "სასიამოვნოა", type: "neutral" },
+            { fr: "Pardon", ka: "უკაცრავად", type: "neutral" }
         ];
 
-        let learnedCount = new Set();
+        let learned = new Set();
 
         function render() {
-            const container = document.getElementById('word-list');
-            container.innerHTML = vocabulary.map((item, i) => `
+            const grid = document.getElementById('grid');
+            grid.innerHTML = words.map((w, i) => `
                 <div class="word-card" id="card-${i}">
-                    <span class="tag ${item.type === 'formal' ? 'tag-formal' : 'tag-informal'}">${item.type}</span>
-                    <div style="font-size:1.3rem; font-weight:bold; color:#002395; margin:5px 0;">${item.fr}</div>
-                    <div style="color:#555;">${item.ka}</div>
-                    <div style="font-size:0.8rem; color:#888; margin-top:8px; border-top:1px solid #eee; padding-top:5px;">${item.tip}</div>
-                    <div class="btn-row">
-                        <button class="circle-btn" onclick="play('${item.fr}', ${i})">🔊</button>
-                        <button class="circle-btn mic-btn" id="mic-${i}" onclick="record('${item.fr}', ${i})">🎤</button>
+                    <span class="tag ${w.type === 'formal' ? 'tag-formal' : 'tag-informal'}">${w.type}</span>
+                    <span class="word-fr">${w.fr}</span>
+                    <span class="word-ka">${w.ka}</span>
+                    <div class="btn-group">
+                        <button class="action-btn" onclick="say('${w.fr}', ${i})">🔊</button>
+                        <button class="action-btn mic-btn" id="mic-${i}" onclick="listen('${w.fr}', ${i})">🎤</button>
                     </div>
                 </div>
             `).join('');
         }
 
-        function play(text, index) {
-            const u = new SpeechSynthesisUtterance(text);
+        function say(txt, idx) {
+            const u = new SpeechSynthesisUtterance(txt);
             u.lang = 'fr-FR';
+            u.rate = 0.85;
             window.speechSynthesis.speak(u);
-            markLearned(index);
+            updateProgress(idx);
         }
 
-        function markLearned(index) {
-            learnedCount.add(index);
-            document.getElementById(`card-${index}`).classList.add('learned');
-            
-            const progress = (learnedCount.size / vocabulary.length) * 100;
-            document.getElementById('progress-bar').style.width = progress + '%';
-            
-            if (learnedCount.size === vocabulary.length) {
-                document.getElementById('test-trigger').style.display = 'block';
-            }
+        function updateProgress(idx) {
+            learned.add(idx);
+            document.getElementById(`card-${idx}`).classList.add('learned');
+            const percent = (learned.size / words.length) * 100;
+            document.getElementById('progress-bar').style.width = percent + '%';
+            if(learned.size === words.length) document.getElementById('test-trigger').style.display = 'block';
         }
 
-        function record(target, idx) {
-            const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-            recognition.lang = 'fr-FR';
+        function listen(target, idx) {
+            const rec = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            rec.lang = 'fr-FR';
             const btn = document.getElementById(`mic-${idx}`);
             btn.classList.add('active');
-            recognition.start();
-
-            recognition.onresult = (e) => {
+            rec.start();
+            rec.onresult = (e) => {
                 const speech = e.results[0][0].transcript.toLowerCase();
-                if (speech.includes(target.toLowerCase().replace(/[?!]/g, ''))) {
-                    alert("ბრავო! ✅");
-                    markLearned(idx);
+                if(speech.includes(target.toLowerCase().replace(/[?!]/g, ''))) {
+                    updateProgress(idx);
                 }
                 btn.classList.remove('active');
             };
-            recognition.onerror = () => btn.classList.remove('active');
+            rec.onerror = () => btn.classList.remove('active');
         }
 
         render();
