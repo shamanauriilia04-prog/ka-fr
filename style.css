@@ -1,0 +1,129 @@
+:root {
+    --primary: #002395;
+    --red: #ed2939;
+    --success: #2ecc71;
+    --bg: #f5f7fa;
+    --dark: #2c3e50;
+}
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Roboto, Helvetica, sans-serif;
+    background: var(--bg);
+    color: var(--dark);
+}
+
+.app-container {
+    max-width: 600px;
+    margin: 0 auto;
+    background: white;
+    min-height: 100vh;
+    box-shadow: 0 0 20px rgba(0,0,0,0.05);
+}
+
+/* Header */
+.header {
+    background: var(--primary);
+    color: white;
+    padding: 30px 20px;
+    text-align: center;
+    border-radius: 0 0 25px 25px;
+}
+
+/* Card Styling */
+.lesson-content {
+    padding: 20px;
+}
+
+.word-card {
+    background: white;
+    border: 2px solid #edf2f7;
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 15px;
+    position: relative;
+    transition: 0.3s;
+}
+
+.word-card:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+}
+
+.tag {
+    font-size: 0.7rem;
+    padding: 4px 10px;
+    border-radius: 10px;
+    text-transform: uppercase;
+    font-weight: bold;
+    margin-bottom: 8px;
+    display: inline-block;
+}
+
+.tag-formal { background: #ebf4ff; color: #3182ce; }
+.tag-informal { background: #fff5f5; color: #e53e3e; }
+
+.word-fr {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: var(--primary);
+    display: block;
+}
+
+.word-ka {
+    font-size: 1.1rem;
+    color: var(--dark);
+}
+
+.word-tip {
+    font-size: 0.9rem;
+    color: #718096;
+    margin-top: 10px;
+    font-style: italic;
+    display: block;
+    border-top: 1px solid #eee;
+    padding-top: 8px;
+}
+
+/* Buttons */
+.controls {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.btn-circle {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    border: none;
+    background: #f1f5f9;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    transition: 0.2s;
+}
+
+.btn-circle:hover { background: #e2e8f0; }
+.btn-mic.active { 
+    background: var(--red); 
+    color: white; 
+    animation: pulse 1.5s infinite; 
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(237, 41, 57, 0.4); }
+    70% { box-shadow: 0 0 0 15px rgba(237, 41, 57, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(237, 41, 57, 0); }
+}
+
+.back-btn {
+    color: white;
+    text-decoration: none;
+    font-size: 1.2rem;
+    position: absolute;
+    left: 20px;
+    top: 30px;
+}
