@@ -1,0 +1,80 @@
+:root {
+    --primary-color: #0055A4; /* ფრანგული ლურჯი */
+    --accent-color: #EF4135;  /* ფრანგული წითელი */
+    --bg-color: #F8F9FA;
+    --text-dark: #2D3436;
+}
+
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-dark);
+    display: flex;
+    justify-content: center;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.app-container {
+    width: 100%;
+    max-width: 500px;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+header {
+    margin-top: 40px;
+    margin-bottom: 30px;
+}
+
+h1 { font-size: 28px; margin-bottom: 5px; font-weight: 600; }
+header p { color: #636e72; font-size: 16px; }
+
+.progress-section {
+    background: white;
+    padding: 15px;
+    border-radius: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.progress-bar {
+    height: 8px;
+    background: #dfe6e9;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-color), #4834d4);
+    transition: width 0.3s ease;
+}
+
+.lesson-card {
+    background: white;
+    padding: 20px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.2s ease;
+    cursor: pointer;
+}
+
+.lesson-card:active {
+    transform: scale(0.97);
+}
+
+.lesson-icon {
+    font-size: 30px;
+    margin-right: 20px;
+}
+
+.lesson-info { flex-grow: 1; }
+.lesson-info h3 { margin: 0; font-size: 18px; }
+.lesson-info p { margin: 5px 0 0; color: #b2bec3; font-size: 14px; }
+
+.chevron { font-size: 24px; color: #b2bec3; }
