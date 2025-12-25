@@ -3,62 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>გამოწვევა - Bonjour</title>
+    <title>პირველი ნაბიჯები - Bonjour</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        .challenge-container { text-align: center; padding: 40px 20px; position: relative; }
+        .challenge-container { text-align: center; padding: 30px 20px; }
         .word-display {
             background: #fff; padding: 40px; border-radius: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-bottom: 25px;
             min-height: 180px; display: flex; flex-direction: column;
             justify-content: center; position: relative;
         }
         .info-btn {
             position: absolute; top: 15px; right: 15px;
             background: #f0f2f5; border: none; border-radius: 50%;
-            width: 30px; height: 30px; cursor: pointer; font-weight: bold; color: #002395;
+            width: 35px; height: 35px; cursor: pointer; font-weight: bold; color: #002395;
         }
-        .modal {
-            display: none; position: fixed; z-index: 100; left: 0; top: 0;
-            width: 100%; height: 100%; background-color: rgba(0,0,0,0.5);
-        }
-        .modal-content {
-            background-color: white; margin: 30% auto; padding: 25px;
-            border-radius: 20px; width: 80%; max-width: 350px; text-align: left;
-        }
-        .close-modal { background: #002395; color: white; border: none; padding: 10px 20px; border-radius: 10px; margin-top: 15px; width: 100%; }
+        .nav-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .nav-btn { background: none; border: 1px solid #ddd; padding: 8px 15px; border-radius: 10px; cursor: pointer; color: #636e72; }
+        .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
         
-        /* დანარჩენი სტილები იგივეა */
-        .word-display h2 { font-size: 2.2rem; color: #002395; margin: 0; }
-        .word-display p { font-size: 1.1rem; color: #636e72; margin-top: 10px; }
-        .controls { display: flex; justify-content: center; gap: 20px; }
-        .btn-round { width: 70px; height: 70px; border-radius: 50%; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
+        .main-controls { display: flex; justify-content: center; gap: 20px; }
+        .btn-round { width: 70px; height: 70px; border-radius: 50%; border: none; color: white; font-size: 1.5rem; cursor: pointer; transition: 0.3s; }
         .btn-audio { background: #002395; }
         .btn-mic { background: #ED2939; }
         .recording { animation: pulse 1.5s infinite; }
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(237, 41, 57, 0.7); } 70% { box-shadow: 0 0 0 20px rgba(237, 41, 57, 0); } 100% { box-shadow: 0 0 0 0 rgba(237, 41, 57, 0); } }
-        #progress-text { margin-bottom: 10px; font-weight: bold; color: #002395; }
-        .feedback { font-size: 1.2rem; margin-top: 15px; height: 25px; font-weight: bold; }
+        
+        .feedback { font-size: 1.1rem; margin-top: 15px; height: 25px; font-weight: bold; color: #2ecc71; }
+        .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); }
+        .modal-content { background: white; margin: 30% auto; padding: 25px; border-radius: 20px; width: 80%; max-width: 350px; }
+        .close-modal { background: #002395; color: white; border: none; padding: 12px; border-radius: 10px; width: 100%; margin-top: 15px; }
     </style>
 </head>
 <body>
     <div class="app-container">
         <div class="header" style="padding:15px;">
-            <a href="index.html" style="color:white; float:left; text-decoration:none;">←</a>
-            <h2>პირველი ნაბიჯები</h2>
+            <a href="index.html" style="color:white; float:left; text-decoration:none;">← მთავარი</a>
+            <span id="progress-text" style="font-size: 14px; opacity: 0.9;">1 / 25</span>
         </div>
 
         <div class="challenge-container">
-            <div id="progress-text">იტვირთება...</div>
-            
+            <div class="nav-controls">
+                <button class="nav-btn" id="prevBtn" onclick="changeWord(-1)">← წინა</button>
+                <button class="nav-btn" id="nextBtn" onclick="changeWord(1)">შემდეგი →</button>
+            </div>
+
             <div class="word-display" id="display-box">
                 <button class="info-btn" onclick="showTip()">?</button>
-                <h2 id="fr-word">-</h2>
-                <p id="ka-word">-</p>
+                <h2 id="fr-word">Bonjour</h2>
+                <p id="ka-word">გამარჯობა</p>
                 <div id="feedback" class="feedback"></div>
             </div>
 
-            <div class="controls">
+            <div class="main-controls">
                 <button class="btn-round btn-audio" onclick="playCurrent()">🔊</button>
                 <button class="btn-round btn-mic" id="mic-btn" onclick="startChallenge()">🎤</button>
             </div>
@@ -67,7 +64,7 @@
 
     <div id="tipModal" class="modal">
         <div class="modal-content">
-            <h3 id="tip-title">როდის ვიყენებთ?</h3>
+            <h3>💡 რჩევა</h3>
             <p id="tip-text"></p>
             <button class="close-modal" onclick="closeModal()">გავიგე</button>
         </div>
@@ -75,25 +72,54 @@
 
     <script>
         const vocabulary = [
-            { fr: "Bonjour", ka: "გამარჯობა", tip: "გამოიყენება მზის ჩასვლამდე. ეს არის ყველაზე ზოგადი და თავაზიანი ფორმა ნებისმიერ სიტუაციაში." },
-            { fr: "Salut", ka: "სალამი", tip: "შინაურული ფორმაა. გამოიყენება მეგობრებთან და ახლობლებთან. ასევე ნიშნავს 'ნახვამდის'-საც." },
-            { fr: "Ça va ?", ka: "როგორ ხარ?", tip: "ნიშნავს 'როგორ მიდის საქმეები?'. პასუხიც იგივეა: 'Ça va!' (კარგად)." },
-            { fr: "Merci beaucoup", ka: "დიდი მადლობა", tip: "Beaucoup ნიშნავს 'ბევრს'. ფრანგები მადლობას ძალიან ხშირად იხდიან, არ დაგავიწყდეთ!" },
-            { fr: "S'il vous plaît", ka: "თუ შეიძლება", tip: "თავაზიანი ფორმაა (თქვენობით). მეგობართან იტყვით: S'il te plaît." },
-            { fr: "Enchanté", ka: "სასიამოვნოა", tip: "ამბობთ მხოლოდ პირველი გაცნობისას. მამაკაცები წერენ Enchanté, ქალები - Enchantée (გამოითქმის ერთნაირად)." },
-            { fr: "Au revoir", ka: "ნახვამდის", tip: "სიტყვასიტყვით ნიშნავს: 'კვლავ ნახვამდე'. ყველაზე გავრცელებული დამშვიდობებაა." },
-            { fr: "À bientôt", ka: "მალე შეხვედრამდე", tip: "გამოიყენება მაშინ, როცა ზუსტად არ იცით როდის, მაგრამ მალე შეხვდებით." }
+            { fr: "Bonjour", ka: "გამარჯობა", tip: "გამოიყენება დღისით. ყველაზე გავრცელებული მისალმებაა." },
+            { fr: "Salut", ka: "სალამი", tip: "მეგობრული მისალმება. ასევე გამოიყენება დამშვიდობებისას." },
+            { fr: "Bonsoir", ka: "საღამო მშვიდობისა", tip: "გამოიყენება საღამოს 6 საათის შემდეგ." },
+            { fr: "Ça va ?", ka: "როგორ ხარ?", tip: "არაფორმალური კითხვა მოკითხვისთვის." },
+            { fr: "Merci", ka: "მადლობა", tip: "უბრალოდ მადლობა." },
+            { fr: "Merci beaucoup", ka: "დიდი მადლობა", tip: "როცა განსაკუთრებული მადლიერების გამოხატვა გსურთ." },
+            { fr: "S'il vous plaît", ka: "თუ შეიძლება", tip: "თავაზიანი ფორმა (თქვენობით)." },
+            { fr: "S'il te plaît", ka: "თუ შეიძლება", tip: "მეგობრული ფორმა (შენობით)." },
+            { fr: "De rien", ka: "არაფრის", tip: "პასუხი მადლობაზე." },
+            { fr: "Je t'en prie", ka: "არაფრის", tip: "უფრო თბილი პასუხი მადლობაზე (შენობით)." },
+            { fr: "Pardon", ka: "ბოდიში", tip: "გამოიყენება შემთხვევითი შეცდომისას." },
+            { fr: "Excusez-moi", ka: "უკაცრავად", tip: "გამოიყენება ყურადღების მისაქცევად." },
+            { fr: "Oui", ka: "დიახ", tip: "დასტური." },
+            { fr: "Non", ka: "არა", tip: "უარყოფა." },
+            { fr: "Enchanté", ka: "სასიამოვნოა", tip: "ამბობენ გაცნობისას." },
+            { fr: "Au revoir", ka: "ნახვამდის", tip: "სტანდარტული დამშვიდობება." },
+            { fr: "À bientôt", ka: "მალე შეხვედრამდე", tip: "როცა მალე აპირებთ ნახვას." },
+            { fr: "À demain", ka: "ხვალამდე", tip: "თუ ხვალ ხვდებით ადამიანს." },
+            { fr: "Bonne journée", ka: "კარგ დღეს გისურვებთ", tip: "ამბობენ დამშვიდობებისას დღისით." },
+            { fr: "Bonne soirée", ka: "სასიამოვნო საღამოს გისურვებთ", tip: "ამბობენ საღამოს დამშვიდობებისას." },
+            { fr: "Bonne nuit", ka: "ღამე მშვიდობისა", tip: "უშუალოდ ძილის წინ." },
+            { fr: "Comment vous appelez-vous ?", ka: "რა გქვიათ?", tip: "თავაზიანი კითხვა სახელის გასაგებად." },
+            { fr: "Je m'appelle", ka: "მე მქვია", tip: "საკუთარი სახელის წარდგენა." },
+            { fr: "D'accord", ka: "კარგი / გეთანხმებით", tip: "გამოიყენება თანხმობის ნიშნად." },
+            { fr: "C'est bien", ka: "ეს კარგია", tip: "შეფასება." }
         ];
 
         let currentIndex = 0;
 
         function updateDisplay() {
-            if (currentIndex < vocabulary.length) {
-                document.getElementById('fr-word').innerText = vocabulary[currentIndex].fr;
-                document.getElementById('ka-word').innerText = vocabulary[currentIndex].ka;
-                document.getElementById('progress-text').innerText = `${currentIndex + 1} / ${vocabulary.length}`;
-                document.getElementById('feedback').innerText = "";
-            }
+            document.getElementById('fr-word').innerText = vocabulary[currentIndex].fr;
+            document.getElementById('ka-word').innerText = vocabulary[currentIndex].ka;
+            document.getElementById('progress-text').innerText = `${currentIndex + 1} / ${vocabulary.length}`;
+            document.getElementById('feedback').innerText = "";
+            document.getElementById('prevBtn').disabled = currentIndex === 0;
+            document.getElementById('nextBtn').disabled = currentIndex === vocabulary.length - 1;
+        }
+
+        function changeWord(direction) {
+            currentIndex += direction;
+            updateDisplay();
+        }
+
+        function playCurrent() {
+            const utterance = new SpeechSynthesisUtterance(vocabulary[currentIndex].fr);
+            utterance.lang = 'fr-FR';
+            utterance.rate = 0.85;
+            window.speechSynthesis.speak(utterance);
         }
 
         function showTip() {
@@ -101,18 +127,11 @@
             document.getElementById('tipModal').style.display = "block";
         }
 
-        function closeModal() {
-            document.getElementById('tipModal').style.display = "none";
-        }
-
-        function playCurrent() {
-            const utterance = new SpeechSynthesisUtterance(vocabulary[currentIndex].fr);
-            utterance.lang = 'fr-FR';
-            window.speechSynthesis.speak(utterance);
-        }
+        function closeModal() { document.getElementById('tipModal').style.display = "none"; }
 
         function startChallenge() {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) { alert("Chrome გამოიყენეთ"); return; }
             const recognition = new SpeechRecognition();
             recognition.lang = 'fr-FR';
             
@@ -122,9 +141,10 @@
                 const target = vocabulary[currentIndex].fr.toLowerCase().replace(/[?!.,]/g, "");
                 if (result.includes(target)) {
                     document.getElementById('feedback').innerText = "✨ სწორია! ✨";
-                    setTimeout(() => { currentIndex++; if(currentIndex < vocabulary.length) updateDisplay(); else alert('გაკვეთილი დასრულდა!'); }, 1200);
+                    if (currentIndex < vocabulary.length - 1) setTimeout(() => changeWord(1), 1500);
                 } else {
                     document.getElementById('feedback').innerText = "❌ სცადე კიდევ ერთხელ";
+                    document.getElementById('feedback').style.color = "#ED2939";
                 }
             };
             recognition.onend = () => document.getElementById('mic-btn').classList.remove('recording');
