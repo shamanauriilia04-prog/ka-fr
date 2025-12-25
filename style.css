@@ -127,3 +127,43 @@ body {
     left: 20px;
     top: 30px;
 }
+:root {
+    --primary: #002395;
+    --red: #ed2939;
+    --success: #2ecc71;
+    --bg: #f8f9fa;
+}
+
+body { margin: 0; font-family: 'Segoe UI', sans-serif; background: var(--bg); }
+.app-container { max-width: 600px; margin: 0 auto; background: white; min-height: 100vh; position: relative; }
+
+/* Progress Bar */
+.progress-container { width: 100%; height: 8px; background: #eee; position: sticky; top: 0; z-index: 100; }
+#progress-bar { height: 100%; background: var(--success); width: 0%; transition: 0.4s; }
+
+.header { background: var(--primary); color: white; padding: 25px; text-align: center; }
+.word-list { padding: 20px; }
+
+.word-card {
+    background: white; border: 2px solid #eee; border-radius: 15px;
+    padding: 20px; margin-bottom: 12px; transition: 0.3s;
+}
+.word-card.learned { border-color: var(--success); background: #fafffb; }
+
+.tag { font-size: 0.7rem; padding: 3px 8px; border-radius: 5px; font-weight: bold; }
+.tag-formal { background: #e3f2fd; color: #1976d2; }
+.tag-informal { background: #fbe9e7; color: #d84315; }
+
+.btn-row { display: flex; gap: 10px; margin-top: 10px; }
+.circle-btn { width: 40px; height: 40px; border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; background: #f0f0f0; transition: 0.2s; }
+.circle-btn:hover { background: #e0e0e0; }
+.mic-btn.active { background: var(--red); color: white; animation: pulse 1s infinite; }
+
+#test-trigger {
+    display: none; margin: 30px 20px; padding: 20px;
+    background: var(--success); color: white; text-align: center;
+    border-radius: 15px; text-decoration: none; font-weight: bold;
+    box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+}
+
+@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
