@@ -3,56 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Avoir - Bonjour</title>
+    <title>Avoir - პრაქტიკა</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        .verb-row {
-            background: white; padding: 15px; border-radius: 12px;
-            margin-bottom: 10px; display: flex; justify-content: space-between;
-            align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-        .btn-play { background: #ED2939; color: white; border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; }
+        .practice-section { background: #fff1f1; padding: 20px; border-radius: 20px; margin-top: 30px; }
+        .verb-row { background: white; padding: 12px; border-radius: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .btn-play { background: #ED2939; color: white; border: none; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; }
+        .challenge-box { background: white; padding: 20px; border-radius: 15px; text-align: center; margin-top: 15px; }
+        .mic-active { animation: pulse 1.5s infinite; background: #333 !important; }
     </style>
 </head>
 <body>
     <div class="app-container">
         <div class="header" style="padding:15px; background: #ED2939;">
             <a href="verbs.html" style="color:white; float:left; text-decoration:none;">←</a>
-            <h2>AVOIR - ქონა</h2>
+            <h2>AVOIR - პრაქტიკა</h2>
         </div>
 
         <div style="padding: 20px;">
-            <div class="verb-row">
-                <div><strong>J'ai</strong><p style="margin:0; font-size:13px; color:gray;">მე მაქვს</p></div>
-                <button class="btn-play" onclick="speak('J\'ai')">🔊</button>
-            </div>
-            <div class="verb-row">
-                <div><strong>Tu as</strong><p style="margin:0; font-size:13px; color:gray;">შენ გაქვს</p></div>
-                <button class="btn-play" onclick="speak('Tu as')">🔊</button>
-            </div>
-            <div class="verb-row">
-                <div><strong>Il / Elle a</strong><p style="margin:0; font-size:13px; color:gray;">მას აქვს</p></div>
-                <button class="btn-play" onclick="speak('Il a')">🔊</button>
-            </div>
-            <div class="verb-row">
-                <div><strong>Nous avons</strong><p style="margin:0; font-size:13px; color:gray;">ჩვენ გვაქვს</p></div>
-                <button class="btn-play" onclick="speak('Nous avons')">🔊</button>
-            </div>
-            <div class="verb-row">
-                <div><strong>Vous avez</strong><p style="margin:0; font-size:13px; color:gray;">თქვენ გაქვთ</p></div>
-                <button class="btn-play" onclick="speak('Vous avez')">🔊</button>
-            </div>
-            <div class="verb-row">
-                <div><strong>Ils / Elles ont</strong><p style="margin:0; font-size:13px; color:gray;">მათ აქვთ</p></div>
-                <button class="btn-play" onclick="speak('Ils ont')">🔊</button>
+            <h3>1. უღლება</h3>
+            <div class="verb-row"><span>J'ai (მე მაქვს)</span> <button class="btn-play" onclick="speak('J\'ai')">🔊</button></div>
+            <div class="verb-row"><span>Tu as (შენ გაქვს)</span> <button class="btn-play" onclick="speak('Tu as')">🔊</button></div>
+            <div class="verb-row"><span>Il/Elle a (მას აქვს)</span> <button class="btn-play" onclick="speak('Il a')">🔊</button></div>
+
+            <div class="practice-section">
+                <h3>2. ისაუბრე ფრანგულად</h3>
+                <div class="challenge-box">
+                    <p id="ka-phrase">მე მაქვს მანქანა</p>
+                    <h4 id="fr-target" style="color: #ED2939;">J'ai une voiture</h4>
+                    <div id="feedback" style="margin-bottom:10px; font-weight:bold;"></div>
+                    
+                    <button class="btn-play" onclick="speak(document.getElementById('fr-target').innerText)">🔊 მოსმენა</button>
+                    <button id="mic-btn" class="btn-play" style="background: #333; width: auto; padding: 0 20px; border-radius: 10px;" onclick="listenAndCheck()">🎤 წარმოთქვი</button>
+                </div>
+                <button onclick="nextPractice()" style="width:100%; margin-top:10px; padding:10px; border-radius:10px; border:1px solid #ED2939; background:none; cursor:pointer; color:#ED2939;">შემდეგი ფრაზა →</button>
             </div>
         </div>
     </div>
+
     <script>
+        const exercises = [
+            { ka: "მე მაქვს მანქანა", fr: "J'ai une voiture" },
+            { ka: "შენ გაქვს წიგნი", fr: "Tu as un livre" },
+            { ka: "მას აქვს ძაღლი", fr: "Il a un chien" },
+            { ka: "ჩვენ გვაქვს დრო", fr: "Nous avons le temps" },
+            { ka: "მე ვარ 20 წლის (მაქვს 20 წელი)", fr: "J'ai vingt ans" }
+        ];
+        let currentIdx = 0;
+
         function speak(text) {
             const u = new SpeechSynthesisUtterance(text);
             u.lang = 'fr-FR';
             window.speechSynthesis.speak(u);
+        }
+
+        function nextPractice() {
+            currentIdx = (currentIdx + 1) % exercises.length;
+            document.getElementById('ka-phrase').innerText = exercises[currentIdx].ka;
+            document.getElementById('fr-target').innerText = exercises[currentIdx].fr;
+            document.getElementById('feedback').innerText = "";
+        }
+
+        function listenAndCheck() {
+            const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.lang = 'fr-FR';
+            const btn = document.getElementById('mic-btn');
+            
+            recognition.onstart = () => btn.classList.add('mic-active');
+            recognition.onresult = (event) => {
+                const speech = event.results[0][0].transcript.toLowerCase();
+                const target = exercises[currentIdx].fr.toLowerCase();
+                if(speech.includes(target.replace(/[.,]/g, "").replace("'", " "))) {
+                    document.getElementById('feedback').innerText = "✅ სწორია!";
+                    document.getElementById('feedback').style.color = "green";
+                } else {
+                    document.getElementById('feedback').innerText = "❌ სცადე თავიდან";
+                    document.getElementById('feedback').style.color = "red";
+                }
+            };
+            recognition.onend = () => btn.classList.remove('mic-active');
+            recognition.start();
         }
     </script>
 </body>
