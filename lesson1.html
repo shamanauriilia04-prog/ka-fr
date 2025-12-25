@@ -2,39 +2,173 @@
 <html lang="ka">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>გაკვეთილი 1 - Bonjour</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>გამოწვევა - Bonjour</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .challenge-container { text-align: center; padding: 40px 20px; }
+        .word-display {
+            background: #fff; padding: 40px; border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-bottom: 30px;
+            min-height: 180px; display: flex; flex-direction: column;
+            justify-content: center; position: relative;
+        }
+        .word-display h2 { font-size: 2.2rem; color: #002395; margin: 0; }
+        .word-display p { font-size: 1.1rem; color: #636e72; margin-top: 10px; }
+        
+        .controls { display: flex; justify-content: center; gap: 20px; }
+        .btn-round {
+            width: 70px; height: 70px; border-radius: 50%; border: none;
+            color: white; font-size: 1.5rem; cursor: pointer; transition: 0.3s;
+        }
+        .btn-audio { background: #002395; }
+        .btn-mic { background: #ED2939; }
+        
+        .recording { animation: pulse 1.5s infinite; }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(237, 41, 57, 0.7); }
+            70% { box-shadow: 0 0 0 20px rgba(237, 41, 57, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(237, 41, 57, 0); }
+        }
+        
+        #progress-text { margin-bottom: 10px; font-weight: bold; color: #002395; }
+        .feedback { font-size: 1.2rem; margin-top: 15px; height: 25px; font-weight: bold; }
+        .error-stack { color: #ED2939; font-size: 0.8rem; margin-top: 20px; }
+    </style>
 </head>
 <body>
     <div class="app-container">
         <div class="header" style="padding:15px;">
             <a href="index.html" style="color:white; float:left; text-decoration:none;">←</a>
-            <h2>მისალმება</h2>
+            <h2>პირველი ნაბიჯები</h2>
         </div>
-        
-        <div class="content-section">
-            <h3>სიტყვები:</h3>
-            <div class="vocab-row"><span>Bonjour</span> <span>გამარჯობა</span></div>
-            <div class="vocab-row"><span>Salut</span> <span>სალიუ (მისალმება)</span></div>
-            <div class="vocab-row"><span>Bonsoir</span> <span>საღამო მშვიდობისა</span></div>
-            <div class="vocab-row"><span>Merci</span> <span>მადლობა</span></div>
-            <div class="vocab-row"><span>Au revoir</span> <span>ნახვამდის</span></div>
 
-            <div class="quiz-box">
-                <h3>✍️ ტესტი:</h3>
-                <p>როგორ არის "ნახვამდის"?</p>
-                <button class="option" onclick="check(this, false)">Merci</button>
-                <button class="option" onclick="check(this, true)">Au revoir</button>
-                <button class="option" onclick="check(this, false)">Salut</button>
+        <div class="challenge-container">
+            <div id="progress-text">იტვირთება...</div>
+            
+            <div class="word-display" id="display-box">
+                <h2 id="fr-word">-</h2>
+                <p id="ka-word">-</p>
+                <div id="feedback" class="feedback"></div>
             </div>
+
+            <div class="controls">
+                <button class="btn-round btn-audio" onclick="playCurrent()">🔊</button>
+                <button class="btn-round btn-mic" id="mic-btn" onclick="startChallenge()">🎤</button>
+            </div>
+            
+            <div id="error-info" class="error-stack"></div>
         </div>
     </div>
+
     <script>
-        function check(btn, isCorrect) {
-            if(isCorrect) btn.classList.add('correct');
-            else btn.classList.add('wrong');
+        // გაფართოებული ლექსიკონი (25 სიტყვა/ფრაზა)
+        let vocabulary = [
+            { fr: "Bonjour", ka: "გამარჯობა" },
+            { fr: "Salut", ka: "სალამი" },
+            { fr: "Ça va ?", ka: "როგორ ხარ?" },
+            { fr: "Merci beaucoup", ka: "დიდი მადლობა" },
+            { fr: "S'il vous plaît", ka: "თუ შეიძლება" },
+            { fr: "De rien", ka: "არაფრის" },
+            { fr: "Pardon", ka: "ბოდიში" },
+            { fr: "Oui", ka: "დიახ" },
+            { fr: "Non", ka: "არა" },
+            { fr: "Enchanté", ka: "სასიამოვნოა" },
+            { fr: "Au revoir", ka: "ნახვამდის" },
+            { fr: "Bonne nuit", ka: "ღამე მშვიდობისა" },
+            { fr: "À bientôt", ka: "მალე შეხვედრამდე" },
+            { fr: "Monsieur", ka: "ბატონო" },
+            { fr: "Madame", ka: "ქალბატონო" },
+            { fr: "Comment vous appelez-vous ?", ka: "რა გქვიათ თქვენ?" },
+            { fr: "Je m'appelle...", ka: "მე მქვია..." },
+            { fr: "Je comprends", ka: "მესმის" },
+            { fr: "Je ne comprends pas", ka: "არ მესმის" },
+            { fr: "Bien sûr", ka: "რა თქმა უნდა" },
+            { fr: "D'accord", ka: "თანახმა ვარ / კარგი" },
+            { fr: "Excusez-moi", ka: "უკაცრავად" },
+            { fr: "Bonne chance", ka: "წარმატებები" },
+            { fr: "À demain", ka: "ხვალამდე" },
+            { fr: "C'est bien", ka: "ეს კარგია" }
+        ];
+
+        let failedWords = []; // აქ დაგროვდება შეცდომები
+        let currentIndex = 0;
+        let isReviewMode = false;
+
+        function updateDisplay() {
+            let list = isReviewMode ? failedWords : vocabulary;
+            if (currentIndex < list.length) {
+                document.getElementById('fr-word').innerText = list[currentIndex].fr;
+                document.getElementById('ka-word').innerText = list[currentIndex].ka;
+                let modePrefix = isReviewMode ? "გამეორება: " : "";
+                document.getElementById('progress-text').innerText = `${modePrefix} ${currentIndex + 1} / ${list.length}`;
+                document.getElementById('feedback').innerText = "";
+                document.getElementById('feedback').style.color = "#2ecc71";
+            }
         }
+
+        function playCurrent() {
+            let list = isReviewMode ? failedWords : vocabulary;
+            const utterance = new SpeechSynthesisUtterance(list[currentIndex].fr);
+            utterance.lang = 'fr-FR';
+            utterance.rate = 0.8;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function startChallenge() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) { alert("გამოიყენეთ Chrome"); return; }
+
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'fr-FR';
+            const micBtn = document.getElementById('mic-btn');
+            const feedback = document.getElementById('feedback');
+
+            recognition.onstart = () => micBtn.classList.add('recording');
+            
+            recognition.onresult = (event) => {
+                let list = isReviewMode ? failedWords : vocabulary;
+                const result = event.results[0][0].transcript.toLowerCase();
+                const target = list[currentIndex].fr.toLowerCase().replace(/[?!.,]/g, "");
+
+                if (result.includes(target)) {
+                    feedback.innerText = "✨ სწორია! ✨";
+                    feedback.style.color = "#2ecc71";
+                    setTimeout(nextWord, 1200);
+                } else {
+                    feedback.innerText = "❌ სცადე კიდევ ერთხელ";
+                    feedback.style.color = "#ED2939";
+                    // თუ პირველად ვსწავლობთ და შეგვეშალა, ვამატებთ სათადარიგო სიაში
+                    if (!isReviewMode && !failedWords.includes(vocabulary[currentIndex])) {
+                        failedWords.push(vocabulary[currentIndex]);
+                        document.getElementById('error-info').innerText = `გასამეორებელია: ${failedWords.length}`;
+                    }
+                }
+            };
+
+            recognition.onend = () => micBtn.classList.remove('recording');
+            recognition.start();
+        }
+
+        function nextWord() {
+            currentIndex++;
+            let list = isReviewMode ? failedWords : vocabulary;
+
+            if (currentIndex < list.length) {
+                updateDisplay();
+            } else if (!isReviewMode && failedWords.length > 0) {
+                // თუ ძირითადი სია მორჩა, მაგრამ შეცდომები იყო
+                isReviewMode = true;
+                currentIndex = 0;
+                alert("ახლა გავიმეოროთ ის სიტყვები, რომლებიც შეგეშალათ!");
+                updateDisplay();
+            } else {
+                document.getElementById('display-box').innerHTML = "<h2>🎉 ბრავო!</h2><p>ყველა სიტყვა დაძლეულია!</p>";
+                document.getElementById('progress-text').innerText = "დასრულებულია";
+            }
+        }
+
+        updateDisplay();
     </script>
 </body>
 </html>
