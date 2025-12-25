@@ -2,44 +2,189 @@
 <html lang="ka">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>რიცხვები და დრო</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>რიცხვები - Premium</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        :root { --main-color: #2ecc71; } /* რიცხვებისთვის ავირჩიოთ მწვანე */
+        
+        .verb-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 30px; }
+        
+        .verb-card {
+            background: #fff; padding: 20px; border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #f0f0f0;
+            position: relative; text-align: center; transition: 0.3s;
+        }
+        
+        .verb-card strong { display: block; color: var(--main-color); font-size: 1.4rem; margin-bottom: 5px; }
+        .verb-card span { color: #636e72; font-size: 0.9rem; }
+        
+        .card-tools {
+            position: absolute; top: 8px; right: 8px;
+            display: flex; flex-direction: column; gap: 5px;
+        }
+        .tool-btn {
+            background: #f0fff4; border: none; width: 28px; height: 28px;
+            border-radius: 50%; font-size: 0.8rem; cursor: pointer; color: var(--main-color);
+        }
+
+        .practice-zone {
+            background: #ffffff; border-radius: 30px; padding: 25px;
+            box-shadow: 0 10px 40px rgba(46,204,113,0.1); border: 2px solid #e8fdf0;
+        }
+
+        .input-wrapper { position: relative; margin: 20px 0; }
+        .modern-input {
+            width: 100%; padding: 15px; border: 2px solid #e0e0e0; border-radius: 15px;
+            font-size: 1.1rem; text-align: center; transition: 0.3s; outline: none; box-sizing: border-box;
+        }
+        .modern-input:focus { border-color: var(--main-color); }
+
+        .btn-group { display: flex; gap: 10px; margin-top: 15px; }
+        .btn-main {
+            flex: 1; padding: 15px; border-radius: 15px; border: none;
+            font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .btn-listen { background: var(--main-color); color: white; }
+        .btn-mic { background: #333; color: white; }
+        .btn-next { background: #34495e; color: white; width: 100%; margin-top: 10px; }
+
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); }
+        .modal-content { background: white; margin: 40% auto; padding: 25px; border-radius: 25px; width: 80%; max-width: 320px; text-align: center; }
+        
+        .category-tabs { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 10px; }
+        .tab { padding: 8px 15px; background: #fff; border: 1px solid #ddd; border-radius: 20px; cursor: pointer; white-space: nowrap; }
+        .tab.active { background: var(--main-color); color: white; border-color: var(--main-color); }
+    </style>
 </head>
 <body>
     <div class="app-container">
-        <div class="header" style="padding:15px;">
-            <a href="index.html" style="color:white; float:left; text-decoration:none;">←</a>
-            <h2>რიცხვები და დრო</h2>
+        <div class="header" style="padding:15px; background: var(--main-color); border-radius: 0 0 30px 30px;">
+            <a href="index.html" style="color:white; float:left; text-decoration:none; font-size:1.5rem;">←</a>
+            <h2>LES NOMBRES (რიცხვები)</h2>
         </div>
-        
-        <div class="content-section">
-            <h3>რიცხვები (1-10):</h3>
-            <div class="vocab-row"><span>1 - Un (ან)</span> <span>6 - Six (სის)</span></div>
-            <div class="vocab-row"><span>2 - Deux (დო)</span> <span>7 - Sept (სეტ)</span></div>
-            <div class="vocab-row"><span>3 - Trois (ტღუა)</span> <span>8 - Huit (უიტ)</span></div>
-            <div class="vocab-row"><span>4 - Quatre (კატღ)</span> <span>9 - Neuf (ნოფ)</span></div>
-            <div class="vocab-row"><span>5 - Cinq (სენკ)</span> <span>10 - Dix (დის)</span></div>
 
-            <h3 style="margin-top:20px;">კვირის დღეები:</h3>
-            <div class="vocab-row"><span>Lundi</span> <span>ორშაბათი</span></div>
-            <div class="vocab-row"><span>Mardi</span> <span>სამშაბათი</span></div>
-            <div class="vocab-row"><span>Mercredi</span> <span>ოთხშაბათი</span></div>
+        <div style="padding: 20px;">
+            <div class="category-tabs">
+                <div class="tab active" onclick="filterNumbers('1-10')">1-10</div>
+                <div class="tab" onclick="filterNumbers('11-20')">11-20</div>
+                <div class="tab" onclick="filterNumbers('tens')">ათეულები</div>
+            </div>
 
-            <div class="quiz-box">
-                <h3>✍️ ტესტი:</h3>
-                <p>როგორ არის რიცხვი "3"?</p>
-                <button class="option" onclick="check(this, false)">Deux</button>
-                <button class="option" onclick="check(this, true)">Trois</button>
-                <button class="option" onclick="check(this, false)">Dix</button>
+            <div class="verb-grid" id="numberGrid"></div>
+
+            <div class="practice-zone">
+                <span style="color: var(--main-color); font-weight: bold; font-size: 0.8rem; text-transform: uppercase;">გამოცდა</span>
+                <p id="ka-phrase" style="font-size: 1.5rem; font-weight: bold; margin: 10px 0;">ხუთი</p>
+                
+                <div class="btn-group">
+                    <button class="btn-main btn-listen" onclick="speakTarget()"><span>🔊</span> მოსმენა</button>
+                    <button class="btn-main btn-mic" id="mic-btn" onclick="listen()"><span>🎤</span> თქვი</button>
+                </div>
+
+                <div class="input-wrapper">
+                    <input type="text" class="modern-input" id="write-input" placeholder="დაწერე ფრანგულად..." oninput="checkWriting()">
+                </div>
+                
+                <div id="feedback" style="height: 20px; font-weight: bold; text-align: center; margin-bottom: 10px;"></div>
+                <button class="btn-main btn-next" onclick="nextExercise()">შემდეგი რიცხვი →</button>
             </div>
         </div>
     </div>
+
+    <div id="infoModal" class="modal">
+        <div class="modal-content">
+            <h3 id="modal-title" style="color:var(--main-color)"></h3>
+            <p id="modal-text" style="color:#636e72; line-height:1.5;"></p>
+            <button onclick="closeModal()" style="background:var(--main-color); color:white; border:none; padding:12px; width:100%; border-radius:12px; margin-top:15px;">გავიგე</button>
+        </div>
+    </div>
+
     <script>
-        function check(btn, isCorrect) {
-            if(isCorrect) btn.classList.add('correct');
-            else btn.classList.add('wrong');
+        const allNumbers = [
+            { fr: "Un", ka: "ერთი", cat: "1-10", tip: "გამოითქმის ცხვირისმიერად: [ენ]." },
+            { fr: "Deux", ka: "ორი", cat: "1-10", tip: "ბოლო 'x' არ იკითხება: [დე]." },
+            { fr: "Trois", ka: "სამი", cat: "1-10", tip: "გამოითქმის: [ტრუა]." },
+            { fr: "Quatre", ka: "ოთხი", cat: "1-10", tip: "გამოითქმის: [კატრ]." },
+            { fr: "Cinq", ka: "ხუთი", cat: "1-10", tip: "აქ 'q' იკითხება: [სენკ]." },
+            { fr: "Six", ka: "ექვსი", cat: "1-10", tip: "გამოითქმის: [სის]." },
+            { fr: "Sept", ka: "შვიდი", cat: "1-10", tip: "'p' არ იკითხება: [სეტ]." },
+            { fr: "Huit", ka: "რვა", cat: "1-10", tip: "გამოითქმის: [უიტ]." },
+            { fr: "Neuf", ka: "ცხრა", cat: "1-10", tip: "გამოითქმის: [ნეფ]." },
+            { fr: "Dix", ka: "ათი", cat: "1-10", tip: "გამოითქმის: [დის]." },
+            { fr: "Onze", ka: "თერთმეტი", cat: "11-20", tip: "[ონზ]" },
+            { fr: "Douze", ka: "თორმეტი", cat: "11-20", tip: "[დუზ]" },
+            { fr: "Treize", ka: "ცამეტი", cat: "11-20", tip: "[ტრეზ]" },
+            { fr: "Vingt", ka: "ოცი", cat: "tens", tip: "'gt' არ იკითხება: [ვენ]." },
+            { fr: "Trente", ka: "ოცდაათი", cat: "tens", tip: "[ტრანტ]" }
+        ];
+
+        let currentNumbers = allNumbers.filter(n => n.cat === '1-10');
+        let currentEx = 0;
+
+        function renderGrid() {
+            const grid = document.getElementById('numberGrid');
+            grid.innerHTML = currentNumbers.map((n, i) => `
+                <div class="verb-card">
+                    <div class="card-tools">
+                        <button class="tool-btn" onclick="speak('${n.fr}')">🔊</button>
+                        <button class="tool-btn" onclick="showTip(${i})">?</button>
+                    </div>
+                    <strong>${n.fr}</strong>
+                    <span>${n.ka}</span>
+                </div>
+            `).join('');
         }
+
+        function filterNumbers(cat) {
+            currentNumbers = allNumbers.filter(n => n.cat === cat);
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            renderGrid();
+        }
+
+        function speak(text) {
+            const u = new SpeechSynthesisUtterance(text);
+            u.lang = 'fr-FR';
+            window.speechSynthesis.speak(u);
+        }
+
+        function showTip(i) {
+            document.getElementById('modal-title').innerText = currentNumbers[i].fr;
+            document.getElementById('modal-text').innerText = currentNumbers[i].tip;
+            document.getElementById('infoModal').style.display = 'block';
+        }
+
+        function closeModal() { document.getElementById('infoModal').style.display = 'none'; }
+        function speakTarget() { speak(currentNumbers[currentEx].fr); }
+
+        function checkWriting() {
+            if(document.getElementById('write-input').value.toLowerCase().trim() === currentNumbers[currentEx].fr.toLowerCase()) {
+                document.getElementById('feedback').innerText = "✨ სწორია!";
+                document.getElementById('feedback').style.color = "#2ecc71";
+            }
+        }
+
+        function nextExercise() {
+            currentEx = (currentEx + 1) % currentNumbers.length;
+            document.getElementById('ka-phrase').innerText = currentNumbers[currentEx].ka;
+            document.getElementById('write-input').value = "";
+            document.getElementById('feedback').innerText = "";
+        }
+
+        function listen() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const rec = new SpeechRecognition();
+            rec.lang = 'fr-FR';
+            rec.onresult = (e) => {
+                if(e.results[0][0].transcript.toLowerCase().includes(currentNumbers[currentEx].fr.toLowerCase())) {
+                    document.getElementById('feedback').innerText = "✅ გამოთქმა სწორია!";
+                }
+            };
+            rec.start();
+        }
+
+        renderGrid();
     </script>
 </body>
 </html>
