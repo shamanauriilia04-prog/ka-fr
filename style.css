@@ -167,3 +167,32 @@ body {
     font-weight: bold;
     margin-left: 10px;
 }
+.lesson-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: #f8f9fa; z-index: 1000;
+    display: none; flex-direction: column;
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+.lesson-header { padding: 40px 20px 20px; display: flex; align-items: center; background: white; }
+.back-btn { border: none; background: #eee; border-radius: 50%; width: 40px; height: 40px; font-size: 20px; margin-right: 15px; }
+
+.lesson-body { padding: 20px; overflow-y: auto; flex-grow: 1; }
+
+.alphabet-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+.char-card {
+    background: white; padding: 20px; border-radius: 20px; text-align: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05); cursor: pointer; border: 2px solid transparent;
+}
+.char-card:active { border-color: var(--primary); transform: scale(0.98); }
+.char-card h2 { font-size: 40px; margin: 0; color: var(--primary); }
+.char-card p { margin: 5px 0; color: var(--text-gray); }
+
+.quiz-container { text-align: center; padding: 20px; }
+.quiz-option {
+    display: block; width: 100%; padding: 15px; margin: 10px 0;
+    background: white; border-radius: 15px; border: 2px solid #eee; font-size: 18px;
+}
