@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container" style="padding:40px; text-align:center;">
+        <h2>გამოცდა: მისალმება</h2>
+        <div id="quiz-box">
+            <h3 id="question">კითხვა</h3>
+            <div id="options" style="display:grid; gap:10px; margin-top:20px;"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            { q: "როგორ არის 'გამარჯობა' (ფორმალური)?", a: "Bonjour", o: ["Bonjour", "Salut", "Merci"] },
+            { q: "რას ვიტყვით საღამოს 8 საათზე?", a: "Bonsoir", o: ["Bonjour", "Bonsoir", "Salut"] },
+            { q: "როგორ ვეტყვით მეგობარს 'როგორ ხარ'?", a: "Ça va ?", o: ["Comment allez-vous ?", "Ça va ?", "Enchanté"] }
+        ];
+
+        let current = 0;
+
+        function loadQuestion() {
+            const data = questions[current];
+            document.getElementById('question').innerText = data.q;
+            const container = document.getElementById('options');
+            container.innerHTML = data.o.map(opt => `
+                <button class="word-card" style="width:100%; cursor:pointer; font-weight:bold;" onclick="check('${opt}')">${opt}</button>
+            `).join('');
+        }
+
+        function check(answer) {
+            if (answer === questions[current].a) {
+                current++;
+                if (current < questions.length) {
+                    loadQuestion();
+                } else {
+                    localStorage.setItem('lesson1_complete', '100');
+                    alert("გილოცავთ! ტესტი ჩაბარებულია 🎉");
+                    window.location.href = 'index.html';
+                }
+            } else {
+                alert("არასწორია, სცადეთ თავიდან! ❌");
+            }
+        }
+
+        loadQuestion();
+    </script>
+</body>
+</html>
