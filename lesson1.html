@@ -2,161 +2,23 @@
 <html lang="ka">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>მისალმება - Progress Mode</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
-    <style>
-        :root { --accent: #007aff; --success: #2ecc71; }
-        
-        /* პროგრესის ბარი */
-        .progress-container {
-            width: 100%; height: 10px; background: #eee;
-            position: sticky; top: 0; z-index: 100;
-        }
-        #progress-bar {
-            width: 0%; height: 100%; background: var(--success);
-            transition: 0.4s;
-        }
-
-        .verb-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 20px; }
-        
-        .verb-card {
-            background: #fff; padding: 20px; border-radius: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 2px solid transparent;
-            position: relative; text-align: center; transition: 0.3s;
-        }
-        
-        .verb-card.learned {
-            border-color: var(--success);
-            background: #f0fff4;
-        }
-        
-        .verb-card strong { display: block; color: var(--accent); font-size: 1.1rem; }
-
-        .card-tools { position: absolute; top: 8px; right: 8px; display: flex; flex-direction: column; gap: 5px; }
-        .tool-btn {
-            background: #f0f0f0; border: none; width: 30px; height: 30px;
-            border-radius: 50%; cursor: pointer; font-size: 0.9rem;
-        }
-
-        /* ტესტის ღილაკი */
-        #test-btn {
-            display: none; margin: 20px; padding: 18px;
-            background: var(--success); color: white; border: none;
-            border-radius: 15px; font-weight: bold; width: calc(100% - 40px);
-            cursor: pointer; box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
-        }
-
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); }
-        .modal-content { background: white; margin: 30% auto; padding: 30px; border-radius: 25px; width: 80%; text-align: center; }
-    </style>
 </head>
 <body>
-    <div class="progress-container"><div id="progress-bar"></div></div>
-
     <div class="app-container">
-        <div class="header" style="padding:15px; background: var(--accent); color:white; text-align:center;">
-            <a href="index.html" style="color:white; float:left; text-decoration:none; font-size:1.2rem;">←</a>
-            <h2 style="margin:0">მისალმება</h2>
-        </div>
-
-        <div id="dataGrid" class="verb-grid"></div>
-
-        <button id="test-btn" onclick="startTest()">🏆 ჩააბარე ტესტი (100%)</button>
-
-        <div id="infoModal" class="modal">
-            <div class="modal-content">
-                <h3 id="modal-title"></h3>
-                <p id="modal-text"></p>
-                <button onclick="closeModal()" style="background:var(--accent); color:white; border:none; padding:12px; width:100%; border-radius:12px;">გავიგე</button>
-            </div>
-        </div>
+        <div class="header"><a href="index.html" style="color:white; text-decoration:none;">← უკან</a><h2 style="margin-left:20px">მისალმება</h2></div>
+        <div id="grid" class="verb-grid"></div>
+        <a href="quiz.html?type=hello" id="test-link" class="test-btn" style="display:none;">🏆 გადადი ტესტზე</a>
     </div>
-
+    <script src="logic.js"></script>
     <script>
-        // მნიშვნელოვანი: lessonId უნდა ემთხვეოდეს index.html-ში გაწერილ სახელს
-        const lessonId = "hello_lesson"; 
-        
+        const lessonId = "hello";
         const library = [
-            { fr: "Bonjour", ka: "გამარჯობა", tip: "დილიდან მზის ჩასვლამდე [ბონჟურ]" },
-            { fr: "Salut", ka: "გამარჯობა/ნახვამდის", tip: "მეგობრული ფორმა [სალიუ]" },
-            { fr: "Bonsoir", ka: "საღამო მშვიდობისა", tip: "საღამოს 6-ის მერე [ბონსუარ]" },
-            { fr: "Ça va ?", ka: "როგორ ხარ?", tip: "სტანდარტული კითხვა [სავა]" },
-            { fr: "Merci", ka: "გმადლობთ", tip: "[მერსი]" },
-            { fr: "De rien", ka: "არაფრის", tip: "[დო რიენ]" },
-            { fr: "Au revoir", ka: "ნახვამდის", tip: "[ო რევუარ]" },
-            { fr: "S'il vous plaît", ka: "თუ შეიძლება", tip: "თავაზიანი ფორმა [სილ ვუ პლე]" }
+            { fr: "Bonjour", ka: "გამარჯობა" }, { fr: "Merci", ka: "მადლობა" },
+            { fr: "Ça va ?", ka: "როგორ ხარ?" }, { fr: "Au revoir", ka: "ნახვამდის" }
         ];
-
-        let learnedWords = JSON.parse(localStorage.getItem(lessonId)) || [];
-
-        function renderGrid() {
-            const grid = document.getElementById('dataGrid');
-            grid.innerHTML = library.map((item, i) => `
-                <div class="verb-card ${learnedWords.includes(item.fr) ? 'learned' : ''}" id="card-${i}">
-                    <div class="card-tools">
-                        <button class="tool-btn" onclick="handleListen('${item.fr}', ${i})">🔊</button>
-                        <button class="tool-btn" onclick="showTip(${i})">?</button>
-                    </div>
-                    <strong>${item.fr}</strong>
-                    <span>${item.ka}</span>
-                </div>
-            `).join('');
-            updateProgress();
-        }
-
-        function handleListen(text, index) {
-            speak(text);
-            if (!learnedWords.includes(text)) {
-                learnedWords.push(text);
-                localStorage.setItem(lessonId, JSON.stringify(learnedWords));
-                document.getElementById(`card-${index}`).classList.add('learned');
-                updateProgress();
-            }
-        }
-
-        function speak(text) {
-            window.speechSynthesis.cancel();
-            const u = new SpeechSynthesisUtterance(text);
-            u.lang = 'fr-FR';
-            u.rate = 0.8;
-            u.pitch = 1.0;
-            
-            const voices = window.speechSynthesis.getVoices();
-            // ვეძებთ Google-ის ან სხვა ხარისხიან ფრანგულ ქალის ხმას
-            const frVoice = voices.find(v => v.lang.startsWith('fr') && (v.name.includes('Female') || v.name.includes('Google') || v.name.includes('Alice')));
-            if (frVoice) u.voice = frVoice;
-
-            window.speechSynthesis.speak(u);
-        }
-
-        function updateProgress() {
-            const percent = (learnedWords.length / library.length) * 100;
-            document.getElementById('progress-bar').style.width = percent + '%';
-            
-            if (percent >= 100) {
-                document.getElementById('test-btn').style.display = 'block';
-            }
-            
-            localStorage.setItem(lessonId + "_percent", Math.round(percent));
-        }
-
-        function startTest() {
-            alert("გილოცავთ! პირველი გაკვეთილი წარმატებით დაასრულეთ!");
-            localStorage.setItem(lessonId + "_completed", "true");
-            window.location.href = "index.html";
-        }
-
-        function showTip(i) {
-            document.getElementById('modal-title').innerText = library[i].fr;
-            document.getElementById('modal-text').innerText = library[i].tip;
-            document.getElementById('infoModal').style.display = 'block';
-        }
-
-        function closeModal() { document.getElementById('infoModal').style.display = 'none'; }
-
-        window.speechSynthesis.onvoiceschanged = () => renderGrid();
-        renderGrid();
+        renderLesson(lessonId, library);
     </script>
 </body>
 </html>
