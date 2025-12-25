@@ -64,3 +64,28 @@ footer {
     bottom: 0;
     width: 100%;
 }
+.verb-container {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 50px;
+    flex-wrap: wrap;
+}
+
+.verb-card {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    width: 200px;
+    transition: 0.3s;
+}
+
+.verb-card:hover {
+    transform: translateY(-10px);
+}
+
+.verb-card h2 {
+    color: #002395;
+    margin: 0;
+}
