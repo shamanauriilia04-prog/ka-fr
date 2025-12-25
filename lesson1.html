@@ -2,181 +2,136 @@
 <html lang="ka">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>პირველი ნაბიჯები - Bonjour</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>გამოწვევა - Bonjour</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        .vocab-card {
-            background: #fff;
-            padding: 15px;
-            border-radius: 12px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        .challenge-container { text-align: center; padding: 40px 20px; position: relative; }
+        .word-display {
+            background: #fff; padding: 40px; border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-bottom: 30px;
+            min-height: 180px; display: flex; flex-direction: column;
+            justify-content: center; position: relative;
         }
-        .btn-audio {
-            background: #002395;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 35px;
-            height: 35px;
-            cursor: pointer;
-            margin-left: 10px;
+        .info-btn {
+            position: absolute; top: 15px; right: 15px;
+            background: #f0f2f5; border: none; border-radius: 50%;
+            width: 30px; height: 30px; cursor: pointer; font-weight: bold; color: #002395;
         }
-        .btn-mic {
-            background: #ED2939;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 35px;
-            height: 35px;
-            cursor: pointer;
-            margin-left: 5px;
+        .modal {
+            display: none; position: fixed; z-index: 100; left: 0; top: 0;
+            width: 100%; height: 100%; background-color: rgba(0,0,0,0.5);
         }
-        .recording {
-            animation: pulse 1.5s infinite;
+        .modal-content {
+            background-color: white; margin: 30% auto; padding: 25px;
+            border-radius: 20px; width: 80%; max-width: 350px; text-align: left;
         }
-        @keyframes pulse {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(237, 41, 57, 0.7); }
-            70% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(237, 41, 57, 0); }
-            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(237, 41, 57, 0); }
-        }
-        #recognition-status {
-            text-align: center;
-            font-weight: bold;
-            color: #ED2939;
-            height: 20px;
-            margin-bottom: 10px;
-        }
+        .close-modal { background: #002395; color: white; border: none; padding: 10px 20px; border-radius: 10px; margin-top: 15px; width: 100%; }
+        
+        /* დანარჩენი სტილები იგივეა */
+        .word-display h2 { font-size: 2.2rem; color: #002395; margin: 0; }
+        .word-display p { font-size: 1.1rem; color: #636e72; margin-top: 10px; }
+        .controls { display: flex; justify-content: center; gap: 20px; }
+        .btn-round { width: 70px; height: 70px; border-radius: 50%; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
+        .btn-audio { background: #002395; }
+        .btn-mic { background: #ED2939; }
+        .recording { animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(237, 41, 57, 0.7); } 70% { box-shadow: 0 0 0 20px rgba(237, 41, 57, 0); } 100% { box-shadow: 0 0 0 0 rgba(237, 41, 57, 0); } }
+        #progress-text { margin-bottom: 10px; font-weight: bold; color: #002395; }
+        .feedback { font-size: 1.2rem; margin-top: 15px; height: 25px; font-weight: bold; }
     </style>
 </head>
 <body>
     <div class="app-container">
         <div class="header" style="padding:15px;">
-            <a href="index.html" style="color:white; float:left; text-decoration:none;">← მთავარი</a>
+            <a href="index.html" style="color:white; float:left; text-decoration:none;">←</a>
             <h2>პირველი ნაბიჯები</h2>
         </div>
-        
-        <div class="content-section">
-            <div id="recognition-status"></div>
 
-            <h3>🇫🇷 ლექსიკონი და გამოთქმა</h3>
-            <p style="font-size: 12px; color: gray;">დააჭირეთ 🔊 მოსასმენად, 🎤 გასამეორებლად</p>
-
-            <div id="vocabulary-list">
-                <div class="vocab-card">
-                    <div>
-                        <strong id="word-1">Bonjour</strong>
-                        <p style="margin:0; font-size:13px; color:gray;">გამარჯობა</p>
-                    </div>
-                    <div>
-                        <button class="btn-audio" onclick="speak('Bonjour')">🔊</button>
-                        <button class="btn-mic" onclick="startListen('Bonjour', this)">🎤</button>
-                    </div>
-                </div>
-
-                <div class="vocab-card">
-                    <div>
-                        <strong id="word-2">Comment ça va ?</strong>
-                        <p style="margin:0; font-size:13px; color:gray;">როგორ ხარ?</p>
-                    </div>
-                    <div>
-                        <button class="btn-audio" onclick="speak('Comment ça va ?')">🔊</button>
-                        <button class="btn-mic" onclick="startListen('Comment ça va', this)">🎤</button>
-                    </div>
-                </div>
-
-                <div class="vocab-card">
-                    <div>
-                        <strong id="word-3">S'il vous plaît</strong>
-                        <p style="margin:0; font-size:13px; color:gray;">თუ შეიძლება</p>
-                    </div>
-                    <div>
-                        <button class="btn-audio" onclick="speak('S\'il vous plaît')">🔊</button>
-                        <button class="btn-mic" onclick="startListen('S\'il vous plaît', this)">🎤</button>
-                    </div>
-                </div>
-
-                <div class="vocab-card">
-                    <div>
-                        <strong id="word-4">Enchanté</strong>
-                        <p style="margin:0; font-size:13px; color:gray;">სასიამოვნოა (გაცნობა)</p>
-                    </div>
-                    <div>
-                        <button class="btn-audio" onclick="speak('Enchanté')">🔊</button>
-                        <button class="btn-mic" onclick="startListen('Enchanté', this)">🎤</button>
-                    </div>
-                </div>
+        <div class="challenge-container">
+            <div id="progress-text">იტვირთება...</div>
+            
+            <div class="word-display" id="display-box">
+                <button class="info-btn" onclick="showTip()">?</button>
+                <h2 id="fr-word">-</h2>
+                <p id="ka-word">-</p>
+                <div id="feedback" class="feedback"></div>
             </div>
 
-            <div class="quiz-box">
-                <h3>✍️ სწრაფი ტესტი</h3>
-                <p>როგორ არის "სასიამოვნოა"?</p>
-                <button class="option" onclick="check(this, false)">Merci</button>
-                <button class="option" onclick="check(this, true)">Enchanté</button>
+            <div class="controls">
+                <button class="btn-round btn-audio" onclick="playCurrent()">🔊</button>
+                <button class="btn-round btn-mic" id="mic-btn" onclick="startChallenge()">🎤</button>
             </div>
         </div>
     </div>
 
+    <div id="tipModal" class="modal">
+        <div class="modal-content">
+            <h3 id="tip-title">როდის ვიყენებთ?</h3>
+            <p id="tip-text"></p>
+            <button class="close-modal" onclick="closeModal()">გავიგე</button>
+        </div>
+    </div>
+
     <script>
-        // 1. ხმის სინთეზი (მოსასმენად)
-        function speak(text) {
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'fr-FR'; // ფრანგული აქცენტი
-            utterance.rate = 0.9;    // ოდნავ ნელი ტემპი უკეთ სასწავლად
+        const vocabulary = [
+            { fr: "Bonjour", ka: "გამარჯობა", tip: "გამოიყენება მზის ჩასვლამდე. ეს არის ყველაზე ზოგადი და თავაზიანი ფორმა ნებისმიერ სიტუაციაში." },
+            { fr: "Salut", ka: "სალამი", tip: "შინაურული ფორმაა. გამოიყენება მეგობრებთან და ახლობლებთან. ასევე ნიშნავს 'ნახვამდის'-საც." },
+            { fr: "Ça va ?", ka: "როგორ ხარ?", tip: "ნიშნავს 'როგორ მიდის საქმეები?'. პასუხიც იგივეა: 'Ça va!' (კარგად)." },
+            { fr: "Merci beaucoup", ka: "დიდი მადლობა", tip: "Beaucoup ნიშნავს 'ბევრს'. ფრანგები მადლობას ძალიან ხშირად იხდიან, არ დაგავიწყდეთ!" },
+            { fr: "S'il vous plaît", ka: "თუ შეიძლება", tip: "თავაზიანი ფორმაა (თქვენობით). მეგობართან იტყვით: S'il te plaît." },
+            { fr: "Enchanté", ka: "სასიამოვნოა", tip: "ამბობთ მხოლოდ პირველი გაცნობისას. მამაკაცები წერენ Enchanté, ქალები - Enchantée (გამოითქმის ერთნაირად)." },
+            { fr: "Au revoir", ka: "ნახვამდის", tip: "სიტყვასიტყვით ნიშნავს: 'კვლავ ნახვამდე'. ყველაზე გავრცელებული დამშვიდობებაა." },
+            { fr: "À bientôt", ka: "მალე შეხვედრამდე", tip: "გამოიყენება მაშინ, როცა ზუსტად არ იცით როდის, მაგრამ მალე შეხვდებით." }
+        ];
+
+        let currentIndex = 0;
+
+        function updateDisplay() {
+            if (currentIndex < vocabulary.length) {
+                document.getElementById('fr-word').innerText = vocabulary[currentIndex].fr;
+                document.getElementById('ka-word').innerText = vocabulary[currentIndex].ka;
+                document.getElementById('progress-text').innerText = `${currentIndex + 1} / ${vocabulary.length}`;
+                document.getElementById('feedback').innerText = "";
+            }
+        }
+
+        function showTip() {
+            document.getElementById('tip-text').innerText = vocabulary[currentIndex].tip;
+            document.getElementById('tipModal').style.display = "block";
+        }
+
+        function closeModal() {
+            document.getElementById('tipModal').style.display = "none";
+        }
+
+        function playCurrent() {
+            const utterance = new SpeechSynthesisUtterance(vocabulary[currentIndex].fr);
+            utterance.lang = 'fr-FR';
             window.speechSynthesis.speak(utterance);
         }
 
-        // 2. ხმის ამოცნობა (შესამოწმებლად)
-        function startListen(expectedText, btn) {
-            const status = document.getElementById('recognition-status');
+        function startChallenge() {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-
-            if (!SpeechRecognition) {
-                alert("თქვენს ბრაუზერს არ აქვს ხმის ამოცნობის მხარდაჭერა. გამოიყენეთ Chrome.");
-                return;
-            }
-
             const recognition = new SpeechRecognition();
             recognition.lang = 'fr-FR';
-
-            recognition.onstart = () => {
-                btn.classList.add('recording');
-                status.innerText = "გისმენთ... თქვით: " + expectedText;
-            };
-
+            
+            recognition.onstart = () => document.getElementById('mic-btn').classList.add('recording');
             recognition.onresult = (event) => {
                 const result = event.results[0][0].transcript.toLowerCase();
-                console.log("ნათქვამია:", result);
-                
-                if (result.includes(expectedText.toLowerCase().replace('?', ''))) {
-                    status.innerText = "✅ ბრწყინვალეა! სწორია.";
-                    status.style.color = "green";
+                const target = vocabulary[currentIndex].fr.toLowerCase().replace(/[?!.,]/g, "");
+                if (result.includes(target)) {
+                    document.getElementById('feedback').innerText = "✨ სწორია! ✨";
+                    setTimeout(() => { currentIndex++; if(currentIndex < vocabulary.length) updateDisplay(); else alert('გაკვეთილი დასრულდა!'); }, 1200);
                 } else {
-                    status.innerText = "❌ ვერ მივხვდი, სცადეთ: " + result;
-                    status.style.color = "red";
+                    document.getElementById('feedback').innerText = "❌ სცადე კიდევ ერთხელ";
                 }
             };
-
-            recognition.onerror = () => {
-                status.innerText = "შეცდომა! სცადეთ ისევ.";
-                btn.classList.remove('recording');
-            };
-
-            recognition.onend = () => {
-                btn.classList.remove('recording');
-            };
-
+            recognition.onend = () => document.getElementById('mic-btn').classList.remove('recording');
             recognition.start();
         }
 
-        function check(btn, isCorrect) {
-            if(isCorrect) btn.classList.add('correct');
-            else btn.classList.add('wrong');
-        }
+        updateDisplay();
     </script>
 </body>
 </html>
