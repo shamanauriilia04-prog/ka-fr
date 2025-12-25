@@ -3,174 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Être - Premium</title>
+    <title>Être - Progress Mode</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        .verb-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 30px; }
-        
+        :root { --accent: #002395; --success: #2ecc71; }
+        .progress-container { width: 100%; height: 8px; background: #eee; position: sticky; top: 0; z-index: 100; }
+        #progress-bar { width: 0%; height: 100%; background: var(--success); transition: 0.4s; }
+        .verb-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 20px; }
         .verb-card {
             background: #fff; padding: 20px; border-radius: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #f0f0f0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 2px solid transparent;
             position: relative; text-align: center; transition: 0.3s;
         }
+        .verb-card.learned { border-color: var(--success); background: #f0fff4; }
+        .verb-card strong { display: block; color: var(--accent); font-size: 1.2rem; }
+        .card-tools { position: absolute; top: 8px; right: 8px; display: flex; flex-direction: column; gap: 5px; }
+        .tool-btn { background: #f0f0f0; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; }
         
-        .verb-card:active { transform: scale(0.95); }
-        .verb-card strong { display: block; color: #002395; font-size: 1.2rem; margin-bottom: 5px; }
-        .verb-card span { color: #636e72; font-size: 0.9rem; }
-        
-        .card-tools {
-            position: absolute; top: 8px; right: 8px;
-            display: flex; flex-direction: column; gap: 5px;
-        }
-        .tool-btn {
-            background: #f8f9fa; border: none; width: 28px; height: 28px;
-            border-radius: 50%; font-size: 0.8rem; cursor: pointer; color: #002395;
+        #test-btn {
+            display: none; margin: 20px; padding: 15px; background: var(--success); color: white; 
+            border: none; border-radius: 15px; font-weight: bold; width: calc(100% - 40px); cursor: pointer;
         }
 
-        .practice-zone {
-            background: #ffffff; border-radius: 30px; padding: 25px;
-            box-shadow: 0 10px 40px rgba(0,35,149,0.1); border: 2px solid #eef2ff;
-        }
-
-        .input-wrapper { position: relative; margin: 20px 0; }
-        .modern-input {
-            width: 100%; padding: 15px; border: 2px solid #e0e0e0; border-radius: 15px;
-            font-size: 1.1rem; text-align: center; transition: 0.3s; outline: none; box-sizing: border-box;
-        }
-        .modern-input:focus { border-color: #002395; box-shadow: 0 0 10px rgba(0,35,149,0.1); }
-
-        .btn-group { display: flex; gap: 10px; margin-top: 15px; }
-        .btn-main {
-            flex: 1; padding: 15px; border-radius: 15px; border: none;
-            font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
-        }
-        .btn-listen { background: #002395; color: white; }
-        .btn-mic { background: #ED2939; color: white; }
-        .btn-next { background: #2ecc71; color: white; width: 100%; margin-top: 10px; }
-
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); }
-        .modal-content { background: white; margin: 40% auto; padding: 25px; border-radius: 25px; width: 80%; max-width: 320px; text-align: center; }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); }
+        .modal-content { background: white; margin: 30% auto; padding: 30px; border-radius: 25px; width: 80%; text-align: center; }
     </style>
 </head>
 <body>
+    <div class="progress-container"><div id="progress-bar"></div></div>
     <div class="app-container">
-        <div class="header" style="padding:15px; border-radius: 0 0 30px 30px;">
-            <a href="verbs.html" style="color:white; float:left; text-decoration:none; font-size:1.5rem;">←</a>
-            <h2>ÊTRE (ყოფნა)</h2>
+        <div class="header" style="padding:15px; background: var(--accent); color:white;">
+            <a href="verbs.html" style="color:white; float:left; text-decoration:none;">←</a>
+            <h2 style="margin:0">ÊTRE (ყოფნა)</h2>
         </div>
-
-        <div style="padding: 20px;">
-            <div class="verb-grid" id="verbGrid"></div>
-
-            <div class="practice-zone">
-                <span style="color: #002395; font-weight: bold; font-size: 0.8rem; text-transform: uppercase;">სავარჯიშო</span>
-                <p id="ka-phrase" style="font-size: 1.3rem; font-weight: bold; margin: 10px 0;">მე ვარ ბედნიერი</p>
-                
-                <div class="btn-group">
-                    <button class="btn-main btn-listen" onclick="speakTarget()"><span>🔊</span> მოსმენა</button>
-                    <button class="btn-main btn-mic" id="mic-btn" onclick="listen()"><span>🎤</span> თქვი</button>
-                </div>
-
-                <div class="input-wrapper">
-                    <input type="text" class="modern-input" id="write-input" placeholder="ჩაწერე ფრანგულად..." oninput="checkWriting()">
-                </div>
-                
-                <div id="feedback" style="height: 20px; font-weight: bold; text-align: center; margin-bottom: 10px;"></div>
-                <button class="btn-main btn-next" onclick="nextExercise()">შემდეგი ფრაზა →</button>
-            </div>
-        </div>
+        <div id="dataGrid" class="verb-grid"></div>
+        <button id="test-btn" onclick="startTest()">🏆 ჩააბარე ტესტი (100%)</button>
     </div>
 
     <div id="infoModal" class="modal">
         <div class="modal-content">
-            <h3 id="modal-title" style="color:#002395"></h3>
-            <p id="modal-text" style="color:#636e72; line-height:1.5;"></p>
-            <button onclick="closeModal()" style="background:#002395; color:white; border:none; padding:12px; width:100%; border-radius:12px; margin-top:15px;">გავიგე</button>
+            <h3 id="modal-title"></h3>
+            <p id="modal-text"></p>
+            <button onclick="closeModal()" style="background:var(--accent); color:white; border:none; padding:12px; width:100%; border-radius:12px;">გავიგე</button>
         </div>
     </div>
 
     <script>
-        const verbs = [
-            { fr: "Je suis", ka: "მე ვარ", tip: "გამოიყენება სახელის, პროფესიის ან ემოციის სათქმელად." },
-            { fr: "Tu es", ka: "შენ ხარ", tip: "მხოლოდ შინაურულ გარემოში მეგობრებთან." },
-            { fr: "Il est", ka: "ის არის (მ)", tip: "გამოიყენება მამრობითი სქესის პიროვნებაზე." },
-            { fr: "Elle est", ka: "ის არის (მდ)", tip: "გამოიყენება მდედრობითი სქესის პიროვნებაზე." },
-            { fr: "Nous sommes", ka: "ჩვენ ვართ", tip: "გამოითქმის როგორც [ნუ სომ]." },
-            { fr: "Vous êtes", ka: "თქვენ ხართ", tip: "გამოიყენება თავაზიანი ფორმისთვის (თქვენობით)." },
-            { fr: "Ils sont", ka: "ისინი არიან", tip: "მამრობითი ან შერეული ჯგუფისთვის." },
-            { fr: "Elles sont", ka: "ისინი არიან (მდ)", tip: "მხოლოდ ქალების ჯგუფისთვის." }
+        const lessonId = "etre_lesson";
+        const library = [
+            { fr: "Je suis", ka: "მე ვარ", tip: "[ჟე სუი]" },
+            { fr: "Tu es", ka: "შენ ხარ", tip: "[ტიუ ე]" },
+            { fr: "Il est", ka: "ის არის (მ)", tip: "[ილ ე]" },
+            { fr: "Elle est", ka: "ის არის (მდ)", tip: "[ელ ე]" },
+            { fr: "Nous sommes", ka: "ჩვენ ვართ", tip: "[ნუ სომ]" },
+            { fr: "Vous êtes", ka: "თქვენ ხართ", tip: "გადაბმით: [ვუზ-ეტ]" },
+            { fr: "Ils sont", ka: "ისინი არიან (მ)", tip: "[ილ სონ]" },
+            { fr: "Elles sont", ka: "ისინი არიან (მდ)", tip: "[ელ სონ]" }
         ];
 
-        const exercises = [
-            { ka: "მე ვარ ბედნიერი", fr: "Je suis heureux" },
-            { ka: "შენ ხარ სტუდენტი", fr: "Tu es étudiant" },
-            { ka: "ის არის ფრანგი", fr: "Il est français" },
-            { ka: "ჩვენ ვართ მზად", fr: "Nous sommes prêts" },
-            { ka: "თქვენ ხართ კეთილი", fr: "Vous êtes gentil" },
-            { ka: "ისინი არიან აქ", fr: "Ils sont ici" }
-        ];
-
-        let currentEx = 0;
+        let learnedWords = JSON.parse(localStorage.getItem(lessonId)) || [];
 
         function renderGrid() {
-            const grid = document.getElementById('verbGrid');
-            grid.innerHTML = verbs.map((v, i) => `
-                <div class="verb-card">
+            const grid = document.getElementById('dataGrid');
+            grid.innerHTML = library.map((item, i) => `
+                <div class="verb-card ${learnedWords.includes(item.fr) ? 'learned' : ''}" id="card-${i}">
                     <div class="card-tools">
-                        <button class="tool-btn" onclick="speak('${v.fr}')">🔊</button>
+                        <button class="tool-btn" onclick="handleListen('${item.fr}', ${i})">🔊</button>
                         <button class="tool-btn" onclick="showTip(${i})">?</button>
                     </div>
-                    <strong>${v.fr}</strong>
-                    <span>${v.ka}</span>
+                    <strong>${item.fr}</strong>
+                    <span>${item.ka}</span>
                 </div>
             `).join('');
+            updateProgress();
+        }
+
+        function handleListen(text, index) {
+            speak(text);
+            if (!learnedWords.includes(text)) {
+                learnedWords.push(text);
+                localStorage.setItem(lessonId, JSON.stringify(learnedWords));
+                document.getElementById(`card-${index}`).classList.add('learned');
+                updateProgress();
+            }
         }
 
         function speak(text) {
+            window.speechSynthesis.cancel();
             const u = new SpeechSynthesisUtterance(text);
             u.lang = 'fr-FR';
-            u.rate = 0.85;
+            u.rate = 0.8;
+            const voices = window.speechSynthesis.getVoices();
+            const frVoice = voices.find(v => v.lang.startsWith('fr') && v.name.includes('Google'));
+            if (frVoice) u.voice = frVoice;
             window.speechSynthesis.speak(u);
         }
 
+        function updateProgress() {
+            const percent = (learnedWords.length / library.length) * 100;
+            document.getElementById('progress-bar').style.width = percent + '%';
+            if (percent === 100) document.getElementById('test-btn').style.display = 'block';
+            localStorage.setItem(lessonId + "_percent", Math.round(percent));
+        }
+
+        function startTest() {
+            alert("ბრწყინვალეა! ყოფნის ზმნა ათვისებულია.");
+            localStorage.setItem(lessonId + "_completed", "true");
+            window.location.href = "index.html";
+        }
+
         function showTip(i) {
-            document.getElementById('modal-title').innerText = verbs[i].fr;
-            document.getElementById('modal-text').innerText = verbs[i].tip;
+            document.getElementById('modal-title').innerText = library[i].fr;
+            document.getElementById('modal-text').innerText = library[i].tip;
             document.getElementById('infoModal').style.display = 'block';
         }
 
         function closeModal() { document.getElementById('infoModal').style.display = 'none'; }
-        function speakTarget() { speak(exercises[currentEx].fr); }
-
-        function checkWriting() {
-            const input = document.getElementById('write-input');
-            if(input.value.toLowerCase().trim() === exercises[currentEx].fr.toLowerCase()) {
-                document.getElementById('feedback').innerText = "✅ ბრწყინვალეა!";
-                document.getElementById('feedback').style.color = "#2ecc71";
-            }
-        }
-
-        function nextExercise() {
-            currentEx = (currentEx + 1) % exercises.length;
-            document.getElementById('ka-phrase').innerText = exercises[currentEx].ka;
-            document.getElementById('write-input').value = "";
-            document.getElementById('feedback').innerText = "";
-        }
-
-        function listen() {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            const rec = new SpeechRecognition();
-            rec.lang = 'fr-FR';
-            document.getElementById('mic-btn').style.opacity = "0.5";
-            rec.onresult = (e) => {
-                if(e.results[0][0].transcript.toLowerCase().includes(exercises[currentEx].fr.toLowerCase())) {
-                    document.getElementById('feedback').innerText = "✅ სწორია!";
-                }
-            };
-            rec.onend = () => document.getElementById('mic-btn').style.opacity = "1";
-            rec.start();
-        }
-
+        window.speechSynthesis.onvoiceschanged = () => renderGrid();
         renderGrid();
     </script>
 </body>
