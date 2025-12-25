@@ -30,3 +30,14 @@
     </div>
 </body>
 </html>
+
+<script>
+    window.onload = function() {
+        const progress = localStorage.getItem('lesson1_complete') || 0;
+        if(progress == 100) {
+            // აქ კოდი რომელიც გაამწვანებს ბარათს
+            document.getElementById('lesson1-card').style.borderColor = '#2ecc71';
+            document.getElementById('lesson1-percent').innerText = '100%';
+        }
+    }
+</script>
