@@ -1,106 +1,116 @@
 :root {
     --primary: #4158D0;
     --secondary: #C850C0;
-    --accent: #FFCC70;
-    --bg-color: #F0F2F5;
-    --card-bg: rgba(255, 255, 255, 0.9);
-    --text-main: #1d1d1f;
-    --text-sub: #86868b;
+    --bg-color: #F2F4F7;
+    --card-bg: #ffffff;
+    --shadow: 0 10px 25px rgba(0,0,0,0.05);
 }
 
 body {
     margin: 0;
     padding: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-    background-attachment: fixed;
-    color: var(--text-main);
+    font-family: -apple-system, system-ui, sans-serif;
+    background-color: var(--bg-color);
     display: flex;
     justify-content: center;
 }
 
 .app-container {
     width: 100%;
-    max-width: 430px; /* iPhone 15-ის მსგავსი სიგანე */
-    min-height: 100vh;
-    padding: 25px;
-    box-sizing: border-box;
+    max-width: 400px; /* ვაკეთებთ მობილურის ზომას */
+    padding: 20px;
 }
 
 header {
-    margin-top: 50px;
-    margin-bottom: 40px;
-    animation: fadeIn 0.8s ease-out;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    text-align: left;
 }
 
-h1 {
-    font-size: 34px;
-    font-weight: 800;
+header h1 {
+    font-size: 32px;
+    color: var(--primary);
     margin: 0;
-    background: linear-gradient(to right, #4158D0, #C850C0);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
 }
 
 header p {
-    font-size: 18px;
-    color: var(--text-sub);
+    color: #636e72;
+    font-size: 16px;
     margin-top: 5px;
 }
 
-/* პროგრესის სექცია */
+/* პროგრეს ბარი */
 .progress-section {
     background: var(--card-bg);
     padding: 20px;
-    border-radius: 25px;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-    margin-bottom: 35px;
-}
-
-.progress-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 12px;
-    font-weight: 600;
-    font-size: 14px;
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    margin-bottom: 25px;
 }
 
 .progress-bar {
     height: 10px;
-    background: #e5e5e7;
-    border-radius: 20px;
-    overflow: hidden;
+    background: #edf2f7;
+    border-radius: 10px;
+    margin-bottom: 10px;
 }
 
 .progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, #4158D0, #C850C0);
-    width: 15%; /* სატესტოდ */
-    border-radius: 20px;
-    box-shadow: 0 0 10px rgba(200, 80, 192, 0.5);
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    border-radius: 10px;
+    width: 15%; 
 }
 
-/* გაკვეთილების ბარათები */
+/* გაკვეთილების ბარათები - აქ არის მთავარი ცვლილება */
 .lesson-card {
     background: var(--card-bg);
-    border-radius: 22px;
-    padding: 20px;
+    border-radius: 24px;
+    padding: 16px 20px; /* უფრო თანაბარი დაშორება */
     display: flex;
     align-items: center;
-    margin-bottom: 20px;
-    text-decoration: none;
-    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    border: 1px solid rgba(255,255,255,0.3);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+    border: 1px solid rgba(0,0,0,0.02);
+    transition: transform 0.2s ease;
 }
 
 .lesson-card:active {
-    transform: scale(0.95);
-    background: rgba(255, 255, 255, 0.7);
+    transform: scale(0.97);
 }
 
 .lesson-icon {
-    width: 60px;
-    height: 60px;
-    background: linear-gradient(135deg, #6c5
+    width: 54px;
+    height: 54px;
+    background: #f0f3ff; /* ღია ფონი ხატულისთვის */
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin-right: 15px;
+    flex-shrink: 0; /* ხატულა რომ არ შეიკუმშოს */
+}
+
+.lesson-info {
+    flex-grow: 1;
+}
+
+.lesson-info h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: #2d3436;
+}
+
+.lesson-info p {
+    margin: 2px 0 0;
+    color: #b2bec3;
+    font-size: 14px;
+}
+
+.chevron {
+    color: #dfe6e9;
+    font-size: 22px;
+    font-weight: bold;
+}
