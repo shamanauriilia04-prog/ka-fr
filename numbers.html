@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>რიცხვები და დრო</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <div class="header" style="padding:15px;">
+            <a href="index.html" style="color:white; float:left; text-decoration:none;">←</a>
+            <h2>რიცხვები და დრო</h2>
+        </div>
+        
+        <div class="content-section">
+            <h3>რიცხვები (1-10):</h3>
+            <div class="vocab-row"><span>1 - Un (ან)</span> <span>6 - Six (სის)</span></div>
+            <div class="vocab-row"><span>2 - Deux (დო)</span> <span>7 - Sept (სეტ)</span></div>
+            <div class="vocab-row"><span>3 - Trois (ტღუა)</span> <span>8 - Huit (უიტ)</span></div>
+            <div class="vocab-row"><span>4 - Quatre (კატღ)</span> <span>9 - Neuf (ნოფ)</span></div>
+            <div class="vocab-row"><span>5 - Cinq (სენკ)</span> <span>10 - Dix (დის)</span></div>
+
+            <h3 style="margin-top:20px;">კვირის დღეები:</h3>
+            <div class="vocab-row"><span>Lundi</span> <span>ორშაბათი</span></div>
+            <div class="vocab-row"><span>Mardi</span> <span>სამშაბათი</span></div>
+            <div class="vocab-row"><span>Mercredi</span> <span>ოთხშაბათი</span></div>
+
+            <div class="quiz-box">
+                <h3>✍️ ტესტი:</h3>
+                <p>როგორ არის რიცხვი "3"?</p>
+                <button class="option" onclick="check(this, false)">Deux</button>
+                <button class="option" onclick="check(this, true)">Trois</button>
+                <button class="option" onclick="check(this, false)">Dix</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        function check(btn, isCorrect) {
+            if(isCorrect) btn.classList.add('correct');
+            else btn.classList.add('wrong');
+        }
+    </script>
+</body>
+</html>
