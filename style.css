@@ -2,168 +2,154 @@
     --primary: #002395;
     --red: #ed2939;
     --success: #2ecc71;
-    --bg: #f5f7fa;
-    --dark: #2c3e50;
+    --bg: #f0f2f5;
+    --card-shadow: 0 8px 24px rgba(149, 157, 165, 0.1);
 }
 
 body {
     margin: 0;
-    font-family: 'Segoe UI', Roboto, Helvetica, sans-serif;
+    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background: var(--bg);
-    color: var(--dark);
+    color: #1d1d1f;
 }
 
 .app-container {
-    max-width: 600px;
+    max-width: 500px;
     margin: 0 auto;
-    background: white;
+    background: #ffffff;
     min-height: 100vh;
-    box-shadow: 0 0 20px rgba(0,0,0,0.05);
+    padding-bottom: 50px;
 }
 
-/* Header */
+/* Premium Progress Bar */
+.progress-container {
+    width: 100%;
+    height: 10px;
+    background: #e5e5e7;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+#progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #2ecc71, #27ae60);
+    width: 0%;
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 .header {
-    background: var(--primary);
-    color: white;
+    background: #fff;
     padding: 30px 20px;
     text-align: center;
-    border-radius: 0 0 25px 25px;
+    border-bottom: 1px solid #eee;
 }
 
-/* Card Styling */
-.lesson-content {
+.header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--primary);
+    letter-spacing: -0.5px;
+}
+
+/* The Magic Grid: 2 სიტყვა გვერდიგვერდ */
+.word-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
     padding: 20px;
 }
 
 .word-card {
-    background: white;
-    border: 2px solid #edf2f7;
-    border-radius: 20px;
+    background: #fff;
+    border: 2px solid #f2f2f7;
+    border-radius: 24px;
     padding: 20px;
-    margin-bottom: 15px;
-    position: relative;
-    transition: 0.3s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: all 0.3s ease;
+    box-shadow: var(--card-shadow);
 }
 
-.word-card:hover {
-    border-color: var(--primary);
-    transform: translateY(-2px);
+.word-card.learned {
+    border-color: var(--success);
+    background: #fafffb;
 }
 
 .tag {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     padding: 4px 10px;
-    border-radius: 10px;
+    border-radius: 20px;
+    font-weight: 700;
     text-transform: uppercase;
-    font-weight: bold;
-    margin-bottom: 8px;
-    display: inline-block;
+    margin-bottom: 12px;
 }
-
-.tag-formal { background: #ebf4ff; color: #3182ce; }
-.tag-informal { background: #fff5f5; color: #e53e3e; }
+.tag-formal { background: #e8f0fe; color: #1a73e8; }
+.tag-informal { background: #fef0f0; color: #f56c6c; }
 
 .word-fr {
-    font-size: 1.4rem;
-    font-weight: bold;
+    font-size: 1.1rem;
+    font-weight: 700;
     color: var(--primary);
-    display: block;
+    margin-bottom: 4px;
 }
 
 .word-ka {
-    font-size: 1.1rem;
-    color: var(--dark);
-}
-
-.word-tip {
     font-size: 0.9rem;
-    color: #718096;
-    margin-top: 10px;
-    font-style: italic;
-    display: block;
-    border-top: 1px solid #eee;
-    padding-top: 8px;
+    color: #86868b;
+    margin-bottom: 15px;
 }
 
-/* Buttons */
-.controls {
+/* Premium Buttons */
+.btn-group {
     display: flex;
-    gap: 10px;
-    margin-top: 15px;
+    gap: 8px;
 }
 
-.btn-circle {
-    width: 45px;
-    height: 45px;
+.action-btn {
+    width: 42px;
+    height: 42px;
     border-radius: 50%;
     border: none;
-    background: #f1f5f9;
+    background: #f5f5f7;
+    color: #1d1d1f;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.2rem;
     transition: 0.2s;
 }
-
-.btn-circle:hover { background: #e2e8f0; }
-.btn-mic.active { 
-    background: var(--red); 
-    color: white; 
-    animation: pulse 1.5s infinite; 
-}
-
-@keyframes pulse {
-    0% { box-shadow: 0 0 0 0 rgba(237, 41, 57, 0.4); }
-    70% { box-shadow: 0 0 0 15px rgba(237, 41, 57, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(237, 41, 57, 0); }
-}
-
-.back-btn {
+.action-btn:hover { background: #e8e8ed; transform: scale(1.1); }
+.mic-btn.active {
+    background: var(--red);
     color: white;
-    text-decoration: none;
-    font-size: 1.2rem;
-    position: absolute;
-    left: 20px;
-    top: 30px;
-}
-:root {
-    --primary: #002395;
-    --red: #ed2939;
-    --success: #2ecc71;
-    --bg: #f8f9fa;
+    box-shadow: 0 0 15px rgba(237, 41, 57, 0.4);
 }
 
-body { margin: 0; font-family: 'Segoe UI', sans-serif; background: var(--bg); }
-.app-container { max-width: 600px; margin: 0 auto; background: white; min-height: 100vh; position: relative; }
-
-/* Progress Bar */
-.progress-container { width: 100%; height: 8px; background: #eee; position: sticky; top: 0; z-index: 100; }
-#progress-bar { height: 100%; background: var(--success); width: 0%; transition: 0.4s; }
-
-.header { background: var(--primary); color: white; padding: 25px; text-align: center; }
-.word-list { padding: 20px; }
-
-.word-card {
-    background: white; border: 2px solid #eee; border-radius: 15px;
-    padding: 20px; margin-bottom: 12px; transition: 0.3s;
-}
-.word-card.learned { border-color: var(--success); background: #fafffb; }
-
-.tag { font-size: 0.7rem; padding: 3px 8px; border-radius: 5px; font-weight: bold; }
-.tag-formal { background: #e3f2fd; color: #1976d2; }
-.tag-informal { background: #fbe9e7; color: #d84315; }
-
-.btn-row { display: flex; gap: 10px; margin-top: 10px; }
-.circle-btn { width: 40px; height: 40px; border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; background: #f0f0f0; transition: 0.2s; }
-.circle-btn:hover { background: #e0e0e0; }
-.mic-btn.active { background: var(--red); color: white; animation: pulse 1s infinite; }
-
+/* Floating Test Button */
 #test-trigger {
-    display: none; margin: 30px 20px; padding: 20px;
-    background: var(--success); color: white; text-align: center;
-    border-radius: 15px; text-decoration: none; font-weight: bold;
-    box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+    display: none;
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    max-width: 400px;
+    padding: 18px;
+    background: var(--success);
+    color: white;
+    text-align: center;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1.1rem;
+    box-shadow: 0 10px 20px rgba(46, 204, 113, 0.3);
+    animation: slideUp 0.5s ease;
+    z-index: 2000;
 }
 
-@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+@keyframes slideUp {
+    from { bottom: -100px; opacity: 0; }
+    to { bottom: 30px; opacity: 1; }
+}
