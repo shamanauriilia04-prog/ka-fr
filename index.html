@@ -31,22 +31,18 @@
             display: flex; align-items: center; justify-content: center;
             font-size: 24px; margin-bottom: 15px;
         }
+        
+        /* ფერების კლასები ხატულებისთვის */
         .bg-blue { background: #eef2ff; color: #002395; }
         .bg-red { background: #fff1f2; color: #ed2939; }
         .bg-green { background: #f0fdf4; color: #22c55e; }
         .bg-purple { background: #f5f3ff; color: #7c3aed; }
         .bg-orange { background: #fff7ed; color: #f97316; }
         .bg-cyan { background: #ecfeff; color: #0891b2; }
+        .bg-pink { background: #fdf2f8; color: #db2777; }
 
         .lesson-card h3 { margin: 0; font-size: 1rem; }
         .lesson-card p { margin: 5px 0 0; font-size: 0.8rem; color: #636e72; }
-        
-        /* პროგრეს ბარი თითოეული ბარათისთვის */
-        .progress-mini {
-            width: 100%; height: 4px; background: #eee; 
-            border-radius: 2px; margin-top: 10px; overflow: hidden;
-        }
-        .progress-fill { width: 0%; height: 100%; background: var(--blue); transition: 0.5s; }
     </style>
 </head>
 <body>
@@ -54,85 +50,68 @@
         <div class="welcome-banner">
             <h1>Bonjour! 🇫🇷</h1>
             <p>ისწავლე ფრანგული მარტივად</p>
-            
             <div class="stats-row">
-                <div class="stat-item">
-                    <strong id="lesson-count">7</strong>
-                    <span>გაკვეთილი</span>
-                </div>
-                <div class="stat-item">
-                    <strong>A1</strong>
-                    <span>დონე</span>
-                </div>
-                <div class="stat-item">
-                    <strong>100%</strong>
-                    <span>უფასო</span>
-                </div>
+                <div class="stat-item"><strong>9</strong><span>გაკვეთილი</span></div>
+                <div class="stat-item"><strong>A1</strong><span>დონე</span></div>
+                <div class="stat-item"><strong>100%</strong><span>უფასო</span></div>
             </div>
         </div>
 
         <div class="lesson-grid">
-            <a href="lesson1.html" class="lesson-card">
+            <a href="greetings.html" class="lesson-card">
                 <div class="icon-circle bg-blue">👋</div>
                 <h3>მისალმება</h3>
-                <p>პირველი ნაბიჯები</p>
-                <div class="progress-mini"><div class="progress-fill" style="width: 100%;"></div></div>
+                <p>საუბრის დასაწყისი</p>
             </a>
 
             <a href="verbs.html" class="lesson-card">
                 <div class="icon-circle bg-red">⚙️</div>
                 <h3>ზმნები</h3>
-                <p>ყოფნა და ქონა</p>
-                <div class="progress-mini"><div class="progress-fill" style="width: 40%;"></div></div>
+                <p>Être & Avoir</p>
             </a>
 
             <a href="numbers.html" class="lesson-card">
                 <div class="icon-circle bg-green">🔢</div>
                 <h3>რიცხვები</h3>
-                <p>1 - 100 სრულად</p>
-                <div class="progress-mini"><div class="progress-fill" style="width: 15%;"></div></div>
+                <p>1-დან 100-მდე</p>
             </a>
 
             <a href="colors.html" class="lesson-card">
                 <div class="icon-circle bg-cyan">🎨</div>
                 <h3>ფერები</h3>
-                <p>Les Couleurs</p>
-                <div class="progress-mini"><div class="progress-fill"></div></div>
+                <p>გარე სამყარო</p>
+            </a>
+
+            <a href="clothes.html" class="lesson-card">
+                <div class="icon-circle bg-pink">👕</div>
+                <h3>ტანსაცმელი</h3>
+                <p>რა გვაცვია?</p>
             </a>
 
             <a href="family.html" class="lesson-card">
                 <div class="icon-circle bg-blue">👨‍👩‍👧</div>
                 <h3>ოჯახი</h3>
-                <p>ხალხი და კავშირები</p>
-                <div class="progress-mini"><div class="progress-fill"></div></div>
+                <p>ახლობლები</p>
             </a>
 
             <a href="time.html" class="lesson-card">
                 <div class="icon-circle bg-purple">📅</div>
                 <h3>დრო</h3>
-                <p>კალენდარი და საათი</p>
-                <div class="progress-mini"><div class="progress-fill"></div></div>
+                <p>კალენდარი</p>
             </a>
 
             <a href="food.html" class="lesson-card">
                 <div class="icon-circle bg-orange">🍏</div>
                 <h3>საჭმელი</h3>
                 <p>პროდუქტები</p>
-                <div class="progress-mini"><div class="progress-fill"></div></div>
             </a>
 
-            <div class="lesson-card" style="opacity: 0.6; cursor: default;">
-                <div class="icon-circle" style="background: #f1f2f6;">🔒</div>
-                <h3>დიალოგები</h3>
-                <p>მალე...</p>
-            </div>
+            <a href="lesson1.html" class="lesson-card">
+                <div class="icon-circle bg-green">📖</div>
+                <h3>სიტყვები</h3>
+                <p>ზოგადი ლექსიკა</p>
+            </a>
         </div>
     </div>
-
-    <script>
-        // აქ შეგვიძლია დავამატოთ ლოგიკა, რომელიც LocalStorage-დან წაიკითხავს 
-        // მომხმარებლის პროგრესს და პროგრეს-ბარებს შეავსებს.
-        console.log("Bonjour app initialized");
-    </script>
 </body>
 </html>
