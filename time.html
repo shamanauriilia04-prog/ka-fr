@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>დრო და კალენდარი - Premium</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        :root { --time-color: #6c5ce7; --bg-soft: #f8f7ff; }
+        
+        .verb-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 30px; }
+        .verb-card {
+            background: #fff; padding: 20px; border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(108,92,231,0.05); border: 1px solid #eceaff;
+            position: relative; text-align: center; transition: 0.2s;
+        }
+        .verb-card strong { display: block; color: var(--time-color); font-size: 1.1rem; margin-bottom: 5px; }
+        .verb-card span { color: #636e72; font-size: 0.85rem; }
+        
+        .card-tools { position: absolute; top: 8px; right: 8px; display: flex; flex-direction: column; gap: 5px; }
+        .tool-btn {
+            background: var(--bg-soft); border: none; width: 28px; height: 28px;
+            border-radius: 50%; font-size: 0.8rem; cursor: pointer; color: var(--time-color);
+        }
+
+        .category-scroll { display: flex; gap: 10px; overflow-x: auto; padding: 10px 0 20px; scrollbar-width: none; }
+        .tab {
+            padding: 10px 20px; background: white; border: 1px solid #ddd;
+            border-radius: 15px; white-space: nowrap; cursor: pointer; font-weight: bold; font-size: 14px;
+        }
+        .tab.active { background: var(--time-color); color: white; border-color: var(--time-color); }
+
+        .practice-zone {
+            background: white; border-radius: 30px; padding: 25px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1); border: 2px solid #eceaff;
+        }
+        .modern-input {
+            width: 100%; padding: 15px; border: 2px solid #e0e0e0; border-radius: 15px;
+            font-size: 1.1rem; text-align: center; outline: none; box-sizing: border-box;
+        }
+        .modern-input:focus { border-color: var(--time-color); }
+        
+        .btn-main {
+            flex: 1; padding: 15px; border-radius: 15px; border: none;
+            font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .btn-listen { background: var(--time-color); color: white; }
+        .btn-next { background: #1c1c1e; color: white; width: 100%; margin-top: 10px; }
+
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); }
+        .modal-content { background: white; margin: 40% auto; padding: 25px; border-radius: 25px; width: 80%; max-width: 320px; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="header" style="padding:15px; background: var(--time-color);">
+            <a href="index.html" style="color:white; float:left; text-decoration:none; font-size:1.5rem;">←</a>
+            <h2>დრო და კალენდარი</h2>
+        </div>
+
+        <div style="padding: 20px;">
+            <div class="category-scroll">
+                <div class="tab active" onclick="setCat('days')">დღეები</div>
+                <div class="tab" onclick="setCat('months')">თვეები</div>
+                <div class="tab" onclick="setCat('seasons')">სეზონები</div>
+                <div class="tab" onclick="setCat('phrases')">დროის ფრაზები</div>
+            </div>
+
+            <div class="verb-grid" id="dataGrid"></div>
+
+            <div class="practice-zone">
+                <p id="ka-phrase" style="font-size: 1.3rem; font-weight: bold; margin: 10px 0;">ორშაბათი</p>
+                <div style="display:flex; gap:10px;">
+                    <button class="btn-main btn-listen" onclick="speakTarget()">🔊 მოსმენა</button>
+                    <button class="btn-main" style="background:#333; color:white;" onclick="listenVoice()">🎤 თქვი</button>
+                </div>
+                <input type="text" class="modern-input" id="write-input" placeholder="დაწერე ფრანგულად..." oninput="checkWriting()" style="margin-top:15px;">
+                <div id="feedback" style="height:25px; margin-top:10px; font-weight:bold; text-align:center;"></div>
+                <button class="btn-main btn-next" onclick="nextEx()">შემდეგი →</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="infoModal" class="modal">
+        <div class="modal-content">
+            <h3 id="modal-title" style="color:var(--time-color)"></h3>
+            <p id="modal-text" style="color:#636e72; line-height:1.5;"></p>
+            <button onclick="closeModal()" style="background:var(--time-color); color:white; border:none; padding:12px; width:100%; border-radius:12px; margin-top:15px;">გავიგე</button>
+        </div>
+    </div>
+
+    <script>
+        const library = [
+            // DAYS
+            { fr: "Lundi", ka: "ორშაბათი", cat: "days", tip: "[ლენდი]" },
+            { fr: "Mardi", ka: "სამშაბათი", cat: "days", tip: "[მარდი]" },
+            { fr: "Mercredi", ka: "ოთხშაბათი", cat: "days", tip: "[მერკრედი]" },
+            { fr: "Jeudi", ka: "ხუთშაბათი", cat: "days", tip: "[ჟედი]" },
+            { fr: "Vendredi", ka: "პარასკევი", cat: "days", tip: "[ვანდრედი]" },
+            { fr: "Samedi", ka: "შაბათი", cat: "days", tip: "[სამდნი]" },
+            { fr: "Dimanche", ka: "კვირა", cat: "days", tip: "[დიმანშ]" },
+            // MONTHS
+            { fr: "Janvier", ka: "იანვარი", cat: "months", tip: "[ჟანვიე]" },
+            { fr: "Février", ka: "თებერვალი", cat: "months", tip: "[ფევრიე]" },
+            { fr: "Mars", ka: "მარტი", cat: "months", tip: "აქ 's' იკითხება: [მარს]" },
+            { fr: "Avril", ka: "აპრილი", cat: "months", tip: "[ავრილ]" },
+            { fr: "Mai", ka: "მაისი", cat: "months", tip: "[მე]" },
+            { fr: "Juin", ka: "ივნისი", cat: "months", tip: "[ჟუენ]" },
+            { fr: "Juillet", ka: "ივლისი", cat: "months", tip: "[ჟუიე]" },
+            { fr: "Août", ka: "აგვისტო", cat: "months", tip: "გამოითქმის მოკლედ: [უტ]" },
+            { fr: "Septembre", ka: "სექტემბერი", cat: "months", tip: "[სეპტამბრ]" },
+            { fr: "Octobre", ka: "ოქტომბერი", cat: "months", tip: "[ოქტობრ]" },
+            { fr: "Novembre", ka: "ნოემბერი", cat: "months", tip: "[ნოვამბრ]" },
+            { fr: "Décembre", ka: "დეკემბერი", cat: "months", tip: "[დესამბრ]" },
+            // SEASONS
+            { fr: "Le printemps", ka: "გაზაფხული", cat: "seasons", tip: "[ლე პრენტან]" },
+            { fr: "L'été", ka: "ზაფხული", cat: "seasons", tip: "[ლეტე]" },
+            { fr: "L'automne", ka: "შემოდგომა", cat: "seasons", tip: "[ლოტონ]" },
+            { fr: "L'hiver", ka: "ზამთარი", cat: "seasons", tip: "'h' არ იკითხება: [ლივერ]" },
+            // PHRASES
+            { fr: "Aujourd'hui", ka: "დღეს", cat: "phrases", tip: "[ოჟურდუი]" },
+            { fr: "Demain", ka: "ხვალ", cat: "phrases", tip: "[დემენ]" },
+            { fr: "Hier", ka: "გუშინ", cat: "phrases", tip: "[იერ]" },
+            { fr: "Maintenant", ka: "ახლა", cat: "phrases", tip: "[მენტნან]" },
+            { fr: "Quelle heure est-il?", ka: "რომელი საათია?", cat: "phrases", tip: "საათის კითხვის ფორმა." }
+        ];
+
+        let activeCat = "days";
+        let currentList = [];
+        let curIdx = 0;
+
+        function setCat(c) {
+            activeCat = c;
+            currentList = library.filter(i => i.cat === c);
+            document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.getAttribute('onclick').includes(c)));
+            curIdx = 0;
+            renderGrid();
+            updatePractice();
+        }
+
+        function renderGrid() {
+            const grid = document.getElementById('dataGrid');
+            grid.innerHTML = currentList.map((item, i) => `
+                <div class="verb-card">
+                    <div class="card-tools">
+                        <button class="tool-btn" onclick="speak('${item.fr}')">🔊</button>
+                        <button class="tool-btn" onclick="showTip(${i})">?</button>
+                    </div>
+                    <strong>${item.fr}</strong>
+                    <span>${item.ka}</span>
+                </div>
+            `).join('');
+        }
+
+        function updatePractice() {
+            document.getElementById('ka-phrase').innerText = currentList[curIdx].ka;
+            document.getElementById('write-input').value = "";
+            document.getElementById('feedback').innerText = "";
+        }
+
+        function checkWriting() {
+            if(document.getElementById('write-input').value.toLowerCase().trim() === currentList[curIdx].fr.toLowerCase()) {
+                document.getElementById('feedback').innerText = "✅ ბრწყინვალეა!";
+                document.getElementById('feedback').style.color = "#2ecc71";
+            }
+        }
+
+        function nextEx() {
+            curIdx = (curIdx + 1) % currentList.length;
+            updatePractice();
+        }
+
+        function speak(t) {
+            const u = new SpeechSynthesisUtterance(t);
+            u.lang = 'fr-FR';
+            speechSynthesis.speak(u);
+        }
+
+        function speakTarget() { speak(currentList[curIdx].fr); }
+
+        function showTip(i) {
+            document.getElementById('modal-title').innerText = currentList[i].fr;
+            document.getElementById('modal-text').innerText = currentList[i].tip;
+            document.getElementById('infoModal').style.display = 'block';
+        }
+
+        function closeModal() { document.getElementById('infoModal').style.display = 'none'; }
+
+        function listenVoice() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const rec = new SpeechRecognition();
+            rec.lang = 'fr-FR';
+            rec.onresult = (e) => {
+                if(e.results[0][0].transcript.toLowerCase().includes(currentList[curIdx].fr.toLowerCase()))
+                    document.getElementById('feedback').innerText = "🎤 ხმა სწორია!";
+            };
+            rec.start();
+        }
+
+        setCat('days');
+    </script>
+</body>
+</html>
