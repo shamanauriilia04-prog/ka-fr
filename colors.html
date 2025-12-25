@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+    <meta charset="UTF-8 glass">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ფერები - Bonjour</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        :root { --color-primary: #e67e22; }
+        .color-preview {
+            width: 40px; height: 40px; border-radius: 50%; 
+            margin: 0 auto 10px; border: 2px solid #eee;
+        }
+        .verb-card strong { color: var(--color-primary); }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="header">
+            <a href="index.html" style="color:white; float:left; text-decoration:none;">←</a>
+            <h1>ფერები</h1>
+            <p>Les Couleurs</p>
+        </div>
+
+        <div class="lesson-list">
+            <div class="verb-grid" id="grid"></div>
+
+            <div class="content-section" style="text-align:center;">
+                <h3 id="ka-phrase">წითელი</h3>
+                <input type="text" id="write-input" placeholder="ჩაწერე ფრანგულად..." 
+                       style="width:80%; padding:12px; border-radius:10px; border:1px solid #ddd; outline:none;">
+                <p id="feedback" style="margin-top:10px; font-weight:bold;"></p>
+                
+                <div style="display:flex; gap:10px; justify-content:center; margin-top:15px;">
+                    <button onclick="checkWriting()" class="nav-btn" style="background:var(--blue); color:white;">შემოწმება</button>
+                    <button onclick="nextEx()" class="nav-btn">შემდეგი</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const colors = [
+            { fr: "Rouge", ka: "წითელი", hex: "#ED2939", tip: "გამოითქმის: რუჟ" },
+            { fr: "Bleu", ka: "ლურჯი", hex: "#002395", tip: "გამოითქმის: ბლიო" },
+            { fr: "Vert", ka: "მწვანე", hex: "#2ecc71", tip: "გამოითქმის: ვერ" },
+            { fr: "Jaune", ka: "ყვითელი", hex: "#f1c40f", tip: "გამოითქმის: ჟონ" },
+            { fr: "Noir", ka: "შავი", hex: "#2d3436", tip: "გამოითქმის: ნუარ" },
+            { fr: "Blanc", ka: "თეთრი", hex: "#ffffff", tip: "გამოითქმის: ბლან" }
+        ];
+
+        let curIdx = 0;
+
+        function renderGrid() {
+            const grid = document.getElementById('grid');
+            grid.innerHTML = colors.map((c, i) => `
+                <div class="verb-card" onclick="speak('${c.fr}')">
+                    <div class="color-preview" style="background:${c.hex}"></div>
+                    <strong>${c.fr}</strong>
+                    <span>${c.ka}</span>
+                </div>
+            `).join('');
+        }
+
+        function checkWriting() {
+            const val = document.getElementById('write-input').value.toLowerCase().trim();
+            if(val === colors[curIdx].fr.toLowerCase()) {
+                document.getElementById('feedback').innerText = "✅ სწორია!";
+                document.getElementById('feedback').style.color = "green";
+            }
+        }
+
+        function nextEx() {
+            curIdx = (curIdx + 1) % colors.length;
+            document.getElementById('ka-phrase').innerText = colors[curIdx].ka;
+            document.getElementById('write-input').value = "";
+            document.getElementById('feedback').innerText = "";
+        }
+
+        function speak(t) {
+            const u = new SpeechSynthesisUtterance(t);
+            u.lang = 'fr-FR';
+            speechSynthesis.speak(u);
+        }
+
+        renderGrid();
+    </script>
+</body>
+</html>
