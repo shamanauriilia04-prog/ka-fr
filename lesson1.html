@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>გაკვეთილი 1 - Bonjour</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <div class="header" style="padding:15px;">
+            <a href="index.html" style="color:white; float:left; text-decoration:none;">←</a>
+            <h2>მისალმება</h2>
+        </div>
+        
+        <div class="content-section">
+            <h3>სიტყვები:</h3>
+            <div class="vocab-row"><span>Bonjour</span> <span>გამარჯობა</span></div>
+            <div class="vocab-row"><span>Salut</span> <span>სალიუ (მისალმება)</span></div>
+            <div class="vocab-row"><span>Bonsoir</span> <span>საღამო მშვიდობისა</span></div>
+            <div class="vocab-row"><span>Merci</span> <span>მადლობა</span></div>
+            <div class="vocab-row"><span>Au revoir</span> <span>ნახვამდის</span></div>
+
+            <div class="quiz-box">
+                <h3>✍️ ტესტი:</h3>
+                <p>როგორ არის "ნახვამდის"?</p>
+                <button class="option" onclick="check(this, false)">Merci</button>
+                <button class="option" onclick="check(this, true)">Au revoir</button>
+                <button class="option" onclick="check(this, false)">Salut</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        function check(btn, isCorrect) {
+            if(isCorrect) btn.classList.add('correct');
+            else btn.classList.add('wrong');
+        }
+    </script>
+</body>
+</html>
