@@ -1,241 +1,37 @@
 <!DOCTYPE html>
 <html lang="ka">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>French Learning AI</title>
-    <style>
-        :root { --primary: #002395; --red: #ed2939; --success: #2ecc71; --bg: #f8f9fa; }
-        body { margin: 0; font-family: 'Segoe UI', sans-serif; background: var(--bg); overflow-x: hidden; }
-        .screen { display: none; min-height: 100vh; width: 100%; max-width: 500px; margin: 0 auto; background: white; position: relative; }
-        .screen.active { display: block; }
-        
-        /* მენიუს სტილი */
-        .welcome-banner { background: linear-gradient(135deg, var(--primary), var(--red)); padding: 40px 20px; color: white; text-align: center; border-radius: 0 0 30px 30px; }
-        .lesson-grid { padding: 20px; display: grid; gap: 15px; }
-        .lesson-card { background: white; padding: 15px; border-radius: 20px; display: flex; align-items: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 2px solid #eee; transition: 0.3s; }
-        .lesson-card.completed { border-color: var(--success); background: #f0fff4; }
-        
-        /* გაკვეთილის სტილი */
-        .header { padding: 20px; background: var(--primary); color: white; display: flex; align-items: center; gap: 15px; }
-        .verb-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 15px; }
-        .verb-card { background: white; padding: 20px; border-radius: 15px; text-align: center; border: 2px solid #eee; position: relative; }
-        .verb-card.learned { border-color: var(--success); background: #fafffb; }
-        
-        /* ღილაკები */
-        .tool-btn { border: none; background: #f0f0f0; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; margin: 5px; font-size: 1.2rem; }
-        .mic-btn.active { background: var(--red); color: white; animation: blink 1s infinite; }
-        .action-btn { display: block; margin: 20px; padding: 18px; background: var(--success); color: white; text-align: center; border-radius: 15px; font-weight: bold; cursor: pointer; border: none; width: calc(100% - 40px); }
-        
-        /* ტესტის სტილი */
-        .opt-btn { width: 100%; padding: 15px; margin-bottom: 10px; border: 2px solid #eee; border-radius: 12px; background: white; cursor: pointer; font-weight: bold; }
-        
-        @keyframes blink { 50% { opacity: 0.5; } }
-        .progress-bar { height: 6px; background: var(--success); width: 0%; transition: 0.4s; }
-    </style>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bonjour AI</title><link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-    <div id="menu-screen" class="screen active">
-        <div class="welcome-banner">
-            <h1>Bonjour! 🇫🇷</h1>
-            <p id="total-p">პროგრესი: 0%</p>
-        </div>
-        <div class="lesson-grid" id="menu-items"></div>
+    <div class="app-container">
+        <div class="welcome-banner"><h1>Bonjour! 🇫🇷</h1><p id="stat">პროგრესი: 0%</p></div>
+        <div class="lesson-grid" id="menu"></div>
     </div>
-
-    <div id="lesson-screen" class="screen">
-        <div class="header">
-            <button onclick="showScreen('menu-screen')" style="background:none; border:none; color:white; font-size:1.5rem; cursor:pointer;">←</button>
-            <h2 id="lesson-title">გაკვეთილი</h2>
-        </div>
-        <div id="lesson-progress-cont" style="height:6px; background:#eee;"><div id="lesson-progress-fill" class="progress-bar"></div></div>
-        <div id="lesson-grid" class="verb-grid"></div>
-        <button id="test-start-btn" class="action-btn" style="display:none;" onclick="startQuiz()">🏆 ტესტის ჩაბარება</button>
-    </div>
-
-    <div id="quiz-screen" class="screen">
-        <div class="header"><h2>გამოცდა</h2></div>
-        <div style="padding:30px; text-align:center;">
-            <h3 id="quiz-question">კითხვა</h3>
-            <div id="quiz-options" style="margin-top:30px;"></div>
-        </div>
-    </div>
-
     <script>
-        const lessonsData = {
-            hello: {
-                name: "მისალმება", icon: "👋",
-                items: [
-                    { fr: "Bonjour", ka: "გამარჯობა" },
-                    { fr: "Merci", ka: "მადლობა" },
-                    { fr: "Ça va ?", ka: "როგორ ხარ?" },
-                    { fr: "Au revoir", ka: "ნახვამდის" }
-                ],
-                quiz: [
-                    { q: "როგორ არის 'მადლობა'?", a: "Merci", o: ["Merci", "Bonjour", "Non"] },
-                    { q: "როგორ არის 'ნახვამდის'?", a: "Au revoir", o: ["Salut", "Au revoir", "Oui"] }
-                ]
-            },
-            etre: {
-                name: "ზმნა Être (ყოფნა)", icon: "⚙️",
-                items: [
-                    { fr: "Je suis", ka: "მე ვარ" },
-                    { fr: "Tu es", ka: "შენ ხარ" },
-                    { fr: "Il est", ka: "ის არის" },
-                    { fr: "Nous sommes", ka: "ჩვენ ვართ" }
-                ],
-                quiz: [
-                    { q: "როგორ არის 'მე ვარ'?", a: "Je suis", o: ["Je suis", "Tu es", "Il est"] }
-                ]
-            }
-        };
-
-        let currentLessonId = "";
-        let currentQuizIdx = 0;
-
-        // ეკრანების გადართვა
-        function showScreen(id) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            if(id === 'menu-screen') renderMenu();
-        }
-
-        // მენიუს გამოჩენა
-        function renderMenu() {
-            const container = document.getElementById('menu-items');
-            container.innerHTML = "";
-            let totalP = 0;
-            
-            Object.keys(lessonsData).forEach(id => {
-                const lesson = lessonsData[id];
-                const p = localStorage.getItem(id + "_p") || 0;
-                const done = localStorage.getItem(id + "_done") === "true";
-                totalP += parseInt(p);
-                
-                const card = document.createElement('div');
-                card.className = `lesson-card ${done ? 'completed' : ''}`;
-                card.onclick = () => openLesson(id);
-                card.innerHTML = `
-                    <div style="font-size:1.5rem; margin-right:15px;">${lesson.icon}</div>
-                    <div style="flex:1">
-                        <b>${lesson.name}</b>
-                        <div style="height:4px; background:#eee; margin-top:5px;"><div style="height:100%; background:var(--success); width:${p}%"></div></div>
-                    </div>
-                    <span style="margin-left:10px; font-weight:bold; color:var(--success)">${p}%</span>
-                `;
-                container.appendChild(card);
-            });
-            document.getElementById('total-p').innerText = `პროგრესი: ${Math.round(totalP / Object.keys(lessonsData).length)}%`;
-        }
-
-        // გაკვეთილის გახსნა
-        function openLesson(id) {
-            currentLessonId = id;
-            const lesson = lessonsData[id];
-            document.getElementById('lesson-title').innerText = lesson.name;
-            const grid = document.getElementById('lesson-grid');
-            grid.innerHTML = "";
-            
-            const learned = JSON.parse(localStorage.getItem(id + "_list") || "[]");
-
-            lesson.items.forEach((item, i) => {
-                const isLearned = learned.includes(item.fr);
-                const card = document.createElement('div');
-                card.className = `verb-card ${isLearned ? 'learned' : ''}`;
-                card.innerHTML = `
-                    <strong>${item.fr}</strong><br><small>${item.ka}</small>
-                    <div style="margin-top:10px;">
-                        <button class="tool-btn" onclick="speak('${item.fr}', '${id}')">🔊</button>
-                        <button class="tool-btn mic-btn" id="mic-${i}" onclick="listenAI('${item.fr}', ${i})">🎤</button>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
-            
-            updateLessonProgress();
-            showScreen('lesson-screen');
-        }
-
-        function speak(text, id) {
-            const u = new SpeechSynthesisUtterance(text);
-            u.lang = 'fr-FR';
-            window.speechSynthesis.speak(u);
-            
-            // მონიშვნა ნასწავლად
-            let learned = JSON.parse(localStorage.getItem(id + "_list") || "[]");
-            if(!learned.includes(text)) {
-                learned.push(text);
-                localStorage.setItem(id + "_list", JSON.stringify(learned));
-                updateLessonProgress();
-                openLesson(id); // განახლება
-            }
-        }
-
-        function updateLessonProgress() {
-            const learned = JSON.parse(localStorage.getItem(currentLessonId + "_list") || "[]");
-            const total = lessonsData[currentLessonId].items.length;
-            const p = Math.round((learned.length / total) * 100);
-            localStorage.setItem(currentLessonId + "_p", p);
-            document.getElementById('lesson-progress-fill').style.width = p + "%";
-            document.getElementById('test-start-btn').style.display = p >= 100 ? 'block' : 'none';
-        }
-
-        function listenAI(target, idx) {
-            const rec = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-            rec.lang = 'fr-FR';
-            const btn = document.getElementById('mic-'+idx);
-            btn.classList.add('active');
-            rec.start();
-            rec.onresult = (e) => {
-                const speech = e.results[0][0].transcript.toLowerCase();
-                if(speech.includes(target.toLowerCase().replace('?', ''))) {
-                    alert("სწორია! ✅");
-                    speak(target, currentLessonId);
-                } else {
-                    alert("ვერ გავიგე. სცადეთ: " + target);
-                }
-                btn.classList.remove('active');
-            };
-            rec.onerror = () => btn.classList.remove('active');
-        }
-
-        // ტესტის ლოგიკა
-        function startQuiz() {
-            currentQuizIdx = 0;
-            showScreen('quiz-screen');
-            loadQuizQuestion();
-        }
-
-        function loadQuizQuestion() {
-            const quiz = lessonsData[currentLessonId].quiz[currentQuizIdx];
-            document.getElementById('quiz-question').innerText = quiz.q;
-            const optsCont = document.getElementById('quiz-options');
-            optsCont.innerHTML = "";
-            quiz.o.forEach(opt => {
-                const btn = document.createElement('button');
-                btn.className = "opt-btn";
-                btn.innerText = opt;
-                btn.onclick = () => {
-                    if(opt === quiz.a) {
-                        currentQuizIdx++;
-                        if(currentQuizIdx < lessonsData[currentLessonId].quiz.length) loadQuizQuestion();
-                        else finishQuiz();
-                    } else {
-                        alert("არასწორია! ❌");
-                    }
-                };
-                optsCont.appendChild(btn);
-            });
-        }
-
-        function finishQuiz() {
-            localStorage.setItem(currentLessonId + "_done", "true");
-            alert("გილოცავთ! ტესტი ჩაბარებულია! 🎉");
-            showScreen('menu-screen');
-        }
-
-        window.onload = renderMenu;
+        const pages = [
+            { id: 'hello', n: 'მისალმება', i: '👋', f: 'hello.html' },
+            { id: 'etre', n: 'ზმნა Être', i: '⚙️', f: 'etre.html' },
+            { id: 'avoir', n: 'ზმნა Avoir', i: '💎', f: 'avoir.html' },
+            { id: 'numbers', n: 'რიცხვები', i: '🔢', f: 'numbers.html' },
+            { id: 'family', n: 'ოჯახი', i: '👨‍👩‍👧', f: 'family.html' },
+            { id: 'food', n: 'საჭმელი', i: '🍏', f: 'food.html' },
+            { id: 'time', n: 'დრო', i: '📅', f: 'time.html' }
+        ];
+        const menu = document.getElementById('menu');
+        let total = 0;
+        pages.forEach(p => {
+            const pct = localStorage.getItem(p.id + "_percent") || 0;
+            total += parseInt(pct);
+            menu.innerHTML += `
+                <a href="${p.f}" class="lesson-card ${pct>=100?'completed':''}">
+                    <div style="font-size:1.5rem; margin-right:15px;">${p.i}</div>
+                    <div style="flex:1"><b>${p.n}</b><div style="height:4px; background:#eee; margin-top:5px;"><div style="height:100%; background:var(--success); width:${pct}%"></div></div></div>
+                    <span style="margin-left:10px; font-weight:bold; color:var(--success)">${pct}%</span>
+                </a>`;
+        });
+        document.getElementById('stat').innerText = "პროგრესი: " + Math.round(total/pages.length) + "%";
     </script>
 </body>
 </html>
