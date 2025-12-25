@@ -2,88 +2,189 @@
 <html lang="ka">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Avoir - პრაქტიკა</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Avoir - Premium</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        .practice-section { background: #fff1f1; padding: 20px; border-radius: 20px; margin-top: 30px; }
-        .verb-row { background: white; padding: 12px; border-radius: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
-        .btn-play { background: #ED2939; color: white; border: none; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; }
-        .challenge-box { background: white; padding: 20px; border-radius: 15px; text-align: center; margin-top: 15px; }
-        .mic-active { animation: pulse 1.5s infinite; background: #333 !important; }
+        .verb-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 30px; }
+        
+        .verb-card {
+            background: #fff; padding: 20px; border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #f0f0f0;
+            position: relative; text-align: center; transition: 0.3s;
+        }
+        
+        .verb-card:active { transform: scale(0.95); }
+        .verb-card strong { display: block; color: #ED2939; font-size: 1.2rem; margin-bottom: 5px; }
+        .verb-card span { color: #636e72; font-size: 0.9rem; }
+        
+        .card-tools {
+            position: absolute; top: 8px; right: 8px;
+            display: flex; flex-direction: column; gap: 5px;
+        }
+        .tool-btn {
+            background: #fff5f5; border: none; width: 28px; height: 28px;
+            border-radius: 50%; font-size: 0.8rem; cursor: pointer; color: #ED2939;
+        }
+
+        .practice-zone {
+            background: #ffffff; border-radius: 30px; padding: 25px;
+            box-shadow: 0 10px 40px rgba(237,41,57,0.1); border: 2px solid #ffebeb;
+        }
+
+        .input-wrapper { position: relative; margin: 20px 0; }
+        .modern-input {
+            width: 100%; padding: 15px; border: 2px solid #e0e0e0; border-radius: 15px;
+            font-size: 1.1rem; text-align: center; transition: 0.3s; outline: none; box-sizing: border-box;
+        }
+        .modern-input:focus { border-color: #ED2939; box-shadow: 0 0 10px rgba(237,41,57,0.1); }
+
+        .btn-group { display: flex; gap: 10px; margin-top: 15px; }
+        .btn-main {
+            flex: 1; padding: 15px; border-radius: 15px; border: none;
+            font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .btn-listen { background: #ED2939; color: white; }
+        .btn-mic { background: #333; color: white; }
+        .btn-next { background: #2ecc71; color: white; width: 100%; margin-top: 10px; }
+
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); }
+        .modal-content { background: white; margin: 40% auto; padding: 25px; border-radius: 25px; width: 80%; max-width: 320px; text-align: center; }
     </style>
 </head>
 <body>
     <div class="app-container">
-        <div class="header" style="padding:15px; background: #ED2939;">
-            <a href="verbs.html" style="color:white; float:left; text-decoration:none;">←</a>
-            <h2>AVOIR - პრაქტიკა</h2>
+        <div class="header" style="padding:15px; background: #ED2939; border-radius: 0 0 30px 30px;">
+            <a href="verbs.html" style="color:white; float:left; text-decoration:none; font-size:1.5rem;">←</a>
+            <h2>AVOIR (ქონა)</h2>
         </div>
 
         <div style="padding: 20px;">
-            <h3>1. უღლება</h3>
-            <div class="verb-row"><span>J'ai (მე მაქვს)</span> <button class="btn-play" onclick="speak('J\'ai')">🔊</button></div>
-            <div class="verb-row"><span>Tu as (შენ გაქვს)</span> <button class="btn-play" onclick="speak('Tu as')">🔊</button></div>
-            <div class="verb-row"><span>Il/Elle a (მას აქვს)</span> <button class="btn-play" onclick="speak('Il a')">🔊</button></div>
+            <div class="verb-grid" id="verbGrid"></div>
 
-            <div class="practice-section">
-                <h3>2. ისაუბრე ფრანგულად</h3>
-                <div class="challenge-box">
-                    <p id="ka-phrase">მე მაქვს მანქანა</p>
-                    <h4 id="fr-target" style="color: #ED2939;">J'ai une voiture</h4>
-                    <div id="feedback" style="margin-bottom:10px; font-weight:bold;"></div>
-                    
-                    <button class="btn-play" onclick="speak(document.getElementById('fr-target').innerText)">🔊 მოსმენა</button>
-                    <button id="mic-btn" class="btn-play" style="background: #333; width: auto; padding: 0 20px; border-radius: 10px;" onclick="listenAndCheck()">🎤 წარმოთქვი</button>
+            <div class="practice-zone">
+                <span style="color: #ED2939; font-weight: bold; font-size: 0.8rem; text-transform: uppercase;">სავარჯიშო</span>
+                <p id="ka-phrase" style="font-size: 1.3rem; font-weight: bold; margin: 10px 0;">მე მაქვს იდეა</p>
+                
+                <div class="btn-group">
+                    <button class="btn-main btn-listen" onclick="speakTarget()"><span>🔊</span> მოსმენა</button>
+                    <button class="btn-main btn-mic" id="mic-btn" onclick="listen()"><span>🎤</span> თქვი</button>
                 </div>
-                <button onclick="nextPractice()" style="width:100%; margin-top:10px; padding:10px; border-radius:10px; border:1px solid #ED2939; background:none; cursor:pointer; color:#ED2939;">შემდეგი ფრაზა →</button>
+
+                <div class="input-wrapper">
+                    <input type="text" class="modern-input" id="write-input" placeholder="აკრიფე ფრანგულად..." oninput="checkWriting()">
+                </div>
+                
+                <div id="feedback" style="height: 20px; font-weight: bold; text-align: center; margin-bottom: 10px;"></div>
+                <button class="btn-main btn-next" onclick="nextExercise()">შემდეგი ფრაზა →</button>
             </div>
         </div>
     </div>
 
+    <div id="infoModal" class="modal">
+        <div class="modal-content">
+            <h3 id="modal-title" style="color:#ED2939"></h3>
+            <p id="modal-text" style="color:#636e72; line-height:1.5;"></p>
+            <button onclick="closeModal()" style="background:#ED2939; color:white; border:none; padding:12px; width:100%; border-radius:12px; margin-top:15px;">გავიგე</button>
+        </div>
+    </div>
+
     <script>
-        const exercises = [
-            { ka: "მე მაქვს მანქანა", fr: "J'ai une voiture" },
-            { ka: "შენ გაქვს წიგნი", fr: "Tu as un livre" },
-            { ka: "მას აქვს ძაღლი", fr: "Il a un chien" },
-            { ka: "ჩვენ გვაქვს დრო", fr: "Nous avons le temps" },
-            { ka: "მე ვარ 20 წლის (მაქვს 20 წელი)", fr: "J'ai vingt ans" }
+        const verbs = [
+            { fr: "J'ai", ka: "მე მაქვს", tip: "ფრანგულში ასაკს ყოველთვის ამ ზმნით ვამბობთ." },
+            { fr: "Tu as", ka: "შენ გაქვს", tip: "გამოითქმის როგორც [ტიუ ა]." },
+            { fr: "Il a", ka: "მას აქვს (მ)", tip: "გამოითქმის როგორც [ილ ა]." },
+            { fr: "Elle a", ka: "მას აქვს (მდ)", tip: "გამოითქმის როგორც [ელ ა]." },
+            { fr: "Nous avons", ka: "ჩვენ გვაქვს", tip: "აქ ხდება გადაბმა (Liaison): [ნუზ ავონ]." },
+            { fr: "Vous avez", ka: "თქვენ გაქვთ", tip: "თავაზიანი ფორმა: [ვუზ ავე]." },
+            { fr: "Ils ont", ka: "მათ აქვთ (მ)", tip: "გამოითქმის: [ილზ ონ]. არ აურიოთ Ils sont-ში!" },
+            { fr: "Elles ont", ka: "მათ აქვთ (მდ)", tip: "გამოიყენება მხოლოდ ქალების ჯგუფზე საუბრისას." }
         ];
-        let currentIdx = 0;
+
+        const exercises = [
+            { ka: "მე მაქვს იდეა", fr: "J'ai une idée" },
+            { ka: "შენ გაქვს ძაღლი", fr: "Tu as un chien" },
+            { ka: "მას აქვს მანქანა", fr: "Il a une voiture" },
+            { ka: "ჩვენ გვაქვს დრო", fr: "Nous avons le temps" },
+            { ka: "თქვენ გაქვთ კითხვა", fr: "Vous avez une question" },
+            { ka: "მათ აქვთ სახლი", fr: "Ils ont une maison" },
+            { ka: "მე მაქვს წიგნი", fr: "J'ai un livre" }
+        ];
+
+        let currentEx = 0;
+
+        // ბარათების გენერაცია
+        function renderGrid() {
+            const grid = document.getElementById('verbGrid');
+            grid.innerHTML = verbs.map((v, i) => `
+                <div class="verb-card">
+                    <div class="card-tools">
+                        <button class="tool-btn" onclick="speak('${v.fr.replace("'", "\\'")}')">🔊</button>
+                        <button class="tool-btn" onclick="showTip(${i})">?</button>
+                    </div>
+                    <strong>${v.fr}</strong>
+                    <span>${v.ka}</span>
+                </div>
+            `).join('');
+        }
 
         function speak(text) {
             const u = new SpeechSynthesisUtterance(text);
             u.lang = 'fr-FR';
+            u.rate = 0.85;
             window.speechSynthesis.speak(u);
         }
 
-        function nextPractice() {
-            currentIdx = (currentIdx + 1) % exercises.length;
-            document.getElementById('ka-phrase').innerText = exercises[currentIdx].ka;
-            document.getElementById('fr-target').innerText = exercises[currentIdx].fr;
+        function showTip(i) {
+            document.getElementById('modal-title').innerText = verbs[i].fr;
+            document.getElementById('modal-text').innerText = verbs[i].tip;
+            document.getElementById('infoModal').style.display = 'block';
+        }
+
+        function closeModal() { document.getElementById('infoModal').style.display = 'none'; }
+        
+        function speakTarget() { speak(exercises[currentEx].fr); }
+
+        function checkWriting() {
+            const input = document.getElementById('write-input');
+            const feedback = document.getElementById('feedback');
+            if(input.value.toLowerCase().trim() === exercises[currentEx].fr.toLowerCase()) {
+                feedback.innerText = "✅ ბრწყინვალეა!";
+                feedback.style.color = "#2ecc71";
+            } else {
+                feedback.innerText = "";
+            }
+        }
+
+        function nextExercise() {
+            currentEx = (currentEx + 1) % exercises.length;
+            document.getElementById('ka-phrase').innerText = exercises[currentEx].ka;
+            document.getElementById('write-input').value = "";
             document.getElementById('feedback').innerText = "";
         }
 
-        function listenAndCheck() {
-            const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-            recognition.lang = 'fr-FR';
+        function listen() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) { alert("გამოიყენეთ Chrome"); return; }
+            
+            const rec = new SpeechRecognition();
+            rec.lang = 'fr-FR';
             const btn = document.getElementById('mic-btn');
             
-            recognition.onstart = () => btn.classList.add('mic-active');
-            recognition.onresult = (event) => {
-                const speech = event.results[0][0].transcript.toLowerCase();
-                const target = exercises[currentIdx].fr.toLowerCase();
-                if(speech.includes(target.replace(/[.,]/g, "").replace("'", " "))) {
-                    document.getElementById('feedback').innerText = "✅ სწორია!";
-                    document.getElementById('feedback').style.color = "green";
-                } else {
-                    document.getElementById('feedback').innerText = "❌ სცადე თავიდან";
-                    document.getElementById('feedback').style.color = "red";
+            btn.style.opacity = "0.5";
+            rec.onresult = (e) => {
+                const speech = e.results[0][0].transcript.toLowerCase();
+                const target = exercises[currentEx].fr.toLowerCase();
+                if(speech.includes(target.replace(/[',]/g, ""))) {
+                    document.getElementById('feedback').innerText = "✅ ხმა სწორია!";
+                    document.getElementById('feedback').style.color = "#2ecc71";
                 }
             };
-            recognition.onend = () => btn.classList.remove('mic-active');
-            recognition.start();
+            rec.onend = () => btn.style.opacity = "1";
+            rec.start();
         }
+
+        renderGrid();
     </script>
 </body>
 </html>
