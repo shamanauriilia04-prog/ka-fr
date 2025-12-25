@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avoir - Bonjour</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .verb-row {
+            background: white; padding: 15px; border-radius: 12px;
+            margin-bottom: 10px; display: flex; justify-content: space-between;
+            align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .btn-play { background: #ED2939; color: white; border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="header" style="padding:15px; background: #ED2939;">
+            <a href="verbs.html" style="color:white; float:left; text-decoration:none;">←</a>
+            <h2>AVOIR - ქონა</h2>
+        </div>
+
+        <div style="padding: 20px;">
+            <div class="verb-row">
+                <div><strong>J'ai</strong><p style="margin:0; font-size:13px; color:gray;">მე მაქვს</p></div>
+                <button class="btn-play" onclick="speak('J\'ai')">🔊</button>
+            </div>
+            <div class="verb-row">
+                <div><strong>Tu as</strong><p style="margin:0; font-size:13px; color:gray;">შენ გაქვს</p></div>
+                <button class="btn-play" onclick="speak('Tu as')">🔊</button>
+            </div>
+            <div class="verb-row">
+                <div><strong>Il / Elle a</strong><p style="margin:0; font-size:13px; color:gray;">მას აქვს</p></div>
+                <button class="btn-play" onclick="speak('Il a')">🔊</button>
+            </div>
+            <div class="verb-row">
+                <div><strong>Nous avons</strong><p style="margin:0; font-size:13px; color:gray;">ჩვენ გვაქვს</p></div>
+                <button class="btn-play" onclick="speak('Nous avons')">🔊</button>
+            </div>
+            <div class="verb-row">
+                <div><strong>Vous avez</strong><p style="margin:0; font-size:13px; color:gray;">თქვენ გაქვთ</p></div>
+                <button class="btn-play" onclick="speak('Vous avez')">🔊</button>
+            </div>
+            <div class="verb-row">
+                <div><strong>Ils / Elles ont</strong><p style="margin:0; font-size:13px; color:gray;">მათ აქვთ</p></div>
+                <button class="btn-play" onclick="speak('Ils ont')">🔊</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        function speak(text) {
+            const u = new SpeechSynthesisUtterance(text);
+            u.lang = 'fr-FR';
+            window.speechSynthesis.speak(u);
+        }
+    </script>
+</body>
+</html>
