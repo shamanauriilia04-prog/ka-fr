@@ -1,24 +1,17 @@
-:root {
-    --primary: #002395; --red: #ed2939; --success: #2ecc71;
-    --bg: #f8f9fa; --text: #2d3436;
-}
-body { margin: 0; font-family: 'Segoe UI', sans-serif; background: var(--bg); }
+:root { --primary: #002395; --red: #ed2939; --success: #2ecc71; --bg: #f8f9fa; }
+body { margin: 0; font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #333; }
 .app-container { max-width: 500px; margin: 0 auto; background: white; min-height: 100vh; }
 .header { padding: 20px; background: var(--primary); color: white; display: flex; align-items: center; gap: 15px; }
-.progress-container { width: 100%; height: 8px; background: #eee; position: sticky; top: 0; z-index: 100; }
-#progress-bar { height: 100%; background: var(--success); width: 0%; transition: 0.4s; }
+.welcome-banner { background: linear-gradient(135deg, var(--primary), var(--red)); padding: 40px 20px; color: white; text-align: center; border-radius: 0 0 30px 30px; }
+.lesson-grid { padding: 20px; display: grid; gap: 15px; }
+.lesson-card { background: white; padding: 15px; border-radius: 20px; display: flex; align-items: center; text-decoration: none; color: inherit; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 2px solid #eee; }
+.lesson-card.completed { border-color: var(--success); background: #f0fff4; }
+.progress-bar-cont { width: 100%; height: 8px; background: #eee; position: sticky; top: 0; z-index: 100; }
+#progress-fill { height: 100%; background: var(--success); width: 0%; transition: 0.4s; }
 .verb-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 15px; }
-.verb-card {
-    background: white; padding: 20px; border-radius: 20px; text-align: center;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 2px solid transparent; transition: 0.3s;
-    position: relative;
-}
-.verb-card.learned { border-color: var(--success); background: #f0fff4; }
-.card-tools { position: absolute; top: 5px; right: 5px; display: flex; flex-direction: column; gap: 5px; }
-.tool-btn { border: none; background: #f0f0f0; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; }
-.mic-btn.active { background: #ff3b30; color: white; animation: pulse 1s infinite; }
-#test-link {
-    display: none; margin: 20px; padding: 18px; background: var(--success);
-    color: white; text-decoration: none; border-radius: 15px; font-weight: bold; text-align: center;
-}
-@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+.verb-card { background: white; padding: 20px; border-radius: 15px; text-align: center; border: 2px solid #eee; position: relative; }
+.verb-card.learned { border-color: var(--success); background: #fafffb; }
+.tool-btn { border: none; background: #f0f0f0; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; margin: 3px; }
+.mic-btn.active { background: var(--red); color: white; animation: blink 1s infinite; }
+@keyframes blink { 50% { opacity: 0.5; } }
+.action-btn { display: block; margin: 20px; padding: 18px; background: var(--success); color: white; text-align: center; border-radius: 15px; text-decoration: none; font-weight: bold; }
