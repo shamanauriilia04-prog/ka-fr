@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>დიალოგები - Bonjour</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        :root { --dialogue-color: #2ecc71; }
+        .chat-container { display: flex; flex-direction: column; gap: 15px; padding: 10px; }
+        
+        .bubble {
+            max-width: 80%; padding: 15px; border-radius: 20px;
+            position: relative; font-size: 0.95rem; line-height: 1.4;
+            cursor: pointer; transition: 0.2s;
+        }
+        .bubble:active { transform: scale(0.98); opacity: 0.8; }
+        
+        /* მარცხენა ბუშტი (პერსონაჟი A) */
+        .bubble.left {
+            align-self: flex-start; background: #f0f0f0;
+            border-bottom-left-radius: 5px; color: #333;
+        }
+        
+        /* მარჯვენა ბუშტი (პერსონაჟი B) */
+        .bubble.right {
+            align-self: flex-end; background: var(--blue);
+            border-bottom-right-radius: 5px; color: white;
+            text-align: right;
+        }
+
+        .translation { display: block; font-size: 0.75rem; margin-top: 5px; opacity: 0.8; }
+        .speaker-name { font-weight: bold; font-size: 0.7rem; text-transform: uppercase; margin-bottom: 3px; display: block; }
+
+        .dialogue-nav {
+            display: flex; justify-content: space-around; 
+            margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="header" style="background: var(--dialogue-color);">
+            <a href="index.html" style="color:white; float:left; text-decoration:none;">←</a>
+            <h1>დიალოგები</h1>
+            <p>პრაქტიკული საუბრები</p>
+        </div>
+
+        <div class="lesson-list">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <h3 id="dialogue-title">გაცნობა</h3>
+                <p style="font-size: 0.8rem; color: #666;">დააჭირე ტექსტს მოსასმენად 🔊</p>
+            </div>
+
+            <div class="chat-container" id="chat-box">
+                </div>
+
+            <div class="dialogue-nav">
+                <button onclick="changeDialogue(-1)" class="nav-btn">← წინა</button>
+                <button onclick="changeDialogue(1)" class="nav-btn" style="background: var(--dialogue-color); color:white; border:none;">შემდეგი →</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const dialogues = [
+            {
+                title: "გაცნობა",
+                content: [
+                    { side: "left", name: "Marc", fr: "Bonjour ! Comment t'appelles-tu ?", ka: "გამარჯობა! რა გქვია?" },
+                    { side: "right", name: "Sophie", fr: "Salut ! Je m'appelle Sophie. Et toi ?", ka: "სალამი! მე სოფი მქვია. შენ?" },
+                    { side: "left", name: "Marc", fr: "Enchanté ! Je suis Marc. Ça va ?", ka: "სასიამოვნოა! მე მარკი ვარ. როგორ ხარ?" },
+                    { side: "right", name: "Sophie", fr: "Ça va très bien, merci !", ka: "ძალიან კარგად, გმადლობ!" }
+                ]
+            },
+            {
+                title: "რესტორანში",
+                content: [
+                    { side: "left", name: "Serveur", fr: "Bonjour, vous voulez commander ?", ka: "გამარჯობა, გსურთ შეკვეთა?" },
+                    { side: "right", name: "Client", fr: "Oui, un café s'il vous plaît.", ka: "დიახ, ერთი ყავა, თუ შეიძლება." },
+                    { side: "left", name: "Serveur", fr: "C'est tout ?", ka: "ეს არის ყველაფერი?" },
+                    { side: "right", name: "Client", fr: "Oui, merci beaucoup.", ka: "დიახ, დიდი მადლობა." }
+                ]
+            }
+        ];
+
+        let currentDialogueIdx = 0;
+
+        function renderDialogue() {
+            const dialogue = dialogues[currentDialogueIdx];
+            document.getElementById('dialogue-title').innerText = dialogue.title;
+            const container = document.getElementById('chat-box');
+            
+            container.innerHTML = dialogue.content.map(msg => `
+                <div class="bubble ${msg.side}" onclick="speak('${msg.fr}')">
+                    <span class="speaker-name">${msg.name}</span>
+                    <strong>${msg.fr}</strong>
+                    <span class="translation">${msg.ka}</span>
+                </div>
+            `).join('');
+        }
+
+        function changeDialogue(dir) {
+            currentDialogueIdx = (currentDialogueIdx + dir + dialogues.length) % dialogues.length;
+            renderDialogue();
+        }
+
+        function speak(text) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'fr-FR';
+            utterance.rate = 0.9;
+            speechSynthesis.speak(utterance);
+        }
+
+        renderDialogue();
+    </script>
+</body>
+</html>
