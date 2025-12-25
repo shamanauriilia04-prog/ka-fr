@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ტანსაცმელი - Bonjour</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        :root { --clothes-color: #9b59b6; --bg-soft: #f9f4fb; }
+        .verb-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 30px; }
+        .verb-card {
+            background: #fff; padding: 20px; border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(155,89,182,0.05); border: 1px solid #f2eef7;
+            position: relative; text-align: center; transition: 0.2s;
+        }
+        .verb-card strong { display: block; color: var(--clothes-color); font-size: 1.1rem; margin-bottom: 5px; }
+        .card-tools { position: absolute; top: 8px; right: 8px; display: flex; flex-direction: column; gap: 5px; }
+        .tool-btn { background: #f9f4fb; border: none; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="header" style="background: var(--clothes-color);">
+            <a href="index.html" style="color:white; float:left; text-decoration:none;">←</a>
+            <h1>ტანსაცმელი</h1>
+            <p>Les Vêtements</p>
+        </div>
+
+        <div class="lesson-list">
+            <div class="verb-grid" id="main-grid"></div>
+
+            <div class="content-section" style="background: var(--bg-soft); border-radius: 25px; padding: 25px; text-align: center;">
+                <h3 style="color: var(--clothes-color);">✍️ სავარჯიშო</h3>
+                <p id="ka-phrase" style="font-size: 1.2rem; font-weight: bold; margin-bottom: 15px;"></p>
+                <input type="text" id="write-input" placeholder="ჩაწერე ფრანგულად..." 
+                       style="width: 100%; padding: 15px; border-radius: 15px; border: 1px solid #ddd; outline: none; margin-bottom: 10px;">
+                <p id="feedback" style="min-height: 20px; font-weight: bold;"></p>
+                
+                <div style="display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
+                    <button onclick="checkWriting()" class="nav-btn" style="background: var(--clothes-color); color: white; border: none;">შემოწმება</button>
+                    <button onclick="nextEx()" class="nav-btn">შემდეგი</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const vocabulary = [
+            { fr: "Une chemise", ka: "პერანგი", tip: "გამოითქმის: იუნ შმიზ" },
+            { fr: "Un pantalon", ka: "შარვალი", tip: "გამოითქმის: ან პანტალონ" },
+            { fr: "Une robe", ka: "კაბა", tip: "გამოითქმის: იუნ რობ" },
+            { fr: "Des chaussures", ka: "ფეხსაცმელი", tip: "გამოითქმის: დე შოსიურ" },
+            { fr: "Un chapeau", ka: "ქუდი", tip: "გამოითქმის: ან შაპო" },
+            { fr: "Un manteau", ka: "პალტო", tip: "გამოითქმის: ან მანტო" }
+        ];
+
+        let curIdx = 0;
+
+        function renderGrid() {
+            document.getElementById('main-grid').innerHTML = vocabulary.map((item, i) => `
+                <div class="verb-card" onclick="speak('${item.fr}')">
+                    <div class="card-tools">
+                        <button class="tool-btn" onclick="event.stopPropagation(); alert('${item.tip}')">💡</button>
+                    </div>
+                    <strong>${item.fr}</strong>
+                    <span>${item.ka}</span>
+                </div>
+            `).join('');
+        }
+
+        function updatePractice() {
+            document.getElementById('ka-phrase').innerText = vocabulary[curIdx].ka;
+            document.getElementById('write-input').value = "";
+            document.getElementById('feedback').innerText = "";
+        }
+
+        function checkWriting() {
+            const val = document.getElementById('write-input').value.toLowerCase().trim();
+            if(val === vocabulary[curIdx].fr.toLowerCase()) {
+                document.getElementById('feedback').innerText = "✅ სწორია!";
+                document.getElementById('feedback').style.color = "#2ecc71";
+            } else {
+                document.getElementById('feedback').innerText = "❌ სცადე კიდევ ერთხელ";
+                document.getElementById('feedback').style.color = "#e74c3c";
+            }
+        }
+
+        function nextEx() {
+            curIdx = (curIdx + 1) % vocabulary.length;
+            updatePractice();
+        }
+
+        function speak(t) {
+            const u = new SpeechSynthesisUtterance(t);
+            u.lang = 'fr-FR';
+            speechSynthesis.speak(u);
+        }
+
+        renderGrid();
+        updatePractice();
+    </script>
+</body>
+</html>
