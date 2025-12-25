@@ -1,91 +1,216 @@
+/* ძირითადი პარამეტრები */
 :root {
-    --blue: #002395;
-    --red: #ED2939;
-    --white: #ffffff;
-    --light-bg: #f0f2f5;
-    --text: #1a1a1a;
+    --primary: #002395;
+    --red: #ed2939;
+    --success: #2ecc71;
+    --bg: #f8f9fa;
+    --text: #2d3436;
+    --shadow: 0 8px 20px rgba(0,0,0,0.06);
+}
+
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent; /* აშორებს ლურჯ ჩარჩოს დაჭერისას */
 }
 
 body {
-    font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background-color: var(--light-bg);
     margin: 0;
-    display: flex;
-    justify-content: center;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
 }
 
+/* კონტეინერი */
 .app-container {
-    width: 100%;
-    max-width: 480px;
-    background: var(--white);
+    max-width: 500px;
+    margin: 0 auto;
     min-height: 100vh;
-    box-shadow: 0 0 15px rgba(0,0,0,0.1);
-}
-
-.header {
-    background: var(--blue);
-    color: white;
-    padding: 30px 20px;
-    text-align: center;
-    border-radius: 0 0 25px 25px;
-}
-
-.lesson-list { padding: 20px; }
-
-.card {
     background: white;
-    border: 1px solid #e1e4e8;
-    border-radius: 15px;
-    padding: 15px;
-    margin-bottom: 15px;
+}
+
+/* ჰედერი */
+.header {
+    padding: 20px;
     display: flex;
     align-items: center;
-    text-decoration: none;
-    color: var(--text);
+    gap: 15px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* ბარათების ბადე (Grid) */
+.verb-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 15px;
+}
+
+/* ბარათის სტილი */
+.verb-card {
+    background: white;
+    padding: 25px 15px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: var(--shadow);
+    border: 2px solid #f1f1f1;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    cursor: pointer;
+}
+
+.verb-card:active {
+    transform: scale(0.95);
+}
+
+/* როცა სიტყვა მოსმენილია/ნასწავლია */
+.verb-card.learned {
+    border-color: var(--success);
+    background-color: #f0fff4;
+}
+
+.verb-card strong {
+    display: block;
+    font-size: 1.1rem;
+    color: var(--primary);
+    margin-bottom: 5px;
+}
+
+.verb-card span {
+    font-size: 0.9rem;
+    color: #636e72;
+}
+
+/* ინსტრუმენტების ღილაკები ბარათზე (?, ხმა) */
+.card-tools {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.tool-btn {
+    background: #f8f9fa;
+    border: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     transition: 0.2s;
 }
 
-.card:active { transform: scale(0.97); }
-
-.icon-box {
-    width: 45px;
-    height: 45px;
-    background: #eef2ff;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    color: var(--blue);
-    margin-right: 15px;
+.tool-btn:hover {
+    background: #e9ecef;
 }
 
-/* გაკვეთილის შიდა სტილი */
-.content-section { padding: 20px; }
-.vocab-row {
+/* კატეგორიების სქროლი (რიცხვებში, საჭმელში) */
+.category-scroll {
     display: flex;
-    justify-content: space-between;
-    padding: 10px 0;
-    border-bottom: 1px solid #eee;
-}
-
-/* ტესტის სტილი */
-.quiz-box {
-    background: #f8f9fa;
+    gap: 10px;
+    overflow-x: auto;
     padding: 15px;
-    border-radius: 15px;
-    margin-top: 20px;
-}
-.option {
-    display: block;
-    width: 100%;
-    padding: 12px;
-    margin: 8px 0;
-    border: 2px solid #ddd;
-    border-radius: 10px;
     background: white;
-    cursor: pointer;
-    font-size: 16px;
+    scrollbar-width: none; /* Firefox */
 }
-.correct { background: #d4edda; border-color: #28a745; }
-.wrong { background: #f8d7da; border-color: #dc3545; }
+
+.category-scroll::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+}
+
+.tab {
+    padding: 8px 18px;
+    background: #f1f2f6;
+    border-radius: 12px;
+    border: none;
+    font-weight: 600;
+    color: #57606f;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.tab.active {
+    background: var(--primary);
+    color: white;
+}
+
+/* პროგრეს ბარი გვერდის თავში */
+.progress-container {
+    width: 100%;
+    height: 8px;
+    background: #eee;
+    position: sticky;
+    top: 0;
+    z-index: 1100;
+}
+
+#progress-bar {
+    height: 100%;
+    background: var(--success);
+    width: 0%;
+    transition: 0.5s ease;
+}
+
+/* მთავარი ღილაკები (ტესტის ჩაბარება) */
+#test-btn {
+    width: calc(100% - 40px);
+    margin: 20px;
+    padding: 16px;
+    border: none;
+    border-radius: 16px;
+    background: var(--success);
+    color: white;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+    transition: 0.3s;
+}
+
+#test-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(46, 204, 113, 0.4);
+}
+
+/* მოდალური ფანჯარა (?) */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(4px);
+}
+
+.modal-content {
+    background: white;
+    margin: 40% auto;
+    padding: 25px;
+    border-radius: 25px;
+    width: 85%;
+    max-width: 350px;
+    text-align: center;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+}
+
+/* ანიმაცია ბარათების გაჩენისას */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.verb-card {
+    animation: fadeIn 0.4s ease forwards;
+}
