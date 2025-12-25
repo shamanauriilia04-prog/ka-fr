@@ -73,6 +73,15 @@
         </main>
     </div>
 
+    <div id="lesson-overlay" class="lesson-overlay">
+    <div class="lesson-header">
+        <button onclick="closeLesson()" class="back-btn">✕</button>
+        <h2 id="lesson-title">გაკვეთილი</h2>
+    </div>
+    <div id="lesson-content" class="lesson-body">
+        </div>
+</div>
+
     <script>
         function openLesson(lessonId) {
             console.log("Opening lesson: " + lessonId);
