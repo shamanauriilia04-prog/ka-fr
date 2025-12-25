@@ -2,29 +2,110 @@
 <html lang="ka">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bonjour - ფრანგული ქართულად</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bonjour - მთავარი</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .welcome-banner {
+            background: linear-gradient(135deg, #002395 0%, #ed2939 100%);
+            padding: 40px 20px;
+            color: white;
+            text-align: center;
+            border-radius: 0 0 40px 40px;
+            margin-bottom: 30px;
+        }
+        .stats-row {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 20px;
+        }
+        .stat-item span { display: block; font-size: 0.8rem; opacity: 0.8; }
+        .stat-item strong { font-size: 1.2rem; }
+
+        .lesson-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            padding: 0 20px 40px;
+        }
+        .lesson-card {
+            background: white;
+            padding: 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            color: #2d3436;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: 0.3s;
+            border: 1px solid #f0f0f0;
+        }
+        .lesson-card:active { transform: scale(0.95); }
+        .icon-circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 12px;
+        }
+        .lesson-card h3 { margin: 0; font-size: 1rem; }
+        .lesson-card p { margin: 5px 0 0; font-size: 0.75rem; color: #b2bec3; }
+
+        /* სხვადასხვა ფერები ბარათებისთვის */
+        .bg-blue { background: #eef2ff; color: #002395; }
+        .bg-red { background: #fff1f1; color: #ed2939; }
+        .bg-green { background: #e8fdf0; color: #2ecc71; }
+        .bg-purple { background: #f3ebff; color: #6c5ce7; }
+    </style>
 </head>
 <body>
     <div class="app-container">
-        <div class="header">
-            <h1>BONJOUR</h1>
-            <p>ისწავლე ფრანგული 0-დან (A1 დონე)</p>
+        <div class="welcome-banner">
+            <h1>Bonjour! 🇫🇷</h1>
+            <p>მზად ხარ ფრანგულად საუბრისთვის?</p>
+            <div class="stats-row">
+                <div class="stat-item"><strong>4</strong><span>კურსი</span></div>
+                <div class="stat-item"><strong>100+</strong><span>სიტყვა</span></div>
+                <div class="stat-item"><strong>A1</strong><span>დონე</span></div>
+            </div>
         </div>
-        
-        <div class="lesson-list">
-            <a href="lesson1.html" class="card">
-                <div class="icon-box">1</div>
-                <div><strong>პირველი ნაბიჯები</strong><p style="margin:0; font-size:12px;">მისალმება და ანბანი</p></div>
+
+        <div class="lesson-grid">
+            <a href="hello.html" class="lesson-card">
+                <div class="icon-circle bg-blue">👋</div>
+                <h3>მისალმება</h3>
+                <p>პირველი ნაბიჯები</p>
             </a>
-            <a href="numbers.html" class="card">
-                <div class="icon-box">2</div>
-                <div><strong>რიცხვები და დრო</strong><p style="margin:0; font-size:12px;">1-100, დღეები, თვეები</p></div>
+
+            <a href="verbs.html" class="lesson-card">
+                <div class="icon-circle bg-red">⚙️</div>
+                <h3>ზმნები</h3>
+                <p>ყოფნა და ქონა</p>
             </a>
-            <a href="verbs.html" class="card">
-                <div class="icon-box">3</div>
-                <div><strong>მთავარი ზმნები</strong><p style="margin:0; font-size:12px;">Être და Avoir (ყოფნა/ქონა)</p></div>
+
+            <a href="numbers.html" class="lesson-card">
+                <div class="icon-circle bg-green">🔢</div>
+                <h3>რიცხვები</h3>
+                <p>1 - 100 სრულად</p>
+            </a>
+
+            <a href="family.html" class="lesson-card">
+                <div class="icon-circle bg-purple">👨‍👩‍👧</div>
+                <h3>ოჯახი</h3>
+                <p>ხალხი და კავშირები</p>
+            </a>
+            
+            <a href="#" class="lesson-card" style="opacity: 0.6;">
+                <div class="icon-circle" style="background:#f0f0f0; color:#999;">⏳</div>
+                <h3>დრო</h3>
+                <p>მალე დაემატება...</p>
             </a>
         </div>
     </div>
