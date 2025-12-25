@@ -1,62 +1,80 @@
+:root {
+    --primary: #002395;
+    --secondary: #ED2939;
+    --bg: #f8f9fa;
+    --text: #2d3436;
+}
+
 body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    background-color: #f0f2f5;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
     margin: 0;
+    padding: 0;
     display: flex;
     justify-content: center;
-    align-items: center;
-    height: 100vh;
 }
 
-.main-container {
-    text-align: center;
-    width: 90%;
-    max-width: 400px;
-}
-
-header {
-    margin-bottom: 30px;
-}
-
-.logo-text {
-    font-size: 2.5rem;
-    color: #002395;
-    margin: 0;
-}
-
-.grid-menu {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 15px;
-}
-
-.menu-item {
+.app-container {
+    width: 100%;
+    max-width: 500px;
+    min-height: 100vh;
     background: white;
-    text-decoration: none;
-    color: #333;
+    box-shadow: 0 0 20px rgba(0,0,0,0.05);
+}
+
+.app-header {
+    background: var(--primary);
+    color: white;
+    padding: 40px 20px;
+    text-align: center;
+    border-bottom-left-radius: 30px;
+    border-bottom-right-radius: 30px;
+}
+
+.lesson-grid {
     padding: 20px;
+}
+
+.lesson-card {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    padding: 20px;
+    margin-bottom: 15px;
+    border-radius: 18px;
+    text-decoration: none;
+    color: inherit;
+    border: 1px solid #eee;
+    transition: transform 0.2s;
+}
+
+.lesson-card:active {
+    transform: scale(0.98);
+}
+
+.lesson-icon {
+    width: 50px;
+    height: 50px;
+    background: #eef2ff;
     border-radius: 12px;
     display: flex;
     align-items: center;
-    gap: 15px;
+    justify-content: center;
     font-weight: bold;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    transition: 0.2s;
+    color: var(--primary);
+    margin-right: 15px;
 }
 
-.menu-item:hover {
-    transform: scale(1.02);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-}
+.lesson-info h3 { margin: 0; font-size: 1.1rem; }
+.lesson-info p { margin: 5px 0 0; font-size: 0.9rem; color: #636e72; }
 
-.menu-item .icon {
-    font-size: 1.5rem;
-    background: #f0f2f5;
-    padding: 10px;
-    border-radius: 10px;
-}
+.locked { opacity: 0.5; filter: grayscale(1); cursor: not-allowed; }
 
-.disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+/* ტესტის სტილები */
+.quiz-section { margin-top: 30px; padding: 20px; background: #f1f3f5; border-radius: 15px; }
+.quiz-option { 
+    display: block; width: 100%; padding: 12px; margin: 10px 0;
+    border: 2px solid #ddd; border-radius: 10px; background: white;
+    cursor: pointer; text-align: left; font-size: 1rem;
 }
