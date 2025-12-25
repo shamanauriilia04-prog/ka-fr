@@ -1,0 +1,66 @@
+/* მთლიანი გვერდის სტილი */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+}
+
+/* ნავიგაცია */
+header {
+    background-color: #002395; /* ლურჯი */
+    color: white;
+    padding: 20px;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+}
+
+nav ul li {
+    margin-left: 20px;
+}
+
+nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+/* მთავარი ბლოკი */
+.hero {
+    text-align: center;
+    padding: 100px 20px;
+}
+
+h1 {
+    color: #002395;
+    font-size: 3rem;
+}
+
+.cta-button {
+    display: inline-block;
+    background-color: #ED2939; /* წითელი */
+    color: white;
+    padding: 15px 30px;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-top: 20px;
+    font-weight: bold;
+}
+
+footer {
+    text-align: center;
+    padding: 20px;
+    background: #eee;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
