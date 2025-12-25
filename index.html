@@ -2,36 +2,45 @@
 <html lang="ka">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Apprendre le Français</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ისწავლე ფრანგული</title>
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Francais">
+    <meta name="apple-mobile-web-app-title" content="Français">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Helvetica+Neue&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 <body>
 
     <div class="app-container">
-        <header>
-            <div class="status-bar"></div>
-            <h1>Bonjour ! 👋</h1>
-            <p>მზად ხარ ფრანგულის სასწავლად?</p>
+        <header class="header-card">
+            <div class="header-content">
+                <h1>Bonjour ! 👋</h1>
+                <p>მზად ხარ ფრანგულის სასწავლად?</p>
+            </div>
+            <div class="header-decoration">🇫🇷</div>
         </header>
 
         <section class="progress-section">
-            <div class="progress-bar">
-                <div class="progress-fill" style="width: 0%"></div>
+            <div class="progress-info">
+                <span>A1 დონე</span>
+                <span>15%</span>
             </div>
-            <span>A1 დონე - 0%</span>
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
         </section>
 
         <main id="lesson-list">
+            
             <div class="lesson-card" onclick="openLesson('alphabet')">
-                <div class="lesson-icon">🇫🇷</div>
+                <div class="lesson-icon">
+                    <span>ABC</span>
+                </div>
                 <div class="lesson-info">
                     <h3>L'Alphabet</h3>
                     <p>ანბანი და ფონეტიკა</p>
@@ -39,17 +48,38 @@
                 <div class="chevron">›</div>
             </div>
 
-            <div class="lesson-card" onclick="openLesson('intro')">
-                <div class="lesson-icon">💬</div>
+            <div class="lesson-card" onclick="openLesson('salutations')">
+                <div class="lesson-icon">
+                    <span>💬</span>
+                </div>
                 <div class="lesson-info">
                     <h3>Salutations</h3>
                     <p>მისალმება და გაცნობა</p>
                 </div>
                 <div class="chevron">›</div>
             </div>
+
+            <div class="lesson-card" onclick="openLesson('numbers')">
+                <div class="lesson-icon">
+                    <span>123</span>
+                </div>
+                <div class="lesson-info">
+                    <h3>Les Nombres</h3>
+                    <p>რიცხვები და დათვლა</p>
+                </div>
+                <div class="chevron">›</div>
+            </div>
+
         </main>
     </div>
 
-    <script src="app.js"></script>
+    <script>
+        function openLesson(lessonId) {
+            console.log("Opening lesson: " + lessonId);
+            // აქ მოგვიანებით დავწერთ გაკვეთილის შინაარსის გამოჩენას
+            alert("გაკვეთილი " + lessonId + " მალე დაემატება!");
+        }
+    </script>
+
 </body>
 </html>
