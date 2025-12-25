@@ -3,198 +3,154 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>საკვები და რესტორანი - Premium</title>
+    <title>საჭმელი - Progress Mode</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        :root { --food-color: #f39c12; --bg-soft: #fff9f0; }
+        :root { --accent: #f39c12; --success: #2ecc71; }
+        .progress-container { width: 100%; height: 10px; background: #eee; position: sticky; top: 0; z-index: 100; }
+        #progress-bar { width: 0%; height: 100%; background: var(--success); transition: 0.4s; }
         
-        .verb-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 30px; }
+        .category-scroll { display: flex; gap: 10px; overflow-x: auto; padding: 15px; scrollbar-width: none; background: #fff; border-bottom: 1px solid #eee; }
+        .tab { padding: 10px 20px; background: #f0f0f0; border-radius: 15px; white-space: nowrap; cursor: pointer; font-weight: bold; border: none; font-size: 14px; }
+        .tab.active { background: var(--accent); color: white; }
+
+        .verb-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 15px; }
         .verb-card {
             background: #fff; padding: 20px; border-radius: 20px;
-            box-shadow: 0 4px 15px rgba(243,156,18,0.05); border: 1px solid #ffeed4;
-            position: relative; text-align: center; transition: 0.2s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 2px solid transparent;
+            position: relative; text-align: center; transition: 0.3s;
         }
-        .verb-card strong { display: block; color: var(--food-color); font-size: 1.1rem; margin-bottom: 5px; }
-        .verb-card span { color: #636e72; font-size: 0.85rem; }
+        .verb-card.learned { border-color: var(--success); background: #f0fff4; }
+        .verb-card strong { display: block; color: var(--accent); font-size: 1rem; margin-bottom: 3px; }
         
         .card-tools { position: absolute; top: 8px; right: 8px; display: flex; flex-direction: column; gap: 5px; }
-        .tool-btn {
-            background: var(--bg-soft); border: none; width: 28px; height: 28px;
-            border-radius: 50%; font-size: 0.8rem; cursor: pointer; color: var(--food-color);
-        }
-
-        .category-scroll { display: flex; gap: 10px; overflow-x: auto; padding: 10px 0 20px; scrollbar-width: none; }
-        .tab {
-            padding: 10px 20px; background: white; border: 1px solid #ddd;
-            border-radius: 15px; white-space: nowrap; cursor: pointer; font-weight: bold; font-size: 14px;
-        }
-        .tab.active { background: var(--food-color); color: white; border-color: var(--food-color); }
-
-        .practice-zone {
-            background: white; border-radius: 30px; padding: 25px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1); border: 2px solid #ffeed4;
-        }
-        .modern-input {
-            width: 100%; padding: 15px; border: 2px solid #e0e0e0; border-radius: 15px;
-            font-size: 1.1rem; text-align: center; outline: none; box-sizing: border-box;
-        }
-        .modern-input:focus { border-color: var(--food-color); }
+        .tool-btn { background: #f0f0f0; border: none; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; }
         
-        .btn-main {
-            flex: 1; padding: 15px; border-radius: 15px; border: none;
-            font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+        #test-btn {
+            display: none; margin: 20px; padding: 18px; background: var(--success); color: white; 
+            border: none; border-radius: 15px; font-weight: bold; width: calc(100% - 40px); cursor: pointer;
         }
-        .btn-listen { background: var(--food-color); color: white; }
-        .btn-next { background: #1c1c1e; color: white; width: 100%; margin-top: 10px; }
 
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); }
-        .modal-content { background: white; margin: 40% auto; padding: 25px; border-radius: 25px; width: 80%; max-width: 320px; text-align: center; }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); }
+        .modal-content { background: white; margin: 30% auto; padding: 30px; border-radius: 25px; width: 80%; text-align: center; }
     </style>
 </head>
 <body>
+    <div class="progress-container"><div id="progress-bar"></div></div>
+    
     <div class="app-container">
-        <div class="header" style="padding:15px; background: var(--food-color);">
-            <a href="index.html" style="color:white; float:left; text-decoration:none; font-size:1.5rem;">←</a>
-            <h2>საკვები და რესტორანი</h2>
+        <div class="header" style="padding:15px; background: var(--accent); color:white;">
+            <a href="index.html" style="color:white; float:left; text-decoration:none;">←</a>
+            <h2 style="margin:0">LA NOURRITURE</h2>
         </div>
 
-        <div style="padding: 20px;">
-            <div class="category-scroll">
-                <div class="tab active" onclick="setCat('basic')">ძირითადი</div>
-                <div class="tab" onclick="setCat('fruits')">ხილი/ბოსტნეული</div>
-                <div class="tab" onclick="setCat('drinks')">სასმელები</div>
-                <div class="tab" onclick="setCat('restaurant')">რესტორანში</div>
-            </div>
-
-            <div class="verb-grid" id="dataGrid"></div>
-
-            <div class="practice-zone">
-                <p id="ka-phrase" style="font-size: 1.3rem; font-weight: bold; margin: 10px 0;">პური</p>
-                <div style="display:flex; gap:10px;">
-                    <button class="btn-main btn-listen" onclick="speakTarget()">🔊 მოსმენა</button>
-                    <button class="btn-main" style="background:#333; color:white;" onclick="listenVoice()">🎤 თქვი</button>
-                </div>
-                <input type="text" class="modern-input" id="write-input" placeholder="დაწერე ფრანგულად..." oninput="checkWriting()" style="margin-top:15px;">
-                <div id="feedback" style="height:25px; margin-top:10px; font-weight:bold; text-align:center;"></div>
-                <button class="btn-main btn-next" onclick="nextEx()">შემდეგი →</button>
-            </div>
+        <div class="category-scroll">
+            <button class="tab active" onclick="setCat('basic')">პროდუქტები</button>
+            <button class="tab" onclick="setCat('fruits')">ხილი/ბოსტნეული</button>
+            <button class="tab" onclick="setCat('drinks')">სასმელები</button>
+            <button class="tab" onclick="setCat('phrases')">რესტორანი</button>
         </div>
+
+        <div id="dataGrid" class="verb-grid"></div>
+        <button id="test-btn" onclick="startTest()">🏆 ჩააბარე ტესტი (100%)</button>
     </div>
 
     <div id="infoModal" class="modal">
         <div class="modal-content">
-            <h3 id="modal-title" style="color:var(--food-color)"></h3>
-            <p id="modal-text" style="color:#636e72; line-height:1.5;"></p>
-            <button onclick="closeModal()" style="background:var(--food-color); color:white; border:none; padding:12px; width:100%; border-radius:12px; margin-top:15px;">გავიგე</button>
+            <h3 id="modal-title"></h3>
+            <p id="modal-text"></p>
+            <button onclick="closeModal()" style="background:var(--accent); color:white; border:none; padding:12px; width:100%; border-radius:12px;">გავიგე</button>
         </div>
     </div>
 
     <script>
+        const lessonId = "food_lesson";
         const library = [
-            // BASIC
             { fr: "Le pain", ka: "პური", cat: "basic", tip: "[ლე პენ]" },
             { fr: "Le fromage", ka: "ყველი", cat: "basic", tip: "[ლე ფრომაჟ]" },
-            { fr: "Le beurre", ka: "კარაქი", cat: "basic", tip: "[ლე ბერ]" },
-            { fr: "L'œuf", ka: "კვერცხი", cat: "basic", tip: "[ლეფ]" },
             { fr: "Le sucre", ka: "შაქარი", cat: "basic", tip: "[ლე სუკრ]" },
-            { fr: "Le sel", ka: "მარილი", cat: "basic", tip: "[ლე სელ]" },
             { fr: "La viande", ka: "ხორცი", cat: "basic", tip: "[ლა ვიანდ]" },
-            { fr: "Le poulet", ka: "ქათამი", cat: "basic", tip: "[ლე პულე]" },
-            { fr: "Le poisson", ka: "თევზი", cat: "basic", tip: "[ლე პუასონ]" },
-            // FRUITS & VEG
             { fr: "La pomme", ka: "ვაშლი", cat: "fruits", tip: "[ლა პომ]" },
             { fr: "La banane", ka: "ბანანი", cat: "fruits", tip: "[ლა ბანან]" },
-            { fr: "L'orange", ka: "ფორთოხალი", cat: "fruits", tip: "[ლორანჟ]" },
             { fr: "La tomate", ka: "პომიდორი", cat: "fruits", tip: "[ლა ტომატ]" },
-            { fr: "La pomme de terre", ka: "კარტოფილი", cat: "fruits", tip: "სიტყვასიტყვით: მიწის ვაშლი!" },
-            // DRINKS
-            { fr: "L'eau", ka: "წყალი", cat: "drinks", tip: "იწერება 3 ასოთი, იკითხება 1: [ო]" },
+            { fr: "L'eau", ka: "წყალი", cat: "drinks", tip: "[ლო]" },
             { fr: "Le café", ka: "ყავა", cat: "drinks", tip: "[ლე კაფე]" },
-            { fr: "Le thé", ka: "ჩაი", cat: "drinks", tip: "[ლე ტე]" },
-            { fr: "Le lait", ka: "რძე", cat: "drinks", tip: "[ლე ლე]" },
             { fr: "Le vin", ka: "ღვინო", cat: "drinks", tip: "[ლე ვენ]" },
-            // RESTAURANT
-            { fr: "Le menu", ka: "მენიუ", cat: "restaurant", tip: "[ლე მენიუ]" },
-            { fr: "L'addition", ka: "ანგარიში", cat: "restaurant", tip: "რესტორანში გადახდისას: [ლადისიონ]" },
-            { fr: "Le petit-déjeuner", ka: "საუზმე", cat: "restaurant", tip: "[ლე პეტი-დეჟენე]" },
-            { fr: "Le déjeuner", ka: "სადილი", cat: "restaurant", tip: "[ლე დეჟენე]" },
-            { fr: "Le dîner", ka: "ვახშამი", cat: "restaurant", tip: "[ლე დინე]" },
-            { fr: "Je voudrais...", ka: "მე მსურს...", cat: "restaurant", tip: "შეკვეთის თავაზიანი ფორმა." }
+            { fr: "Le menu", ka: "მენიუ", cat: "phrases", tip: "[ლე მენიუ]" },
+            { fr: "L'addition", ka: "ანგარიში", cat: "phrases", tip: "[ლადისიონ]" },
+            { fr: "Je voudrais", ka: "მე მსურს", cat: "phrases", tip: "[ჟე ვუდრე]" }
         ];
 
+        let learnedWords = JSON.parse(localStorage.getItem(lessonId)) || [];
         let activeCat = "basic";
-        let currentList = [];
-        let curIdx = 0;
 
-        function setCat(c) {
-            activeCat = c;
-            currentList = library.filter(i => i.cat === c);
-            document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.getAttribute('onclick').includes(c)));
-            curIdx = 0;
+        function setCat(cat) {
+            activeCat = cat;
+            document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.getAttribute('onclick').includes(cat)));
             renderGrid();
-            updatePractice();
         }
 
         function renderGrid() {
             const grid = document.getElementById('dataGrid');
-            grid.innerHTML = currentList.map((item, i) => `
-                <div class="verb-card">
+            const filtered = library.filter(n => n.cat === activeCat);
+            grid.innerHTML = filtered.map((item, i) => `
+                <div class="verb-card ${learnedWords.includes(item.fr) ? 'learned' : ''}" id="card-${item.fr.replace(/[' ]/g, '-')}">
                     <div class="card-tools">
-                        <button class="tool-btn" onclick="speak('${item.fr}')">🔊</button>
-                        <button class="tool-btn" onclick="showTip(${i})">?</button>
+                        <button class="tool-btn" onclick="handleListen('${item.fr}')">🔊</button>
+                        <button class="tool-btn" onclick="showTip('${item.fr}')">?</button>
                     </div>
                     <strong>${item.fr}</strong>
                     <span>${item.ka}</span>
                 </div>
             `).join('');
+            updateProgress();
         }
 
-        function updatePractice() {
-            document.getElementById('ka-phrase').innerText = currentList[curIdx].ka;
-            document.getElementById('write-input').value = "";
-            document.getElementById('feedback').innerText = "";
-        }
-
-        function checkWriting() {
-            if(document.getElementById('write-input').value.toLowerCase().trim() === currentList[curIdx].fr.toLowerCase()) {
-                document.getElementById('feedback').innerText = "✅ გემრიელად სწორია!";
-                document.getElementById('feedback').style.color = "#2ecc71";
+        function handleListen(text) {
+            speak(text);
+            if (!learnedWords.includes(text)) {
+                learnedWords.push(text);
+                localStorage.setItem(lessonId, JSON.stringify(learnedWords));
+                const card = document.getElementById(`card-${text.replace(/[' ]/g, '-')}`);
+                if(card) card.classList.add('learned');
+                updateProgress();
             }
         }
 
-        function nextEx() {
-            curIdx = (curIdx + 1) % currentList.length;
-            updatePractice();
-        }
-
-        function speak(t) {
-            const u = new SpeechSynthesisUtterance(t);
+        function speak(text) {
+            window.speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(text);
             u.lang = 'fr-FR';
-            speechSynthesis.speak(u);
+            u.rate = 0.8;
+            const voices = window.speechSynthesis.getVoices();
+            const frVoice = voices.find(v => v.lang.startsWith('fr') && v.name.includes('Google'));
+            if (frVoice) u.voice = frVoice;
+            window.speechSynthesis.speak(u);
         }
 
-        function speakTarget() { speak(currentList[curIdx].fr); }
+        function updateProgress() {
+            const percent = (learnedWords.length / library.length) * 100;
+            document.getElementById('progress-bar').style.width = percent + '%';
+            if (percent >= 100) document.getElementById('test-btn').style.display = 'block';
+            localStorage.setItem(lessonId + "_percent", Math.round(percent));
+        }
 
-        function showTip(i) {
-            document.getElementById('modal-title').innerText = currentList[i].fr;
-            document.getElementById('modal-text').innerText = currentList[i].tip;
+        function startTest() {
+            alert("Bon Appétit! კვების თემა წარმატებით დასრულდა.");
+            localStorage.setItem(lessonId + "_completed", "true");
+            window.location.href = "index.html";
+        }
+
+        function showTip(fr) {
+            const item = library.find(n => n.fr === fr);
+            document.getElementById('modal-title').innerText = item.fr;
+            document.getElementById('modal-text').innerText = item.tip;
             document.getElementById('infoModal').style.display = 'block';
         }
 
         function closeModal() { document.getElementById('infoModal').style.display = 'none'; }
-
-        function listenVoice() {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            const rec = new SpeechRecognition();
-            rec.lang = 'fr-FR';
-            rec.onresult = (e) => {
-                if(e.results[0][0].transcript.toLowerCase().includes(currentList[curIdx].fr.toLowerCase()))
-                    document.getElementById('feedback').innerText = "🎤 ხმა სწორია!";
-            };
-            rec.start();
-        }
-
-        setCat('basic');
+        window.speechSynthesis.onvoiceschanged = () => renderGrid();
+        renderGrid();
     </script>
 </body>
 </html>
