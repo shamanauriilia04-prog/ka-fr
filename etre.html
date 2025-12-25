@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Être - Bonjour</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .verb-row {
+            background: white; padding: 15px; border-radius: 12px;
+            margin-bottom: 10px; display: flex; justify-content: space-between;
+            align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .btn-play { background: #002395; color: white; border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="header" style="padding:15px;">
+            <a href="verbs.html" style="color:white; float:left; text-decoration:none;">←</a>
+            <h2>ÊTRE - ყოფნა</h2>
+        </div>
+
+        <div style="padding: 20px;">
+            <div class="verb-row">
+                <div><strong>Je suis</strong><p style="margin:0; font-size:13px; color:gray;">მე ვარ</p></div>
+                <button class="btn-play" onclick="speak('Je suis')">🔊</button>
+            </div>
+            <div class="verb-row">
+                <div><strong>Tu es</strong><p style="margin:0; font-size:13px; color:gray;">შენ ხარ</p></div>
+                <button class="btn-play" onclick="speak('Tu es')">🔊</button>
+            </div>
+            <div class="verb-row">
+                <div><strong>Il / Elle est</strong><p style="margin:0; font-size:13px; color:gray;">ის არის</p></div>
+                <button class="btn-play" onclick="speak('Il est')">🔊</button>
+            </div>
+            <div class="verb-row">
+                <div><strong>Nous sommes</strong><p style="margin:0; font-size:13px; color:gray;">ჩვენ ვართ</p></div>
+                <button class="btn-play" onclick="speak('Nous sommes')">🔊</button>
+            </div>
+            <div class="verb-row">
+                <div><strong>Vous êtes</strong><p style="margin:0; font-size:13px; color:gray;">თქვენ ხართ</p></div>
+                <button class="btn-play" onclick="speak('Vous êtes')">🔊</button>
+            </div>
+            <div class="verb-row">
+                <div><strong>Ils / Elles sont</strong><p style="margin:0; font-size:13px; color:gray;">ისინი არიან</p></div>
+                <button class="btn-play" onclick="speak('Ils sont')">🔊</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        function speak(text) {
+            const u = new SpeechSynthesisUtterance(text);
+            u.lang = 'fr-FR';
+            window.speechSynthesis.speak(u);
+        }
+    </script>
+</body>
+</html>
