@@ -1,95 +1,145 @@
+/* ძირითადი ცვლადები ფერებისთვის */
 :root {
     --primary: #4158D0;
     --secondary: #C850C0;
+    --accent: #FFCC70;
     --bg-color: #F2F4F7;
-    --card-bg: #ffffff;
+    --card-white: #ffffff;
+    --text-dark: #2d3436;
+    --text-gray: #86868b;
     --shadow: 0 10px 25px rgba(0,0,0,0.05);
 }
 
+/* მთლიანი გვერდის პარამეტრები */
 body {
     margin: 0;
     padding: 0;
-    font-family: -apple-system, system-ui, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     background-color: var(--bg-color);
     display: flex;
     justify-content: center;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
 }
 
 .app-container {
     width: 100%;
-    max-width: 400px; /* ვაკეთებთ მობილურის ზომას */
-    padding: 20px;
+    max-width: 430px; /* iPhone Pro Max-ის სიგანე */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
-header {
-    margin-top: 30px;
-    margin-bottom: 30px;
-    text-align: left;
+/* ფერადი და მომრგვალებული ზედა ნაწილი (Header) */
+.header-card {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    padding: 60px 25px 45px 25px;
+    border-radius: 0 0 45px 45px;
+    box-shadow: 0 12px 30px rgba(65, 88, 208, 0.25);
+    position: relative;
+    overflow: hidden;
+    color: white;
 }
 
-header h1 {
-    font-size: 32px;
-    color: var(--primary);
+/* დეკორატიული დროშა ფონზე */
+.header-decoration {
+    position: absolute;
+    right: -15px;
+    bottom: -15px;
+    font-size: 110px;
+    opacity: 0.15;
+    transform: rotate(-15deg);
+    user-select: none;
+}
+
+.header-card h1 {
+    font-size: 36px;
+    font-weight: 800;
     margin: 0;
+    letter-spacing: -1px;
 }
 
-header p {
-    color: #636e72;
-    font-size: 16px;
-    margin-top: 5px;
+.header-card p {
+    font-size: 18px;
+    margin: 10px 0 0 0;
+    opacity: 0.9;
+    font-weight: 400;
 }
 
-/* პროგრეს ბარი */
-.progress-section {
-    background: var(--card-bg);
-    padding: 20px;
-    border-radius: 20px;
+/* მთავარი კონტენტის არეალი */
+.content {
+    padding: 25px;
+    margin-top: -25px; /* ჰედერზე ოდნავ გადაფარვისთვის */
+    z-index: 10;
+}
+
+/* პროგრესის ბარათი */
+.progress-card {
+    background: var(--card-white);
+    padding: 22px;
+    border-radius: 28px;
     box-shadow: var(--shadow);
     margin-bottom: 25px;
+    border: 1px solid rgba(255,255,255,0.8);
+}
+
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--text-dark);
 }
 
 .progress-bar {
     height: 10px;
-    background: #edf2f7;
-    border-radius: 10px;
-    margin-bottom: 10px;
+    background: #EDF2F7;
+    border-radius: 12px;
+    overflow: hidden;
 }
 
 .progress-fill {
+    width: 15%; /* აქედან იმართება პროგრესი */
     height: 100%;
     background: linear-gradient(90deg, var(--primary), var(--secondary));
-    border-radius: 10px;
-    width: 15%; 
+    border-radius: 12px;
+    transition: width 0.5s ease-in-out;
 }
 
-/* გაკვეთილების ბარათები - აქ არის მთავარი ცვლილება */
+/* გაკვეთილების ბარათების სტილი */
 .lesson-card {
-    background: var(--card-bg);
-    border-radius: 24px;
-    padding: 16px 20px; /* უფრო თანაბარი დაშორება */
+    background: var(--card-white);
+    border-radius: 26px;
+    padding: 18px;
     display: flex;
     align-items: center;
-    margin-bottom: 16px;
-    box-shadow: var(--shadow);
+    margin-bottom: 18px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.03);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
     border: 1px solid rgba(0,0,0,0.02);
-    transition: transform 0.2s ease;
 }
 
+/* დაჭერის ეფექტი */
 .lesson-card:active {
-    transform: scale(0.97);
+    transform: scale(0.96);
+    background-color: #fcfcfc;
 }
 
-.lesson-icon {
-    width: 54px;
-    height: 54px;
-    background: #f0f3ff; /* ღია ფონი ხატულისთვის */
-    border-radius: 16px;
+/* ხატულების კონტეინერი */
+.icon-box {
+    width: 58px;
+    height: 58px;
+    background: #F0F3FF;
+    border-radius: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 24px;
-    margin-right: 15px;
-    flex-shrink: 0; /* ხატულა რომ არ შეიკუმშოს */
+    font-size: 26px;
+    margin-right: 18px;
+    flex-shrink: 0;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
 }
 
 .lesson-info {
@@ -98,19 +148,22 @@ header p {
 
 .lesson-info h3 {
     margin: 0;
-    font-size: 18px;
+    font-size: 19px;
+    color: var(--text-dark);
     font-weight: 700;
-    color: #2d3436;
+    letter-spacing: -0.3px;
 }
 
 .lesson-info p {
-    margin: 2px 0 0;
-    color: #b2bec3;
+    margin: 5px 0 0 0;
     font-size: 14px;
+    color: var(--text-gray);
 }
 
+/* ისარი მარჯვნივ */
 .chevron {
-    color: #dfe6e9;
-    font-size: 22px;
+    color: #D1D1D6;
+    font-size: 24px;
     font-weight: bold;
+    margin-left: 10px;
 }
