@@ -2,42 +2,69 @@
 <html lang="ka">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Être - პრაქტიკა</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Être - სრული კურსი</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        .practice-section { background: #eef2ff; padding: 20px; border-radius: 20px; margin-top: 30px; }
-        .verb-row { background: white; padding: 12px; border-radius: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
-        .btn-play { background: #002395; color: white; border: none; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; }
-        .challenge-box { background: white; padding: 20px; border-radius: 15px; text-align: center; margin-top: 15px; }
-        .mic-active { animation: pulse 1.5s infinite; background: #ED2939 !important; }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(237, 41, 57, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(237, 41, 57, 0); } 100% { box-shadow: 0 0 0 0 rgba(237, 41, 57, 0); } }
+        .verb-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 25px; }
+        .verb-card { background: #fff; padding: 15px; border-radius: 15px; border: 1px solid #e0e0e0; display: flex; flex-direction: column; align-items: center; text-align: center; }
+        .verb-card strong { color: #002395; font-size: 1.1rem; }
+        
+        .practice-box { background: #f8faff; border-radius: 25px; padding: 25px; border: 2px solid #eef2ff; }
+        
+        .control-btns { display: flex; gap: 10px; justify-content: center; margin-top: 15px; }
+        .action-btn { 
+            border: none; border-radius: 12px; padding: 12px 20px; font-weight: bold; cursor: pointer;
+            display: flex; align-items: center; gap: 8px; transition: 0.2s;
+        }
+        .btn-speak { background: #002395; color: white; }
+        .btn-mic { background: #ED2939; color: white; }
+        .btn-mic.recording { animation: pulse 1s infinite; }
+        
+        input[type="text"] {
+            width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 12px;
+            margin-top: 15px; text-align: center; font-size: 1rem; outline: none;
+        }
+        input[type="text"]:focus { border-color: #002395; }
+        
+        .next-btn { 
+            width: 100%; background: #2ecc71; color: white; border: none; padding: 15px; 
+            border-radius: 15px; font-weight: bold; margin-top: 20px; cursor: pointer;
+        }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
     </style>
 </head>
 <body>
     <div class="app-container">
         <div class="header" style="padding:15px;">
-            <a href="verbs.html" style="color:white; float:left; text-decoration:none;">←</a>
-            <h2>ÊTRE - პრაქტიკა</h2>
+            <a href="verbs.html" style="color:white; float:left; text-decoration:none;">← უკან</a>
+            <h2>ÊTRE (ყოფნა)</h2>
         </div>
 
         <div style="padding: 20px;">
-            <h3>1. უღლება</h3>
-            <div class="verb-row"><span>Je suis (მე ვარ)</span> <button class="btn-play" onclick="speak('Je suis')">🔊</button></div>
-            <div class="verb-row"><span>Tu es (შენ ხარ)</span> <button class="btn-play" onclick="speak('Tu es')">🔊</button></div>
-            <div class="verb-row"><span>Il/Elle est (ის არის)</span> <button class="btn-play" onclick="speak('Il est')">🔊</button></div>
+            <h3>1. სრული უღლება</h3>
+            <div class="verb-grid">
+                <div class="verb-card" onclick="speak('Je suis')"><strong>Je suis</strong><span>მე ვარ</span></div>
+                <div class="verb-card" onclick="speak('Tu es')"><strong>Tu es</strong><span>შენ ხარ</span></div>
+                <div class="verb-card" onclick="speak('Il est')"><strong>Il est</strong><span>ის არის</span></div>
+                <div class="verb-card" onclick="speak('Nous sommes')"><strong>Nous sommes</strong><span>ჩვენ ვართ</span></div>
+                <div class="verb-card" onclick="speak('Vous êtes')"><strong>Vous êtes</strong><span>თქვენ ხართ</span></div>
+                <div class="verb-card" onclick="speak('Ils sont')"><strong>Ils sont</strong><span>ისინი არიან</span></div>
+            </div>
 
-            <div class="practice-section">
-                <h3>2. ააწყვე ფრაზა (თქვი ხმით)</h3>
-                <div class="challenge-box">
-                    <p id="ka-phrase">მე ვარ ბედნიერი</p>
-                    <h4 id="fr-target" style="color: #002395;">Je suis heureux</h4>
-                    <div id="feedback" style="margin-bottom:10px; font-weight:bold;"></div>
-                    
-                    <button class="btn-play" onclick="speak(document.getElementById('fr-target').innerText)">🔊 მოსმენა</button>
-                    <button id="mic-btn" class="btn-play" style="background: #ED2939; width: auto; padding: 0 20px; border-radius: 10px;" onclick="listenAndCheck()">🎤 თქვი ფრაზა</button>
+            <div class="practice-box">
+                <h3 style="margin-top:0;">2. პრაქტიკა: თქვი და დაწერე</h3>
+                <p id="ka-phrase" style="font-size: 1.2rem; font-weight: bold;">მე ვარ ბედნიერი</p>
+                
+                <div class="control-btns">
+                    <button class="action-btn btn-speak" onclick="speakTarget()">🔊 მოსმენა</button>
+                    <button id="mic-btn" class="action-btn btn-mic" onclick="listen()">🎤 თქვი</button>
                 </div>
-                <button onclick="nextPractice()" style="width:100%; margin-top:10px; padding:10px; border-radius:10px; border:1px solid #002395; background:none; cursor:pointer;">შემდეგი ფრაზა →</button>
+
+                <input type="text" id="write-input" placeholder="ჩაწერე ფრანგულად..." oninput="checkWriting()">
+                <div id="feedback" style="margin-top:10px; font-weight:bold; text-align:center;"></div>
+
+                <button class="next-btn" onclick="nextExercise()">შემდეგი დავალება →</button>
             </div>
         </div>
     </div>
@@ -46,9 +73,10 @@
         const exercises = [
             { ka: "მე ვარ ბედნიერი", fr: "Je suis heureux" },
             { ka: "შენ ხარ სტუდენტი", fr: "Tu es étudiant" },
-            { ka: "ის არის ლამაზი", fr: "Elle est belle" },
+            { ka: "ის არის ფრანგი", fr: "Il est français" },
             { ka: "ჩვენ ვართ მზად", fr: "Nous sommes prêts" },
-            { ka: "თქვენ ხართ მასწავლებელი", fr: "Vous êtes professeur" }
+            { ka: "თქვენ ხართ კეთილი", fr: "Vous êtes gentil" },
+            { ka: "ისინი არიან აქ", fr: "Ils sont ici" }
         ];
         let currentIdx = 0;
 
@@ -58,33 +86,7 @@
             window.speechSynthesis.speak(u);
         }
 
-        function nextPractice() {
-            currentIdx = (currentIdx + 1) % exercises.length;
-            document.getElementById('ka-phrase').innerText = exercises[currentIdx].ka;
-            document.getElementById('fr-target').innerText = exercises[currentIdx].fr;
-            document.getElementById('feedback').innerText = "";
-        }
+        function speakTarget() { speak(exercises[currentIdx].fr); }
 
-        function listenAndCheck() {
-            const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-            recognition.lang = 'fr-FR';
-            const btn = document.getElementById('mic-btn');
-            
-            recognition.onstart = () => btn.classList.add('mic-active');
-            recognition.onresult = (event) => {
-                const speech = event.results[0][0].transcript.toLowerCase();
-                const target = exercises[currentIdx].fr.toLowerCase();
-                if(speech.includes(target.replace(/[.,]/g, ""))) {
-                    document.getElementById('feedback').innerText = "✅ ბრწყინვალეა!";
-                    document.getElementById('feedback').style.color = "green";
-                } else {
-                    document.getElementById('feedback').innerText = "❌ სცადე კიდევ ერთხელ...";
-                    document.getElementById('feedback').style.color = "red";
-                }
-            };
-            recognition.onend = () => btn.classList.remove('mic-active');
-            recognition.start();
-        }
-    </script>
-</body>
-</html>
+        function listen() {
+            const recognition
