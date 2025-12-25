@@ -3,97 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>რიცხვები 1-100 - Premium</title>
+    <title>რიცხვები - Progress Mode</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        :root { --num-color: #2ecc71; --dark-blue: #2c3e50; }
+        :root { --accent: #2ecc71; --success: #27ae60; }
+        .progress-container { width: 100%; height: 10px; background: #eee; position: sticky; top: 0; z-index: 100; }
+        #progress-bar { width: 0%; height: 100%; background: var(--accent); transition: 0.4s; }
         
-        .verb-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 30px; }
+        .category-scroll { display: flex; gap: 10px; overflow-x: auto; padding: 15px; scrollbar-width: none; background: #fff; }
+        .tab { padding: 10px 20px; background: #f0f0f0; border-radius: 15px; white-space: nowrap; cursor: pointer; font-weight: bold; border: none; }
+        .tab.active { background: var(--accent); color: white; }
+
+        .verb-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 15px; }
         .verb-card {
             background: #fff; padding: 20px; border-radius: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #f0f0f0;
-            position: relative; text-align: center; transition: 0.2s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 2px solid transparent;
+            position: relative; text-align: center; transition: 0.3s;
         }
-        .verb-card strong { display: block; color: var(--num-color); font-size: 1.3rem; margin-bottom: 5px; }
+        .verb-card.learned { border-color: var(--accent); background: #f0fff4; }
+        .verb-card strong { display: block; color: var(--accent); font-size: 1.3rem; }
         
         .card-tools { position: absolute; top: 8px; right: 8px; display: flex; flex-direction: column; gap: 5px; }
-        .tool-btn {
-            background: #f0fff4; border: none; width: 28px; height: 28px;
-            border-radius: 50%; font-size: 0.8rem; cursor: pointer; color: var(--num-color);
+        .tool-btn { background: #f0f0f0; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; }
+        
+        #test-btn {
+            display: none; margin: 20px; padding: 18px; background: var(--success); color: white; 
+            border: none; border-radius: 15px; font-weight: bold; width: calc(100% - 40px); cursor: pointer;
+            box-shadow: 0 5px 15px rgba(39,174,96,0.3);
         }
 
-        .category-scroll {
-            display: flex; gap: 10px; overflow-x: auto; padding: 10px 0 20px;
-            scrollbar-width: none; -webkit-overflow-scrolling: touch;
-        }
-        .tab {
-            padding: 10px 20px; background: white; border: 1px solid #ddd;
-            border-radius: 15px; white-space: nowrap; cursor: pointer; font-weight: bold;
-        }
-        .tab.active { background: var(--num-color); color: white; border-color: var(--num-color); }
-
-        .practice-zone {
-            background: white; border-radius: 30px; padding: 25px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1); border: 2px solid #e8fdf0;
-        }
-        .modern-input {
-            width: 100%; padding: 15px; border: 2px solid #e0e0e0; border-radius: 15px;
-            font-size: 1.1rem; text-align: center; outline: none; box-sizing: border-box;
-        }
-        .modern-input:focus { border-color: var(--num-color); }
-        .btn-main {
-            flex: 1; padding: 15px; border-radius: 15px; border: none;
-            font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
-        }
-        .btn-listen { background: var(--num-color); color: white; }
-        .btn-next { background: var(--dark-blue); color: white; width: 100%; margin-top: 10px; }
-
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); }
-        .modal-content { background: white; margin: 40% auto; padding: 25px; border-radius: 25px; width: 80%; max-width: 320px; text-align: center; }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); }
+        .modal-content { background: white; margin: 30% auto; padding: 30px; border-radius: 25px; width: 80%; text-align: center; }
     </style>
 </head>
 <body>
+    <div class="progress-container"><div id="progress-bar"></div></div>
+    
     <div class="app-container">
-        <div class="header" style="padding:15px; background: var(--num-color);">
-            <a href="index.html" style="color:white; float:left; text-decoration:none; font-size:1.5rem;">←</a>
-            <h2>1 - 100 (Les Nombres)</h2>
+        <div class="header" style="padding:15px; background: var(--accent); color:white;">
+            <a href="index.html" style="color:white; float:left; text-decoration:none;">←</a>
+            <h2 style="margin:0">LES NOMBRES</h2>
         </div>
 
-        <div style="padding: 20px;">
-            <div class="category-scroll" id="tabs">
-                <div class="tab active" onclick="setCategory('1-19')">1 - 19</div>
-                <div class="tab" onclick="setCategory('20-69')">20 - 69</div>
-                <div class="tab" onclick="setCategory('70-79')">70 - 79</div>
-                <div class="tab" onclick="setCategory('80-89')">80 - 89</div>
-                <div class="tab" onclick="setCategory('90-100')">90 - 100</div>
-            </div>
-
-            <div class="verb-grid" id="numberGrid"></div>
-
-            <div class="practice-zone">
-                <p id="ka-phrase" style="font-size: 1.4rem; font-weight: bold; margin-bottom: 15px;">ერთი</p>
-                <div style="display:flex; gap:10px;">
-                    <button class="btn-main btn-listen" onclick="speakTarget()">🔊 მოუსმინე</button>
-                    <button class="btn-main" style="background:#333; color:white;" onclick="listenVoice()">🎤 თქვი</button>
-                </div>
-                <input type="text" class="modern-input" id="write-input" placeholder="დაწერე ფრანგულად..." oninput="checkWriting()" style="margin-top:15px;">
-                <div id="feedback" style="height:25px; margin-top:10px; font-weight:bold; text-align:center;"></div>
-                <button class="btn-main btn-next" onclick="nextEx()">შემდეგი რიცხვი →</button>
-            </div>
+        <div class="category-scroll">
+            <button class="tab active" onclick="setCat('1-19')">1-19</button>
+            <button class="tab" onclick="setCat('20-69')">20-69</button>
+            <button class="tab" onclick="setCat('70-89')">70-89</button>
+            <button class="tab" onclick="setCat('90-100')">90-100</button>
         </div>
+
+        <div id="dataGrid" class="verb-grid"></div>
+        <button id="test-btn" onclick="startTest()">🏆 ჩააბარე ტესტი (100%)</button>
     </div>
 
     <div id="infoModal" class="modal">
         <div class="modal-content">
-            <h3 id="modal-title" style="color:var(--num-color)"></h3>
-            <p id="modal-text" style="color:#636e72; line-height:1.5;"></p>
-            <button onclick="closeModal()" style="background:var(--num-color); color:white; border:none; padding:12px; width:100%; border-radius:12px; margin-top:15px;">გავიგე</button>
+            <h3 id="modal-title"></h3>
+            <p id="modal-text"></p>
+            <button onclick="closeModal()" style="background:var(--accent); color:white; border:none; padding:12px; width:100%; border-radius:12px;">გავიგე</button>
         </div>
     </div>
 
     <script>
-        const data = [
-            { fr: "Un", ka: "1", cat: "1-19", tip: "გამოითქმის: [ენ]" },
+        const lessonId = "numbers_lesson";
+        const library = [
+            { fr: "Un", ka: "1", cat: "1-19", tip: "[ენ]" },
             { fr: "Deux", ka: "2", cat: "1-19", tip: "[დე]" },
             { fr: "Trois", ka: "3", cat: "1-19", tip: "[ტრუა]" },
             { fr: "Quatre", ka: "4", cat: "1-19", tip: "[კატრ]" },
@@ -103,103 +77,87 @@
             { fr: "Huit", ka: "8", cat: "1-19", tip: "[უიტ]" },
             { fr: "Neuf", ka: "9", cat: "1-19", tip: "[ნეფ]" },
             { fr: "Dix", ka: "10", cat: "1-19", tip: "[დის]" },
-            { fr: "Onze", ka: "11", cat: "1-19", tip: "[ონზ]" },
-            { fr: "Douze", ka: "12", cat: "1-19", tip: "[დუზ]" },
-            { fr: "Treize", ka: "13", cat: "1-19", tip: "[ტრეზ]" },
-            { fr: "Quatorze", ka: "14", cat: "1-19", tip: "[კატორზ]" },
-            { fr: "Quinze", ka: "15", cat: "1-19", tip: "[კენზ]" },
-            { fr: "Seize", ka: "16", cat: "1-19", tip: "[სეზ]" },
-            { fr: "Dix-sept", ka: "17", cat: "1-19", tip: "10+7: [დის-სეტ]" },
-            { fr: "Dix-huit", ka: "18", cat: "1-19", tip: "10+8: [დიზ-უიტ]" },
-            { fr: "Dix-neuf", ka: "19", cat: "1-19", tip: "10+9: [დის-ნეფ]" },
             { fr: "Vingt", ka: "20", cat: "20-69", tip: "[ვენ]" },
-            { fr: "Vingt et un", ka: "21", cat: "20-69", tip: "20 და 1: [ვენტ-ე-ენ]" },
             { fr: "Trente", ka: "30", cat: "20-69", tip: "[ტრანტ]" },
             { fr: "Quarante", ka: "40", cat: "20-69", tip: "[კარანტ]" },
             { fr: "Cinquante", ka: "50", cat: "20-69", tip: "[სენკანტ]" },
             { fr: "Soixante", ka: "60", cat: "20-69", tip: "[სუასანტ]" },
-            { fr: "Soixante-dix", ka: "70", cat: "70-79", tip: "60+10: ფრანგები 70-ს ასე ამბობენ!" },
-            { fr: "Soixante et onze", ka: "71", cat: "70-79", tip: "60+11: [სუასანტ-ე-ონზ]" },
-            { fr: "Quatre-vingts", ka: "80", cat: "80-89", tip: "4 x 20: ოთხი ოცი!" },
-            { fr: "Quatre-vingტ-un", ka: "81", cat: "80-89", tip: "4 x 20 + 1" },
-            { fr: "Quatre-vingტ-dix", ka: "90", cat: "90-100", tip: "4 x 20 + 10: ოთხი ოცი და ათი!" },
-            { fr: "Quatre-vingტ-onze", ka: "91", cat: "90-100", tip: "4 x 20 + 11" },
+            { fr: "Soixante-dix", ka: "70", cat: "70-89", tip: "60+10" },
+            { fr: "Quatre-vingts", ka: "80", cat: "70-89", tip: "4x20" },
+            { fr: "Quatre-vingt-dix", ka: "90", cat: "90-100", tip: "4x20+10" },
             { fr: "Cent", ka: "100", cat: "90-100", tip: "[სან]" }
         ];
 
+        let learnedWords = JSON.parse(localStorage.getItem(lessonId)) || [];
         let activeCat = "1-19";
-        let currentList = [];
-        let curIdx = 0;
 
-        function setCategory(c) {
-            activeCat = c;
-            currentList = data.filter(n => n.cat === c);
-            document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.innerText.includes(c)));
-            curIdx = 0;
+        function setCat(cat) {
+            activeCat = cat;
+            document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.innerText === cat));
             renderGrid();
-            updatePractice();
         }
 
         function renderGrid() {
-            const grid = document.getElementById('numberGrid');
-            grid.innerHTML = currentList.map((n, i) => `
-                <div class="verb-card">
+            const grid = document.getElementById('dataGrid');
+            const filtered = library.filter(n => n.cat === activeCat);
+            grid.innerHTML = filtered.map((item, i) => `
+                <div class="verb-card ${learnedWords.includes(item.fr) ? 'learned' : ''}" id="card-${item.fr}">
                     <div class="card-tools">
-                        <button class="tool-btn" onclick="speak('${n.fr}')">🔊</button>
-                        <button class="tool-btn" onclick="showTip(${i})">?</button>
+                        <button class="tool-btn" onclick="handleListen('${item.fr}')">🔊</button>
+                        <button class="tool-btn" onclick="showTip('${item.fr}')">?</button>
                     </div>
-                    <strong>${n.fr}</strong>
-                    <span>${n.ka}</span>
+                    <strong>${item.fr}</strong>
+                    <span>${item.ka}</span>
                 </div>
             `).join('');
+            updateProgress();
         }
 
-        function updatePractice() {
-            document.getElementById('ka-phrase').innerText = "რიცხვი: " + currentList[curIdx].ka;
-            document.getElementById('write-input').value = "";
-            document.getElementById('feedback').innerText = "";
-        }
-
-        function checkWriting() {
-            if(document.getElementById('write-input').value.toLowerCase().trim() === currentList[curIdx].fr.toLowerCase()) {
-                document.getElementById('feedback').innerText = "✅ სწორია!";
-                document.getElementById('feedback').style.color = "green";
+        function handleListen(text) {
+            speak(text);
+            if (!learnedWords.includes(text)) {
+                learnedWords.push(text);
+                localStorage.setItem(lessonId, JSON.stringify(learnedWords));
+                const card = document.getElementById(`card-${text}`);
+                if(card) card.classList.add('learned');
+                updateProgress();
             }
         }
 
-        function nextEx() {
-            curIdx = (curIdx + 1) % currentList.length;
-            updatePractice();
-        }
-
-        function speak(t) {
-            const u = new SpeechSynthesisUtterance(t);
+        function speak(text) {
+            window.speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(text);
             u.lang = 'fr-FR';
-            speechSynthesis.speak(u);
+            u.rate = 0.85;
+            const voices = window.speechSynthesis.getVoices();
+            const frVoice = voices.find(v => v.lang.startsWith('fr') && v.name.includes('Google'));
+            if (frVoice) u.voice = frVoice;
+            window.speechSynthesis.speak(u);
         }
 
-        function speakTarget() { speak(currentList[curIdx].fr); }
+        function updateProgress() {
+            const percent = (learnedWords.length / library.length) * 100;
+            document.getElementById('progress-bar').style.width = percent + '%';
+            if (percent >= 100) document.getElementById('test-btn').style.display = 'block';
+            localStorage.setItem(lessonId + "_percent", Math.round(percent));
+        }
 
-        function showTip(i) {
-            document.getElementById('modal-title').innerText = currentList[i].fr;
-            document.getElementById('modal-text').innerText = currentList[i].tip;
+        function startTest() {
+            alert("გილოცავთ! 100-მდე რიცხვები ათვისებულია.");
+            localStorage.setItem(lessonId + "_completed", "true");
+            window.location.href = "index.html";
+        }
+
+        function showTip(fr) {
+            const item = library.find(n => n.fr === fr);
+            document.getElementById('modal-title').innerText = item.fr;
+            document.getElementById('modal-text').innerText = item.tip;
             document.getElementById('infoModal').style.display = 'block';
         }
 
         function closeModal() { document.getElementById('infoModal').style.display = 'none'; }
-
-        function listenVoice() {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            const rec = new SpeechRecognition();
-            rec.lang = 'fr-FR';
-            rec.onresult = (e) => {
-                if(e.results[0][0].transcript.toLowerCase().includes(currentList[curIdx].fr.toLowerCase()))
-                    document.getElementById('feedback').innerText = "🎤 ხმა სწორია!";
-            };
-            rec.start();
-        }
-
-        setCategory('1-19');
+        window.speechSynthesis.onvoiceschanged = () => renderGrid();
+        renderGrid();
     </script>
 </body>
 </html>
