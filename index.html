@@ -3,51 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ისწავლე ფრანგული</title>
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Bonjour - სრული კურსი A1</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-    <div id="main-page" class="app-container">
-        <header class="header-card">
-            <div class="header-decoration">🇫🇷</div>
-            <h1>Bonjour ! 👋</h1>
-            <p>მზად ხარ ფრანგულის სასწავლად?</p>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="progress-bar-container">
+                <div class="progress" id="mainProgress" style="width: 10%;"></div>
+            </div>
+            <h1>🇫🇷 Bonjour A1</h1>
+            <p>სრული სასწავლო კურსი</p>
         </header>
 
-        <div class="content">
-            <div class="progress-card">
-                <div class="progress-header">
-                    <span>A1 დონე</span>
-                    <span id="progress-text">0% მზადაა</span>
-                </div>
-                <div class="progress-bar">
-                    <div id="progress-fill" class="progress-fill" style="width: 0%"></div>
-                </div>
-            </div>
-
-            <div class="lesson-card" onclick="openLesson('alphabet')">
-                <div class="icon-box">🔡</div>
+        <main class="lesson-grid">
+            <a href="lesson1.html" class="lesson-card">
+                <div class="lesson-icon">01</div>
                 <div class="lesson-info">
-                    <h3>L'Alphabet</h3>
-                    <p>ანბანი და გამოთქმა</p>
+                    <h3>პირველი ნაბიჯები</h3>
+                    <p>ანბანი, მისალმება, გამოთქმა</p>
                 </div>
-                <div class="chevron">›</div>
-            </div>
-            </div>
-    </div>
+            </a>
 
-    <div id="lesson-page" class="lesson-overlay" style="display: none;">
-        <header class="lesson-header">
-            <button class="back-btn" onclick="closeLesson()">✕</button>
-            <h2 id="lesson-title">L'Alphabet</h2>
-        </header>
-        <div id="lesson-content" class="lesson-body">
-            </div>
-    </div>
+            <a href="verbs.html" class="lesson-card">
+                <div class="lesson-icon">02</div>
+                <div class="lesson-info">
+                    <h3>ფუნდამენტი: Être & Avoir</h3>
+                    <p>ყოფნა და ქონა + ტესტები</p>
+                </div>
+            </a>
 
-    <script src="app.js"></script>
+            <a href="numbers.html" class="lesson-card">
+                <div class="lesson-icon">03</div>
+                <div class="lesson-info">
+                    <h3>ციფრები და კალენდარი</h3>
+                    <p>1-100, კვირის დღეები, თვეები</p>
+                </div>
+            </a>
+
+            <a href="family.html" class="lesson-card">
+                <div class="lesson-icon">04</div>
+                <div class="lesson-info">
+                    <h3>ჩემი ოჯახი</h3>
+                    <p>ზედსართავი სახელები და აღწერა</p>
+                </div>
+            </a>
+
+            <a href="regular_verbs.html" class="lesson-card">
+                <div class="lesson-icon">05</div>
+                <div class="lesson-info">
+                    <h3>-ER ჯგუფის ზმნები</h3>
+                    <p>Parler, Habiter, Manger...</p>
+                </div>
+            </a>
+        </main>
+    </div>
 </body>
 </html>
