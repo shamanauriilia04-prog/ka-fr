@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ზმნები - Bonjour</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .challenge-container { text-align: center; padding: 30px 20px; }
+        .word-display {
+            background: #fff; padding: 40px; border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-bottom: 25px;
+            min-height: 200px; display: flex; flex-direction: column;
+            justify-content: center; position: relative;
+        }
+        .info-btn {
+            position: absolute; top: 15px; right: 15px;
+            background: #f0f2f5; border: none; border-radius: 50%;
+            width: 35px; height: 35px; cursor: pointer; font-weight: bold; color: #002395;
+        }
+        .nav-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .nav-btn { background: none; border: 1px solid #ddd; padding: 8px 15px; border-radius: 10px; cursor: pointer; color: #636e72; }
+        .main-controls { display: flex; justify-content: center; gap: 20px; }
+        .btn-round { width: 70px; height: 70px; border-radius: 50%; border: none; color: white; font-size: 1.5rem; cursor: pointer; transition: 0.3s; }
+        .btn-audio { background: #002395; }
+        .btn-mic { background: #ED2939; }
+        .recording { animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(237, 41, 57, 0.7); } 70% { box-shadow: 0 0 0 20px rgba(237, 41, 57, 0); } 100% { box-shadow: 0 0 0 0 rgba(237, 41, 57, 0); } }
+        .feedback { font-size: 1.1rem; margin-top: 15px; height: 25px; font-weight: bold; color: #2ecc71; }
+        .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); }
+        .modal-content { background: white; margin: 30% auto; padding: 25px; border-radius: 20px; width: 80%; max-width: 350px; }
+        .close-modal { background: #002395; color: white; border: none; padding: 12px; border-radius: 10px; width: 100%; margin-top: 15px; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="header" style="padding:15px;">
+            <a href="index.html" style="color:white; float:left; text-decoration:none;">← მთავარი</a>
+            <span id="progress-text" style="font-size: 14px; opacity: 0.9;">1 / 12</span>
+        </div>
+
+        <div class="challenge-container">
+            <div class="nav-controls">
+                <button class="nav-btn" id="prevBtn" onclick="changeWord(-1)">← წინა</button>
+                <button class="nav-btn" id="nextBtn" onclick="changeWord(1)">შემდეგი →</button>
+            </div>
+
+            <div class="word-display" id="display-box">
+                <button class="info-btn" onclick="showTip()">?</button>
+                <h2 id="fr-word">Je suis</h2>
+                <p id="ka-word">მე ვარ</p>
+                <div id="feedback" class="feedback"></div>
+            </div>
+
+            <div class="main-controls">
+                <button class="btn-round btn-audio" onclick="playCurrent()">🔊</button>
+                <button class="btn-round btn-mic" id="mic-btn" onclick="startChallenge()">🎤</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="tipModal" class="modal">
+        <div class="modal-content">
+            <h3>💡 გრამატიკა</h3>
+            <p id="tip-text"></p>
+            <button class="close-modal" onclick="closeModal()">გავიგე</button>
+        </div>
+    </div>
+
+    <script>
+        const vocabulary = [
+            // ზმნა ÊTRE (ყოფნა)
+            { fr: "Je suis", ka: "მე ვარ", tip: "გამოიყენება სახელის, პროფესიის ან ეროვნების სათქმელად. მაგ: Je suis Géorgien (მე ქართველი ვარ)." },
+            { fr: "Tu es", ka: "შენ ხარ", tip: "შინაურული ფორმა მეგობართან საუბრისას." },
+            { fr: "Il est", ka: "ის არის (მამრ.)", tip: "Il გამოიყენება მამრობითი სქესისთვის." },
+            { fr: "Elle est", ka: "ის არის (მდედრ.)", tip: "Elle გამოიყენება მდედრობითი სქესისთვის." },
+            { fr: "Nous sommes", ka: "ჩვენ ვართ", tip: "დააკვირდით გამოთქმას: [ნუ სომ]." },
+            { fr: "Vous êtes", ka: "თქვენ ხართ", tip: "გამოიყენება თავაზიანი მიმართვისას ან ბევრ ადამიანთან." },
+            { fr: "Ils sont", ka: "ისინი არიან", tip: "მამრობითი ან შერეული ჯგუფისთვის." },
+            
+            // ზმნა AVOIR (ქონა)
+            { fr: "J'ai", ka: "მე მაქვს", tip: "ფრანგულში ასაკს ამ ზმნით ვამბობთ. მაგ: J'ai 20 ans (მე ვარ 20 წლის - სიტყვასიტყვით: მაქვს 20 წელი)." },
+            { fr: "Tu as", ka: "შენ გაქვს", tip: "გამოითქმის უბრალოდ: [ტიუ ა]." },
+            { fr: "Il a", ka: "მას აქვს", tip: "Il a [ილ ა]." },
+            { fr: "Nous avons", ka: "ჩვენ გვაქვს", tip: "აქ ხდება გადაბმა (Liaison): [ნუზ ავონ]." },
+            { fr: "Ils ont", ka: "მათ აქვთ", tip: "დააკვირდით: Ils sont (არიან) და Ils ont (აქვთ) ძალიან ჰგავს ერთმანეთს!" }
+        ];
+
+        let currentIndex = 0;
+
+        function updateDisplay() {
+            document.getElementById('fr-word').innerText = vocabulary[currentIndex].fr;
+            document.getElementById('ka-word').innerText = vocabulary[currentIndex].ka;
+            document.getElementById('progress-text').innerText = `${currentIndex + 1} / ${vocabulary.length}`;
+            document.getElementById('feedback').innerText = "";
+            document.getElementById('prevBtn').disabled = currentIndex === 0;
+            document.getElementById('nextBtn').disabled = currentIndex === vocabulary.length - 1;
+        }
+
+        function changeWord(direction) {
+            currentIndex += direction;
+            updateDisplay();
+        }
+
+        function playCurrent() {
+            const utterance = new SpeechSynthesisUtterance(vocabulary[currentIndex].fr);
+            utterance.lang = 'fr-FR';
+            utterance.rate = 0.8;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function showTip() {
+            document.getElementById('tip-text').innerText = vocabulary[currentIndex].tip;
+            document.getElementById('tipModal').style.display = "block";
+        }
+
+        function closeModal() { document.getElementById('tipModal').style.display = "none"; }
+
+        function startChallenge() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) { alert("Chrome გამოიყენეთ"); return; }
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'fr-FR';
+            
+            recognition.onstart = () => document.getElementById('mic-btn').classList.add('recording');
+            recognition.onresult = (event) => {
+                const result = event.results[0][0].transcript.toLowerCase();
+                const target = vocabulary[currentIndex].fr.toLowerCase();
+                if (result.includes(target)) {
+                    document.getElementById('feedback').innerText = "✅ ყოჩაღ!";
+                    if (currentIndex < vocabulary.length - 1) setTimeout(() => changeWord(1), 1200);
+                } else {
+                    document.getElementById('feedback').innerText = "❌ სცადე: " + vocabulary[currentIndex].fr;
+                    document.getElementById('feedback').style.color = "#ED2939";
+                }
+            };
+            recognition.onend = () => document.getElementById('mic-btn').classList.remove('recording');
+            recognition.start();
+        }
+
+        updateDisplay();
+    </script>
+</body>
+</html>
