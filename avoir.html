@@ -2,52 +2,64 @@
 <html lang="ka">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Avoir - პრაქტიკა</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Avoir - სრული კურსი</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        .practice-section { background: #fff1f1; padding: 20px; border-radius: 20px; margin-top: 30px; }
-        .verb-row { background: white; padding: 12px; border-radius: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
-        .btn-play { background: #ED2939; color: white; border: none; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; }
-        .challenge-box { background: white; padding: 20px; border-radius: 15px; text-align: center; margin-top: 15px; }
-        .mic-active { animation: pulse 1.5s infinite; background: #333 !important; }
+        /* სტილები იგივეა რაც ზემოთ, მხოლოდ ფერებია სხვა */
+        .verb-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 25px; }
+        .verb-card { background: #fff; padding: 15px; border-radius: 15px; border: 1px solid #e0e0e0; text-align: center; }
+        .verb-card strong { color: #ED2939; font-size: 1.1rem; }
+        .practice-box { background: #fff5f5; border-radius: 25px; padding: 25px; border: 2px solid #ffebeb; }
+        .btn-speak { background: #ED2939; color: white; }
+        .btn-mic { background: #333; color: white; }
+        input[type="text"]:focus { border-color: #ED2939; }
+        .next-btn { width: 100%; background: #ED2939; color: white; border: none; padding: 15px; border-radius: 15px; font-weight: bold; margin-top: 20px; }
     </style>
 </head>
 <body>
     <div class="app-container">
         <div class="header" style="padding:15px; background: #ED2939;">
-            <a href="verbs.html" style="color:white; float:left; text-decoration:none;">←</a>
-            <h2>AVOIR - პრაქტიკა</h2>
+            <a href="verbs.html" style="color:white; float:left; text-decoration:none;">← უკან</a>
+            <h2>AVOIR (ქონა)</h2>
         </div>
 
         <div style="padding: 20px;">
-            <h3>1. უღლება</h3>
-            <div class="verb-row"><span>J'ai (მე მაქვს)</span> <button class="btn-play" onclick="speak('J\'ai')">🔊</button></div>
-            <div class="verb-row"><span>Tu as (შენ გაქვს)</span> <button class="btn-play" onclick="speak('Tu as')">🔊</button></div>
-            <div class="verb-row"><span>Il/Elle a (მას აქვს)</span> <button class="btn-play" onclick="speak('Il a')">🔊</button></div>
+            <h3>1. სრული უღლება</h3>
+            <div class="verb-grid">
+                <div class="verb-card" onclick="speak('J\'ai')"><strong>J'ai</strong><span>მე მაქვს</span></div>
+                <div class="verb-card" onclick="speak('Tu as')"><strong>Tu as</strong><span>შენ გაქვს</span></div>
+                <div class="verb-card" onclick="speak('Il a')"><strong>Il a</strong><span>მას აქვს</span></div>
+                <div class="verb-card" onclick="speak('Nous avons')"><strong>Nous avons</strong><span>ჩვენ გვაქვს</span></div>
+                <div class="verb-card" onclick="speak('Vous avez')"><strong>Vous avez</strong><span>თქვენ გაქვთ</span></div>
+                <div class="verb-card" onclick="speak('Ils ont')"><strong>Ils ont</strong><span>მათ აქვთ</span></div>
+            </div>
 
-            <div class="practice-section">
-                <h3>2. ისაუბრე ფრანგულად</h3>
-                <div class="challenge-box">
-                    <p id="ka-phrase">მე მაქვს მანქანა</p>
-                    <h4 id="fr-target" style="color: #ED2939;">J'ai une voiture</h4>
-                    <div id="feedback" style="margin-bottom:10px; font-weight:bold;"></div>
-                    
-                    <button class="btn-play" onclick="speak(document.getElementById('fr-target').innerText)">🔊 მოსმენა</button>
-                    <button id="mic-btn" class="btn-play" style="background: #333; width: auto; padding: 0 20px; border-radius: 10px;" onclick="listenAndCheck()">🎤 წარმოთქვი</button>
+            <div class="practice-box">
+                <h3 style="margin-top:0;">2. პრაქტიკა: თქვი და დაწერე</h3>
+                <p id="ka-phrase" style="font-size: 1.2rem; font-weight: bold;">მე მაქვს იდეა</p>
+                
+                <div class="control-btns">
+                    <button class="action-btn btn-speak" onclick="speakTarget()">🔊 მოსმენა</button>
+                    <button id="mic-btn" class="action-btn btn-mic" onclick="listen()">🎤 თქვი</button>
                 </div>
-                <button onclick="nextPractice()" style="width:100%; margin-top:10px; padding:10px; border-radius:10px; border:1px solid #ED2939; background:none; cursor:pointer; color:#ED2939;">შემდეგი ფრაზა →</button>
+
+                <input type="text" id="write-input" placeholder="აკრიფე ფრანგულად..." oninput="checkWriting()">
+                <div id="feedback" style="margin-top:10px; font-weight:bold; text-align:center;"></div>
+
+                <button class="next-btn" onclick="nextExercise()">შემდეგი დავალება →</button>
             </div>
         </div>
     </div>
 
     <script>
         const exercises = [
-            { ka: "მე მაქვს მანქანა", fr: "J'ai une voiture" },
-            { ka: "შენ გაქვს წიგნი", fr: "Tu as un livre" },
-            { ka: "მას აქვს ძაღლი", fr: "Il a un chien" },
+            { ka: "მე მაქვს იდეა", fr: "J'ai une idée" },
+            { ka: "შენ გაქვს ძაღლი", fr: "Tu as un chien" },
+            { ka: "მას აქვს მანქანა", fr: "Il a une voiture" },
             { ka: "ჩვენ გვაქვს დრო", fr: "Nous avons le temps" },
-            { ka: "მე ვარ 20 წლის (მაქვს 20 წელი)", fr: "J'ai vingt ans" }
+            { ka: "თქვენ გაქვთ კითხვა", fr: "Vous avez une question" },
+            { ka: "მათ აქვთ სახლი", fr: "Ils ont une maison" }
         ];
         let currentIdx = 0;
 
@@ -57,32 +69,35 @@
             window.speechSynthesis.speak(u);
         }
 
-        function nextPractice() {
-            currentIdx = (currentIdx + 1) % exercises.length;
-            document.getElementById('ka-phrase').innerText = exercises[currentIdx].ka;
-            document.getElementById('fr-target').innerText = exercises[currentIdx].fr;
-            document.getElementById('feedback').innerText = "";
+        function speakTarget() { speak(exercises[currentIdx].fr); }
+
+        function listen() {
+            const recognition = new (window.webkitSpeechRecognition || window.SpeechRecognition)();
+            recognition.lang = 'fr-FR';
+            recognition.onresult = (e) => {
+                if(e.results[0][0].transcript.toLowerCase().includes(exercises[currentIdx].fr.toLowerCase())) 
+                    showFeedback(true, "ხმა: ✅");
+                else showFeedback(false, "ხმა: ❌");
+            };
+            recognition.start();
         }
 
-        function listenAndCheck() {
-            const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-            recognition.lang = 'fr-FR';
-            const btn = document.getElementById('mic-btn');
-            
-            recognition.onstart = () => btn.classList.add('mic-active');
-            recognition.onresult = (event) => {
-                const speech = event.results[0][0].transcript.toLowerCase();
-                const target = exercises[currentIdx].fr.toLowerCase();
-                if(speech.includes(target.replace(/[.,]/g, "").replace("'", " "))) {
-                    document.getElementById('feedback').innerText = "✅ სწორია!";
-                    document.getElementById('feedback').style.color = "green";
-                } else {
-                    document.getElementById('feedback').innerText = "❌ სცადე თავიდან";
-                    document.getElementById('feedback').style.color = "red";
-                }
-            };
-            recognition.onend = () => btn.classList.remove('mic-active');
-            recognition.start();
+        function checkWriting() {
+            if(document.getElementById('write-input').value.toLowerCase() === exercises[currentIdx].fr.toLowerCase())
+                showFeedback(true, "წერა: ✅ სწორია!");
+        }
+
+        function showFeedback(isOk, text) {
+            const fb = document.getElementById('feedback');
+            fb.innerText = text;
+            fb.style.color = isOk ? "#2ecc71" : "#ED2939";
+        }
+
+        function nextExercise() {
+            currentIdx = (currentIdx + 1) % exercises.length;
+            document.getElementById('ka-phrase').innerText = exercises[currentIdx].ka;
+            document.getElementById('write-input').value = "";
+            document.getElementById('feedback').innerText = "";
         }
     </script>
 </body>
