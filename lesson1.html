@@ -8,112 +8,90 @@
 </head>
 <body>
     <div class="app-container">
+        <div class="progress-container"><div id="progress-bar"></div></div>
         <div class="header">
-            <a href="index.html" class="back-btn">←</a>
+            <a href="index.html" style="color:white; float:left; text-decoration:none;">←</a>
             <h2>L'art de saluer</h2>
-            <p>კონტაქტის ხელოვნება</p>
+            <p>მისალმება და კულტურა</p>
         </div>
 
-        <div class="lesson-content">
-            <div id="word-list"></div>
-        </div>
+        <div class="word-list" id="word-list"></div>
+        
+        <a href="test1.html" id="test-trigger">🏆 ჩააბარე ტესტი პროგრესისთვის</a>
     </div>
 
     <script>
         const vocabulary = [
-            { 
-                fr: "Bonjour, Monsieur", 
-                ka: "გამარჯობა, ბატონო", 
-                type: "formal", 
-                tip: "გამოიყენეთ დღისით ნებისმიერ უცხო მამაკაცთან. ფრანგულში 'Monsieur'-ის დამატება ზრდილობის ნიშანია." 
-            },
-            { 
-                fr: "Salut !", 
-                ka: "სალამი / პრივეტ", 
-                type: "informal", 
-                tip: "მხოლოდ მეგობრებთან. ასევე ნიშნავს 'ნახვამდის'-ს." 
-            },
-            { 
-                fr: "Comment allez-vous ?", 
-                ka: "როგორ ბრძანდებით?", 
-                type: "formal", 
-                tip: "თქვენობითი ფორმა. გამოიყენეთ VOUS (თქვენ)." 
-            },
-            { 
-                fr: "Ça va ?", 
-                ka: "როგორ ხარ? / ხომ მშვიდობაა?", 
-                type: "informal", 
-                tip: "ყველაზე პოპულარული ფრაზა მეგობრებში. პასუხიც იგივეა: 'Ça va !'." 
-            },
-            { 
-                fr: "Enchanté", 
-                ka: "სასიამოვნოა თქვენი გაცნობა", 
-                type: "neutral", 
-                tip: "ამბობთ პირველი გაცნობისას." 
-            },
-            { 
-                fr: "Au revoir", 
-                ka: "ნახვამდის", 
-                type: "formal", 
-                tip: "სტანდარტული დამშვიდობება ნებისმიერ სიტუაციაში." 
-            },
-            { 
-                fr: "À bientôt", 
-                ka: "მალე შეხვედრამდე", 
-                type: "neutral", 
-                tip: "როცა იცით, რომ ადამიანს მალე ისევ ნახავთ." 
-            }
+            { fr: "Bonjour", ka: "გამარჯობა / დილა მშვიდობისა", type: "formal", tip: "უნივერსალური დღისით." },
+            { fr: "Bonsoir", ka: "საღამო მშვიდობისა", type: "formal", tip: "საღამოს 6 საათის შემდეგ." },
+            { fr: "Salut", ka: "სალამი / პრივეტ", type: "informal", tip: "მეგობრული და შინაურული." },
+            { fr: "Coucou", ka: "ჰეი!", type: "informal", tip: "ძალიან ახლო მეგობრული." },
+            { fr: "Comment allez-vous ?", ka: "როგორ ბრძანდებით?", type: "formal", tip: "ზრდილობიანი ფორმა." },
+            { fr: "Ça va ?", ka: "როგორ ხარ?", type: "informal", tip: "ყველაზე ხშირი მეგობრებში." },
+            { fr: "Enchanté", ka: "სასიამოვნოა გაცნობა", type: "neutral", tip: "გაცნობის პირველ წამებში." },
+            { fr: "Merci beaucoup", ka: "დიდი მადლობა", type: "neutral", tip: "" },
+            { fr: "De rien", ka: "არაფრის", type: "neutral", tip: "" },
+            { fr: "S'il vous plaît", ka: "თუ შეიძლება", type: "formal", tip: "თქვენობით." },
+            { fr: "Au revoir", ka: "ნახვამდის", type: "formal", tip: "" },
+            { fr: "À plus tard", ka: "მოგვიანებით შეხვედრამდე", type: "informal", tip: "" }
         ];
 
-        function renderWords() {
-            const list = document.getElementById('word-list');
-            list.innerHTML = vocabulary.map((item, i) => `
-                <div class="word-card">
+        let learnedCount = new Set();
+
+        function render() {
+            const container = document.getElementById('word-list');
+            container.innerHTML = vocabulary.map((item, i) => `
+                <div class="word-card" id="card-${i}">
                     <span class="tag ${item.type === 'formal' ? 'tag-formal' : 'tag-informal'}">${item.type}</span>
-                    <span class="word-fr">${item.fr}</span>
-                    <span class="word-ka">${item.ka}</span>
-                    <span class="word-tip">${item.tip}</span>
-                    
-                    <div class="controls">
-                        <button class="btn-circle" onclick="play('${item.fr}')">🔊</button>
-                        <button class="btn-circle btn-mic" id="mic-${i}" onclick="record('${item.fr}', ${i})">🎤</button>
+                    <div style="font-size:1.3rem; font-weight:bold; color:#002395; margin:5px 0;">${item.fr}</div>
+                    <div style="color:#555;">${item.ka}</div>
+                    <div style="font-size:0.8rem; color:#888; margin-top:8px; border-top:1px solid #eee; padding-top:5px;">${item.tip}</div>
+                    <div class="btn-row">
+                        <button class="circle-btn" onclick="play('${item.fr}', ${i})">🔊</button>
+                        <button class="circle-btn mic-btn" id="mic-${i}" onclick="record('${item.fr}', ${i})">🎤</button>
                     </div>
                 </div>
             `).join('');
         }
 
-        function play(text) {
+        function play(text, index) {
             const u = new SpeechSynthesisUtterance(text);
             u.lang = 'fr-FR';
-            u.rate = 0.9;
             window.speechSynthesis.speak(u);
+            markLearned(index);
+        }
+
+        function markLearned(index) {
+            learnedCount.add(index);
+            document.getElementById(`card-${index}`).classList.add('learned');
+            
+            const progress = (learnedCount.size / vocabulary.length) * 100;
+            document.getElementById('progress-bar').style.width = progress + '%';
+            
+            if (learnedCount.size === vocabulary.length) {
+                document.getElementById('test-trigger').style.display = 'block';
+            }
         }
 
         function record(target, idx) {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!SpeechRecognition) return alert("AI Voice არ არის მხარდაჭერილი");
-
-            const rec = new SpeechRecognition();
-            rec.lang = 'fr-FR';
+            const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.lang = 'fr-FR';
             const btn = document.getElementById(`mic-${idx}`);
-            
             btn.classList.add('active');
-            rec.start();
+            recognition.start();
 
-            rec.onresult = (e) => {
+            recognition.onresult = (e) => {
                 const speech = e.results[0][0].transcript.toLowerCase();
-                if (speech.includes(target.toLowerCase().replace(/[?!,.]/g, ''))) {
-                    alert("ბრავო! ✅ სწორი გამოთქმაა.");
-                } else {
-                    alert("თქვენ თქვით: " + speech + ". სცადეთ უფრო მკაფიოდ.");
+                if (speech.includes(target.toLowerCase().replace(/[?!]/g, ''))) {
+                    alert("ბრავო! ✅");
+                    markLearned(idx);
                 }
                 btn.classList.remove('active');
             };
-
-            rec.onerror = () => btn.classList.remove('active');
+            recognition.onerror = () => btn.classList.remove('active');
         }
 
-        renderWords();
+        render();
     </script>
 </body>
 </html>
