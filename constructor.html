@@ -7,50 +7,53 @@
     <link rel="stylesheet" href="style.css">
     <style>
         :root { --const-color: #6c5ce7; }
+        .game-area { padding: 15px; text-align: center; }
         
-        .progress-header { padding: 10px 20px; display: flex; align-items: center; gap: 10px; }
-        .bar-bg { flex: 1; height: 8px; background: #eee; border-radius: 10px; overflow: hidden; }
-        .bar-fill { height: 100%; background: var(--const-color); width: 0%; transition: 0.4s; }
+        .progress-bar { height: 8px; background: #eee; border-radius: 20px; margin: 20px; overflow: hidden; }
+        #progress-fill { height: 100%; background: var(--const-color); width: 0%; transition: 0.4s ease; }
 
-        .game-area { padding: 20px; text-align: center; min-height: 400px; }
-        .target-sentence { 
-            font-size: 1.3rem; font-weight: bold; color: #2d3436; margin-bottom: 10px; 
-            min-height: 30px; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px;
-        }
-        .translation-hint { color: #636e72; font-size: 1rem; margin-bottom: 30px; display: block; }
-
-        /* არჩეული სიტყვების ზონა */
         .drop-zone {
-            min-height: 60px; border: 2px dashed #ddd; border-radius: 15px;
-            margin-bottom: 30px; display: flex; flex-wrap: wrap; justify-content: center;
-            gap: 10px; padding: 10px; background: #fafafa;
+            min-height: 90px; border: 2px dashed #d1d8e0; border-radius: 20px;
+            margin: 20px 0; display: flex; flex-wrap: wrap; justify-content: center;
+            align-items: center; gap: 8px; padding: 15px; background: #fdfdfd;
         }
 
-        /* სიტყვების ღილაკები */
-        .word-pool { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+        .word-pool { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 20px; }
+
         .word-tile {
-            background: white; border: 2px solid #eee; padding: 12px 20px;
-            border-radius: 12px; cursor: pointer; font-weight: 500;
-            box-shadow: 0 4px 0 #eee; transition: 0.2s; user-select: none;
+            background: white; border: 1px solid #ddd; padding: 12px 18px;
+            border-radius: 15px; cursor: pointer; font-weight: 500;
+            box-shadow: 0 3px 0 #eee; transition: 0.1s;
         }
-        .word-tile:active { transform: translateY(2px); box-shadow: 0 2px 0 #eee; }
-        .word-tile.used { opacity: 0; pointer-events: none; }
+        .word-tile.disabled { opacity: 0.2; pointer-events: none; transform: scale(0.9); }
 
-        .word-in-zone {
-            background: var(--const-color); color: white; padding: 10px 18px;
-            border-radius: 12px; animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        @keyframes pop { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-
-        .feedback-area { margin-top: 20px; min-height: 50px; font-weight: bold; }
-        .info-circle {
-            display: inline-block; width: 24px; height: 24px; border-radius: 50%;
-            border: 2px solid var(--const-color); color: var(--const-color);
-            cursor: pointer; font-size: 14px; line-height: 22px; margin-left: 10px;
+        .selected-word {
+            background: var(--const-color); color: white; padding: 10px 15px;
+            border-radius: 12px; animation: popIn 0.3s ease;
         }
 
-        .controls { margin-top: 40px; display: flex; gap: 10px; justify-content: center; }
+        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .controls-row { display: flex; justify-content: center; gap: 12px; margin-top: 25px; flex-wrap: wrap; }
+        
+        .btn-circle {
+            width: 55px; height: 55px; border-radius: 50%; border: none;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; cursor: pointer; transition: 0.2s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .mic-btn { background: #ff4757; color: white; }
+        .mic-btn.recording { animation: pulse 1.5s infinite; background: #ff6b81; }
+        .undo-btn { background: #f1f2f6; color: #2f3542; }
+        .check-btn { background: var(--const-color); color: white; border-radius: 30px; padding: 0 30px; font-weight: bold; }
+
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); box-shadow: 0 0 20px rgba(255,71,87,0.4); } 100% { transform: scale(1); } }
+
+        .hint-box {
+            margin-top: 20px; padding: 15px; border-radius: 15px;
+            background: #f0f4ff; color: #333; font-size: 0.85rem;
+            display: none; border-left: 5px solid var(--const-color); text-align: left;
+        }
     </style>
 </head>
 <body>
@@ -58,135 +61,188 @@
         <div class="header" style="background: var(--const-color);">
             <a href="index.html" style="color:white; float:left; text-decoration:none;">←</a>
             <h1>კონსტრუქტორი</h1>
-            <p>ააწყვე წინადადება</p>
+            <p id="task-counter">1 / 50</p>
         </div>
 
-        <div class="progress-header">
-            <span id="progress-text">1/20</span>
-            <div class="bar-bg"><div id="progress-fill" class="bar-fill"></div></div>
-        </div>
+        <div class="progress-bar"><div id="progress-fill"></div></div>
 
         <div class="game-area">
-            <span class="translation-hint" id="ka-sentence">მე ვარ სტუდენტი</span>
-            <div class="drop-zone" id="drop-zone" onclick="clearLast()"></div>
+            <h2 id="ka-sentence">იტვირთება...</h2>
+            
+            <div class="drop-zone" id="drop-zone"></div>
             <div class="word-pool" id="word-pool"></div>
 
-            <div class="feedback-area" id="feedback"></div>
-            
-            <div id="explanation" style="display:none; background:#f0f4ff; padding:15px; border-radius:15px; margin-top:15px; font-size:0.85rem; color:#333;">
-            </div>
+            <div id="feedback" style="margin-top: 15px; font-weight: bold; min-height: 24px;"></div>
+            <div id="hint-text" class="hint-box"></div>
 
-            <div class="controls">
-                <button onclick="checkSentence()" class="nav-btn" style="background:var(--const-color); color:white; border:none;">შემოწმება</button>
-                <button onclick="showHint()" class="info-circle" title="დახმარება">?</button>
+            <div class="controls-row">
+                <button class="btn-circle undo-btn" onclick="undo()" title="დაბრუნება">↺</button>
+                <button class="btn-circle mic-btn" id="mic-btn" onclick="startListening()" title="თქვი წინადადება">🎤</button>
+                <button class="action-btn check-btn" onclick="checkAnswer()">შემოწმება</button>
+                <button class="btn-circle undo-btn" onclick="toggleHint()">💡</button>
             </div>
         </div>
     </div>
 
     <script>
-        const tasks = [
-            { fr: "Je suis étudiant", ka: "მე ვარ სტუდენტი", hint: "ფრანგულში 'ვარ' არის 'suis'. პირველი მოდის ნაცვალსახელი 'Je'." },
-            { fr: "Tu es français", ka: "შენ ხარ ფრანგი", hint: "'Tu' ყოველთვის მოითხოვს ზმნის ფორმას 'es'." },
-            { fr: "J'ai un chat", ka: "მე მაქვს კატა", hint: "როცა 'Je' ხვდება ხმოვანს (ai), ის ხდება J'." },
-            { fr: "Il est professeur", ka: "ის არის მასწავლებელი", hint: "'Il' არის მამრობითი სქესის 'ის'. ზმნა არის 'est'." },
-            { fr: "Elle a une pomme", ka: "მას აქვს ვაშლი", hint: "'Elle' არის მდედრობითი სქესის 'ის'. 'A' ნიშნავს 'აქვს'." },
-            { fr: "Nous sommes amis", ka: "ჩვენ ვართ მეგობრები", hint: "'Nous' ნიშნავს ჩვენ. 'Sommes' არის ყოფნა (ვართ)." },
-            { fr: "Vous avez faim", ka: "თქვენ გაქვთ შიმშილი (გშიათ)", hint: "'Vous' არის თქვენ. 'Avez' არის ქონა (გაქვთ)." },
-            { fr: "Ils sont ici", ka: "ისინი არიან აქ", hint: "'Sont' გამოიყენება მრავლობითში 'ისინი'-სთვის." },
-            { fr: "C'est ma famille", ka: "ეს ჩემი ოჯახია", hint: "'C'est' ნიშნავს 'ეს არის'." },
-            { fr: "Le ciel est bleu", ka: "ცაც ლურჯია", hint: "ფერი ყოველთვის ზმნის შემდეგ მოდის." },
-            { fr: "Je veux un café", ka: "მე მინდა ყავა", hint: "'Veux' ნიშნავს 'მინდა'." },
-            { fr: "Il fait beau", ka: "კარგი ამინდია", hint: "ამინდზე საუბრისას ვიყენებთ ზმნას 'Faire' (Fait)." },
-            { fr: "Comment allez vous", ka: "როგორ ხართ?", hint: "ოფიციალური შეკითხვაა." },
-            { fr: "Je parle français", ka: "მე ვსაუბრობ ფრანგულად", hint: "'Parle' არის საუბარი." },
-            { fr: "La pomme est rouge", ka: "ვაშლი წითელია", hint: "მდედრობითი სქესის არტიკლია 'La'." },
-            { fr: "Où est le chat", ka: "სად არის კატა?", hint: "'Où' ნიშნავს 'სად'." },
-            { fr: "J'aime le fromage", ka: "მე მიყვარს ყველი", hint: "'Aime' არის სიყვარული." },
-            { fr: "Tu as quel âge", ka: "შენ რამდენი წლის ხარ?", hint: "ფრანგულში ვამბობთ: 'შენ გაქვს რა ასაკი'." },
-            { fr: "Il est midi", ka: "შუადღეა", hint: "დროზე საუბრისას ვიყენებთ 'Il est'." },
-            { fr: "Bonne nuit maman", ka: "ღამე მშვიდობისა დედა", hint: "Bonne nuit გამოიყენება ძილის წინ." }
+        const database = [
+            { fr: "Je suis étudiant", ka: "მე ვარ სტუდენტი", tip: "Je (მე) + suis (ვარ)." },
+            { fr: "Tu es belle", ka: "შენ ხარ ლამაზი", tip: "Tu es (შენ ხარ) - მდედრობითი." },
+            { fr: "Il est français", ka: "ის არის ფრანგი", tip: "Il est (ის არის)." },
+            { fr: "J'ai un chat", ka: "მე მაქვს კატა", tip: "J'ai (მე მაქვს)." },
+            { fr: "Elle a une voiture", ka: "მას აქვს მანქანა", tip: "Elle a (მას აქვს)." },
+            { fr: "C'est mon ami", ka: "ეს ჩემი მეგობარია", tip: "C'est (ეს არის)." },
+            { fr: "Il fait beau", ka: "კარგი ამინდია", tip: "ამინდზე: Il fait." },
+            { fr: "Je parle français", ka: "მე ვსაუბრობ ფრანგულად", tip: "Je parle (მე ვსაუბრობ)." },
+            { fr: "Comment ça va", ka: "როგორ ხარ?", tip: "სტანდარტული მისალმება." },
+            { fr: "Je veux un café", ka: "მე მინდა ყავა", tip: "Je veux (მე მინდა)." },
+            { fr: "Où არის le taxi", ka: "სად არის ტაქსი?", tip: "Où (სად)." },
+            { fr: "Nous sommes amis", ka: "ჩვენ ვართ მეგობრები", tip: "Nous sommes (ჩვენ ვართ)." },
+            { fr: "Vous avez raison", ka: "თქვენ მართალი ხართ", tip: "Vous avez (თქვენ გაქვთ)." },
+            { fr: "Ils sont ici", ka: "ისინი აქ არიან", tip: "Ils sont (ისინი არიან)." },
+            { fr: "J'aime le fromage", ka: "მე მიყვარს ყველი", tip: "J'aime (მე მიყვარს)." },
+            { fr: "La pomme არის rouge", ka: "ვაშლი წითელია", tip: "La (მდედრ. არტიკლი)." },
+            { fr: "Il est midi", ka: "შუადღეა", tip: "დროზე: Il est." },
+            { fr: "Je ne sais pas", ka: "არ ვიცი", tip: "Ne...pas (უარყოფა)." },
+            { fr: "Tu as quel âge", ka: "რამდენი წლის ხარ?", tip: "Tu as (შენ გაქვს)." },
+            { fr: "Bonne nuit", ka: "ღამე მშვიდობისა", tip: "Nuit (ღამე)." },
+            { fr: "Je suis fatigué", ka: "დაღლილი ვარ", tip: "Fatigué (მამრ. დაღლილი)." },
+            { fr: "C'est une table", ka: "ეს არის მაგიდა", tip: "Une (მდედრ. არტიკლი)." },
+            { fr: "Le ciel est bleu", ka: "ცა ლურჯია", tip: "Le ciel (ცა)." },
+            { fr: "Elle არის très gentille", ka: "ის ძალიან კეთილია", tip: "Gentille (მდედრ. კეთილი)." },
+            { fr: "Voulez vous danser", ka: "გსურთ ცეკვა?", tip: "Voulez-vous (გსურთ?)." },
+            { fr: "Je cherche la gare", ka: "სადგურს ვეძებ", tip: "Je cherche (ვეძებ)." },
+            { fr: "Il y a un livre", ka: "აქ წიგნია", tip: "Il y a (აქ არის)." },
+            { fr: "Merci beaucoup", ka: "დიდი მადლობა", tip: "Beaucoup (ბევრი/ძალიან)." },
+            { fr: "A demain", ka: "ხვალამდე", tip: "Demain (ხვალ)." },
+            { fr: "C'est délicieux", ka: "გემრიელია", tip: "Délicieux (გემრიელი)." },
+            { fr: "Je comprends", ka: "მესმის", tip: "Comprendre (გაგება)." },
+            { fr: "Attendez un moment", ka: "მოიცადეთ ერთი წამით", tip: "Attendez (დაელოდეთ)." },
+            { fr: "Il habite à Paris", ka: "ის პარიზში ცხოვრობს", tip: "Habiter (ცხოვრება)." },
+            { fr: "C'est trop cher", ka: "ზედმეტად ძვირია", tip: "Trop (ზედმეტად)." },
+            { fr: "Quelle heure est il", ka: "რომელი საათია?", tip: "Heure (საათი)." },
+            { fr: "Je vais au cinéma", ka: "კინოში მივდივარ", tip: "Je vais (მივდივარ)." },
+            { fr: "Tu me manques", ka: "მენატრები", tip: "ფრანგული კონსტრუქციაა." },
+            { fr: "Il fait froid", ka: "ცივა", tip: "Froid (ცივი)." },
+            { fr: "Je suis d'accord", ka: "ვეთანხმები", tip: "D'accord (თანახმა)." },
+            { fr: "Ouvrez la porte", ka: "გააღეთ კარი", tip: "Ouvrez (გააღეთ)." },
+            { fr: "C'est facile", ka: "ადვილია", tip: "Facile (ადვილი)." },
+            { fr: "Il pleut dehors", ka: "გარეთ წვიმს", tip: "Il pleut (წვიმს)." },
+            { fr: "Bonne chance", ka: "წარმატებები", tip: "Chance (იღბალი)." },
+            { fr: "Je prends un thé", ka: "ჩაის ავიღებ", tip: "Prendre (აღება/დალევა)." },
+            { fr: "Où habitez vous", ka: "სად ცხოვრობთ?", tip: "Où (სად)." },
+            { fr: "C'est mon frère", ka: "ეს ჩემი ძმაა", tip: "Frère (ძმა)." },
+            { fr: "Je regarde la télé", ka: "ტელევიზორს ვუყურებ", tip: "Regarder (ყურება)." },
+            { fr: "Il est tard", ka: "გვიანია", tip: "Tard (გვიან)." },
+            { fr: "Bon appétit", ka: "გემრიელად მიირთვით", tip: "Appétit (მადა)." },
+            { fr: "Je t'aime maman", ka: "მიყვარხარ დედა", tip: "Maman (დედა)." }
         ];
 
         let currentIdx = 0;
         let selectedWords = [];
+        let usedTileIds = [];
 
-        function initTask() {
-            const task = tasks[currentIdx];
+        function loadTask() {
+            const task = database[currentIdx];
             document.getElementById('ka-sentence').innerText = task.ka;
-            document.getElementById('feedback').innerText = "";
-            document.getElementById('explanation').style.display = "none";
+            document.getElementById('task-counter').innerText = `${currentIdx + 1} / ${database.length}`;
+            document.getElementById('progress-fill').style.width = `${((currentIdx + 1) / database.length) * 100}%`;
             document.getElementById('drop-zone').innerHTML = "";
-            selectedWords = [];
+            document.getElementById('feedback').innerText = "";
+            document.getElementById('hint-text').style.display = "none";
             
-            // პროგრესი
-            document.getElementById('progress-text').innerText = `${currentIdx + 1}/${tasks.length}`;
-            document.getElementById('progress-fill').style.width = `${((currentIdx + 1) / tasks.length) * 100}%`;
+            selectedWords = [];
+            usedTileIds = [];
 
-            // სიტყვების არევა
             let words = task.fr.split(' ');
-            // დავამატოთ 1-2 ზედმეტი სიტყვა სირთულისთვის
-            words.push("pas", "très"); 
             words = words.sort(() => Math.random() - 0.5);
 
             const pool = document.getElementById('word-pool');
             pool.innerHTML = words.map((w, i) => `
-                <div class="word-tile" id="word-${i}" onclick="addWord('${w}', 'word-${i}')">${w}</div>
+                <div class="word-tile" id="t-${i}" onclick="addWord('${w}', 't-${i}')">${w}</div>
             `).join('');
         }
 
         function addWord(word, id) {
             selectedWords.push(word);
-            document.getElementById(id).classList.add('used');
-            renderDropZone();
+            usedTileIds.push(id);
+            document.getElementById(id).classList.add('disabled');
+            renderZone();
         }
 
-        function renderDropZone() {
+        function undo() {
+            if (selectedWords.length === 0) return;
+            selectedWords.pop();
+            const lastId = usedTileIds.pop();
+            document.getElementById(lastId).classList.remove('disabled');
+            renderZone();
+        }
+
+        function renderZone() {
             const zone = document.getElementById('drop-zone');
-            zone.innerHTML = selectedWords.map(w => `<div class="word-in-zone">${w}</div>`).join('');
+            zone.innerHTML = selectedWords.map(w => `<div class="selected-word">${w}</div>`).join('');
         }
 
-        function clearLast() {
-            if(selectedWords.length === 0) return;
-            selectedWords = [];
-            initTask(); // თავიდან დაწყება ამ სავარჯიშოსთვის
-        }
+        function checkAnswer() {
+            const userStr = selectedWords.join(' ').toLowerCase();
+            const targetStr = database[currentIdx].fr.toLowerCase();
+            const fb = document.getElementById('feedback');
 
-        function checkSentence() {
-            const userSentence = selectedWords.join(' ');
-            const target = tasks[currentIdx].fr;
-            const feedback = document.getElementById('feedback');
-
-            if(userSentence === target) {
-                feedback.innerText = "✨ სწორია! ბრწყინვალეა!";
-                feedback.style.color = "#2ecc71";
-                speak(target);
+            if (userStr === targetStr) {
+                fb.innerText = "✅ სწორია!";
+                fb.style.color = "#2ecc71";
+                const u = new SpeechSynthesisUtterance(database[currentIdx].fr);
+                u.lang = 'fr-FR';
+                speechSynthesis.speak(u);
                 setTimeout(() => {
-                    if(currentIdx < tasks.length - 1) {
-                        currentIdx++;
-                        initTask();
-                    } else {
-                        feedback.innerText = "🏆 გილოცავ! შენ დაასრულე კურსი!";
-                    }
-                }, 2000);
+                    currentIdx = (currentIdx + 1) % database.length;
+                    loadTask();
+                }, 1500);
             } else {
-                feedback.innerText = "❌ არასწორია, სცადე თავიდან";
-                feedback.style.color = "#e74c3c";
+                fb.innerText = "❌ სცადე თავიდან";
+                fb.style.color = "#e74c3c";
             }
         }
 
-        function showHint() {
-            const exp = document.getElementById('explanation');
-            exp.innerText = tasks[currentIdx].hint;
-            exp.style.display = exp.style.display === "none" ? "block" : "none";
+        function startListening() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) { alert("მიკროფონი არ არის მხარდაჭერილი ამ ბრაუზერში."); return; }
+
+            const rec = new SpeechRecognition();
+            rec.lang = 'fr-FR';
+            const btn = document.getElementById('mic-btn');
+            
+            rec.onstart = () => btn.classList.add('recording');
+            rec.onresult = (e) => {
+                const transcript = e.results[0][0].transcript.replace(/[.,?!]/g, "");
+                const spokenWords = transcript.split(' ');
+                
+                // ავტომატური აწყობა ნათქვამის მიხედვით
+                selectedWords = [];
+                document.querySelectorAll('.word-tile').forEach(t => t.classList.remove('disabled'));
+                usedTileIds = [];
+
+                spokenWords.forEach(sw => {
+                    const tiles = document.querySelectorAll('.word-tile');
+                    for (let t of tiles) {
+                        if (t.innerText.toLowerCase() === sw.toLowerCase() && !t.classList.contains('disabled')) {
+                            addWord(t.innerText, t.id);
+                            break;
+                        }
+                    }
+                });
+            };
+            rec.onend = () => btn.classList.remove('recording');
+            rec.start();
         }
 
-        function speak(t) {
-            const u = new SpeechSynthesisUtterance(t);
-            u.lang = 'fr-FR';
-            speechSynthesis.speak(u);
+        function toggleHint() {
+            const h = document.getElementById('hint-text');
+            h.innerText = database[currentIdx].tip;
+            h.style.display = h.style.display === "block" ? "none" : "block";
         }
 
-        initTask();
+        loadTask();
     </script>
 </body>
 </html>
