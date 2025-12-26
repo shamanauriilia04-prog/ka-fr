@@ -2,120 +2,156 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Professeur AI - Powered by Gemini</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Professeur Gemini - Ultra AI</title>
     <style>
-        :root { --main: #002395; --accent: #ed2939; --skin: #ffdbac; }
-        body { margin: 0; background: #f0f2f5; font-family: 'Arial', sans-serif; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        :root { --ai-blue: #002395; --ai-red: #ed2939; --skin: #ffdbac; }
+        body { margin: 0; background: #f0f4f8; font-family: 'Segoe UI', Roboto, sans-serif; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
 
-        .avatar-container {
-            background: white; padding: 25px; border-bottom-left-radius: 50px;
-            border-bottom-right-radius: 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            display: flex; flex-direction: column; align-items: center; z-index: 10;
+        /* მასწავლებლის ანიმაციური ვიზუალი */
+        .header-ai {
+            background: white; padding: 25px 0; display: flex; flex-direction: column; align-items: center;
+            border-bottom: 2px solid #e1e8ed; box-shadow: 0 10px 25px rgba(0,0,0,0.05); z-index: 10;
         }
 
-        /* ანიმაციური ადამიანი */
-        .human { width: 120px; height: 140px; background: var(--skin); border-radius: 60px 60px 45px 45px; position: relative; border: 3px solid #333; }
-        .hair { position: absolute; top: -12px; width: 130px; height: 50px; background: #3d2419; border-radius: 70px 70px 0 0; left: -8px; }
-        .eye { position: absolute; top: 55px; width: 12px; height: 12px; background: #222; border-radius: 50%; }
-        .eye.left { left: 30px; } .eye.right { right: 30px; }
-        .mouth { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); width: 25px; height: 8px; background: #a52a2a; border-radius: 4px; transition: 0.1s; }
+        .face {
+            width: 130px; height: 155px; background: var(--skin); border-radius: 65px 65px 50px 50px;
+            position: relative; border: 3px solid #333; transition: 0.3s;
+        }
 
-        .talking .mouth { height: 25px; border-radius: 50%; animation: speakMove 0.15s infinite alternate; }
-        @keyframes speakMove { from { height: 8px; } to { height: 25px; } }
+        .hair { position: absolute; top: -15px; width: 140px; height: 55px; background: #3d2419; border-radius: 70px 70px 0 0; left: -5px; }
+        .eye { position: absolute; top: 55px; width: 14px; height: 14px; background: #222; border-radius: 50%; }
+        .eye.left { left: 35px; } .eye.right { right: 35px; }
+        
+        .mouth {
+            position: absolute; bottom: 35px; left: 50%; transform: translateX(-50%);
+            width: 30px; height: 10px; background: #a52a2a; border-radius: 5px;
+            transition: 0.1s; border: 1px solid rgba(0,0,0,0.1);
+        }
 
-        #chat { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px; background: #f8f9fa; }
-        .bubble { max-width: 85%; padding: 12px 18px; border-radius: 20px; font-size: 1rem; line-height: 1.4; }
-        .ai { background: var(--main); color: white; align-self: flex-start; border-bottom-left-radius: 2px; }
-        .user { background: #e2e8f0; color: #1a202c; align-self: flex-end; border-bottom-right-radius: 2px; }
+        /* ლაპარაკის რეჟიმი */
+        .talking .mouth {
+            height: 35px; border-radius: 50%; animation: speakMove 0.15s infinite alternate;
+        }
+        @keyframes speakMove { from { height: 10px; } to { height: 35px; } }
 
-        .controls { padding: 20px; background: white; border-top: 1px solid #ddd; display: flex; justify-content: center; align-items: center; gap: 10px; }
-        .mic-btn { width: 70px; height: 70px; border-radius: 50%; border: none; background: var(--accent); color: white; font-size: 28px; cursor: pointer; box-shadow: 0 5px 15px rgba(237,41,57,0.3); }
-        .mic-btn.active { background: #2ecc71; animation: pulse 1s infinite; }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        /* ჩეთის სტილი */
+        #chat-window { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+        .bubble { max-width: 80%; padding: 14px 18px; border-radius: 20px; font-size: 1rem; line-height: 1.5; }
+        .ai-msg { background: var(--ai-blue); color: white; align-self: flex-start; border-bottom-left-radius: 4px; box-shadow: 0 4px 10px rgba(0,35,149,0.2); }
+        .user-msg { background: #fff; color: #333; align-self: flex-end; border-bottom-right-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+
+        /* მართვის პანელი */
+        .mic-container { padding: 30px; background: white; border-top: 1px solid #eee; display: flex; justify-content: center; }
+        .mic-btn {
+            width: 80px; height: 80px; border-radius: 50%; border: none;
+            background: var(--ai-red); color: white; font-size: 35px; cursor: pointer;
+            box-shadow: 0 10px 25px rgba(237, 41, 57, 0.4); transition: 0.3s;
+        }
+        .mic-btn.listening { background: #2ecc71; transform: scale(1.1); animation: glow 1s infinite; }
+        @keyframes glow { 0% { box-shadow: 0 0 0 0px rgba(46, 204, 113, 0.4); } 100% { box-shadow: 0 0 0 20px rgba(46, 204, 113, 0); } }
     </style>
 </head>
 <body>
 
-    <div class="avatar-container">
-        <div class="human" id="character">
+    <div class="header-ai">
+        <div class="face" id="face">
             <div class="hair"></div><div class="eye left"></div><div class="eye right"></div><div class="mouth"></div>
         </div>
-        <h3 style="margin: 10px 0 0; color: var(--main);">Professeur Gemini</h3>
-        <p id="status" style="font-size: 0.7rem; color: #999;">Gemini AI ინტეგრირებულია</p>
+        <h2 style="margin: 15px 0 5px; color: var(--ai-blue);">Professeur Gemini</h2>
+        <p id="status" style="font-size: 0.8rem; color: #888;">Gemini AI ცოცხალია და გისმენთ</p>
     </div>
 
-    <div id="chat">
-        <div class="bubble ai">Bonjour ! Je suis Professeur Gemini. Je peux discuter de tout avec vous. Parlez-moi !</div>
+    <div id="chat-window">
+        <div class="bubble ai-msg">Bonjour ! Je suis Professeur Gemini. Je peux parler de tout, corriger vos fautes et vous enseigner le français. Que voulez-vous me dire ?</div>
     </div>
 
-    <div class="controls">
-        <button class="mic-btn" id="mic" onclick="startVoice()">🎤</button>
+    <div class="mic-container">
+        <button class="mic-btn" id="mic-btn" onclick="startRecognition()">🎤</button>
     </div>
 
     <script>
-        const API_KEY = "შენი_API_KEY_აქ"; // <-- ჩასვი შენი Gemini API გასაღები აქ
-        const chat = document.getElementById('chat');
-        const character = document.getElementById('character');
+        // შენი API Key უკვე აქ არის
+        const GEMINI_API_KEY = "AIzaSyCX9nmtRlgToL7gK54hWe3gkwxeJVA-c4k"; 
+        const chatWindow = document.getElementById('chat-window');
+        const face = document.getElementById('face');
+        const micBtn = document.getElementById('mic-btn');
 
-        // Gemini-სთან დაკავშირება
-        async function askGemini(prompt) {
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+        // Gemini API-სთან დაკავშირება
+        async function getGeminiResponse(userPrompt) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
             
+            const payload = {
+                contents: [{
+                    parts: [{
+                        text: `You are an expert French teacher. Respond only in French. 
+                               Keep it conversational, natural, and helpful. 
+                               If the user makes a mistake, correct it gently. 
+                               User said: "${userPrompt}"`
+                    }]
+                }]
+            };
+
             const response = await fetch(url, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    contents: [{ parts: [{ text: "You are a French teacher. Respond only in French. Be brief, professional and helpful. If I make a grammatical mistake, correct it politely. My message: " + prompt }] }]
-                })
+                body: JSON.stringify(payload)
             });
 
             const data = await response.json();
             return data.candidates[0].content.parts[0].text;
         }
 
-        // ხმის ამოცნობა
+        // ხმის ამოცნობა (Speech to Text)
         const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
         recognition.lang = 'fr-FR';
 
-        async function startVoice() {
-            recognition.start();
-            document.getElementById('mic').classList.add('active');
+        function startRecognition() {
+            try {
+                recognition.start();
+                micBtn.classList.add('listening');
+                document.getElementById('status').innerText = "გისმენთ...";
+            } catch(e) {}
         }
 
         recognition.onresult = async (event) => {
-            const userText = event.results[0][0].transcript;
-            addMsg(userText, 'user');
+            const transcript = event.results[0][0].transcript;
+            addMessage(transcript, 'user-msg');
             
             document.getElementById('status').innerText = "Gemini ფიქრობს...";
             
             try {
-                const aiText = await askGemini(userText);
-                addMsg(aiText, 'ai');
-                speak(aiText);
+                const aiResponse = await getGeminiResponse(transcript);
+                addMessage(aiResponse, 'ai-msg');
+                speak(aiResponse);
             } catch (error) {
-                addMsg("AIzaSyCX9nmtRlgToL7gK54hWe3gkwxeJVA-c4k", 'ai');
+                console.error(error);
+                addMessage("Désolé, j'ai un problème de connexion.", 'ai-msg');
             }
             
-            document.getElementById('status').innerText = "მზად ვარ";
+            document.getElementById('status').innerText = "Professeur Gemini";
         };
 
-        recognition.onend = () => document.getElementById('mic').classList.remove('active');
+        recognition.onend = () => micBtn.classList.remove('listening');
 
-        function addMsg(text, type) {
-            const div = document.createElement('div');
-            div.className = `bubble ${type}`;
-            div.innerText = text;
-            chat.appendChild(div);
-            chat.scrollTop = chat.scrollHeight;
+        function addMessage(text, className) {
+            const b = document.createElement('div');
+            b.className = `bubble ${className}`;
+            b.innerText = text;
+            chatWindow.appendChild(b);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
         }
 
+        // ლაპარაკის ფუნქცია (Text to Speech)
         function speak(text) {
-            const utter = new SpeechSynthesisUtterance(text);
-            utter.lang = 'fr-FR';
-            utter.onstart = () => character.classList.add('talking');
-            utter.onend = () => character.classList.remove('talking');
-            window.speechSynthesis.speak(utter);
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'fr-FR';
+            utterance.rate = 0.9;
+
+            utterance.onstart = () => face.classList.add('talking');
+            utterance.onend = () => face.classList.remove('talking');
+
+            window.speechSynthesis.speak(utterance);
         }
     </script>
 </body>
