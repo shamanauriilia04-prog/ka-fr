@@ -3,229 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Professeur AI - Premium Tutor</title>
+    <title>Professeur AI - Live Chat</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <style>
-        :root {
-            --ai-primary: #002395;
-            --ai-accent: #ed2939;
-            --glass: rgba(255, 255, 255, 0.9);
+        :root { --ai-blue: #002395; --user-bg: #e9ecef; }
+        body { background: #f4f7f6; overflow-x: hidden; }
+
+        /* ავატარის ბლოკი */
+        .avatar-section {
+            padding: 30px 0; text-align: center; background: white;
+            border-bottom-left-radius: 40px; border-bottom-right-radius: 40px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .ai-character {
+            width: 120px; height: 120px; border-radius: 50%;
+            background: #eee; margin: 0 auto; overflow: hidden;
+            border: 4px solid var(--ai-blue); position: relative;
+        }
+        .ai-character img { width: 100%; height: 100%; object-fit: cover; transition: 0.3s; }
+        
+        /* ლაპარაკის ანიმაცია */
+        .talking { animation: mouthMove 0.4s infinite alternate; }
+        @keyframes mouthMove {
+            from { transform: scale(1); } to { transform: scale(1.05); }
         }
 
-        body { background: #f0f2f5; font-family: 'Segoe UI', sans-serif; }
-
-        .teacher-container {
-            max-width: 500px; margin: 0 auto; padding: 20px;
-            display: flex; flex-direction: column; align-items: center;
+        /* ჩეთის არე */
+        .chat-container {
+            padding: 20px; display: flex; flex-direction: column; gap: 15px;
+            height: calc(100vh - 350px); overflow-y: auto; scroll-behavior: smooth;
         }
-
-        /* მასწავლებლის ვიზუალური ბლოკი */
-        .teacher-avatar-wrapper {
-            position: relative; margin-top: 30px;
+        .message {
+            max-width: 80%; padding: 12px 18px; border-radius: 20px;
+            font-size: 0.95rem; line-height: 1.4; animation: fadeInUp 0.3s;
         }
+        .ai-msg { background: var(--ai-blue); color: white; align-self: flex-start; border-bottom-left-radius: 5px; }
+        .user-msg { background: var(--user-bg); color: #333; align-self: flex-end; border-bottom-right-radius: 5px; }
 
-        .avatar-circle {
-            width: 140px; height: 140px; background: white;
-            border-radius: 50%; border: 4px solid var(--ai-primary);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 70px; box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-            transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 2; position: relative;
+        /* მართვის პანელი */
+        .input-area {
+            position: fixed; bottom: 0; width: 100%; padding: 20px;
+            background: white; display: flex; justify-content: center; gap: 15px;
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.05);
         }
+        .mic-btn {
+            width: 70px; height: 70px; border-radius: 50%; border: none;
+            background: #ed2939; color: white; font-size: 28px; cursor: pointer;
+            box-shadow: 0 5px 15px rgba(237, 41, 57, 0.3); transition: 0.3s;
+        }
+        .mic-btn.active { background: #2ecc71; transform: scale(1.1); animation: pulse 1s infinite; }
 
-        /* ლაპარაკის ანიმაცია (ტალღები) */
-        .pulse-rings {
-            position: absolute; top: 0; left: 0; width: 140px; height: 140px;
-            border-radius: 50%; background: var(--ai-primary);
-            opacity: 0; z-index: 1;
-        }
-
-        .speaking .pulse-rings {
-            animation: pulse-ring 1.5s cubic-bezier(0.24, 0, 0.38, 1) infinite;
-        }
-
-        @keyframes pulse-ring {
-            0% { transform: scale(0.8); opacity: 0.5; }
-            100% { transform: scale(1.6); opacity: 0; }
-        }
-
-        /* საუბრის ბუშტი */
-        .ai-speech-bubble {
-            background: var(--glass); padding: 25px; border-radius: 30px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05); margin: 30px 0;
-            width: 100%; position: relative; text-align: center;
-            border: 1px solid rgba(0,35,149,0.1);
-        }
-
-        .ai-speech-bubble::before {
-            content: ''; position: absolute; top: -10px; left: 50%;
-            transform: translateX(-50%); border-left: 10px solid transparent;
-            border-right: 10px solid transparent; border-bottom: 10px solid white;
-        }
-
-        .user-echo {
-            font-size: 0.9rem; color: var(--ai-primary); font-weight: 600;
-            margin-bottom: 10px; min-height: 20px;
-        }
-
-        /* კონტროლის ღილაკი */
-        .mic-section {
-            position: fixed; bottom: 40px; text-align: center; width: 100%; left: 0;
-        }
-
-        .master-mic-btn {
-            width: 85px; height: 85px; border-radius: 50%;
-            background: var(--ai-accent); border: none; color: white;
-            font-size: 32px; cursor: pointer;
-            box-shadow: 0 10px 25px rgba(237, 41, 57, 0.4);
-            transition: 0.3s; display: flex; align-items: center; justify-content: center;
-            margin: 0 auto;
-        }
-
-        .master-mic-btn.active {
-            background: #2ecc71; transform: scale(1.1);
-            box-shadow: 0 0 30px rgba(46, 204, 113, 0.5);
-        }
-
-        /* AI-ს სტატუსი */
-        .ai-mood-tag {
-            background: #dfe6e9; padding: 5px 15px; border-radius: 20px;
-            font-size: 0.75rem; font-weight: bold; margin-bottom: 10px;
-            color: #636e72; text-transform: uppercase;
-        }
-
-        .correction-card {
-            background: #fff5f5; border-left: 4px solid var(--ai-accent);
-            padding: 10px; border-radius: 10px; margin-top: 15px;
-            font-size: 0.85rem; display: none;
-        }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0px rgba(46, 204, 113, 0.4); } 100% { box-shadow: 0 0 0 20px rgba(46, 204, 113, 0); } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
     <div class="app-container">
-        <div class="header" style="background: var(--ai-primary);">
+        <div class="header" style="background: var(--ai-blue);">
             <a href="index.html" style="color:white; float:left; text-decoration:none;">←</a>
             <h1>Professeur AI</h1>
         </div>
 
-        <div class="teacher-container">
-            <div class="ai-mood-tag" id="ai-mood">მოსმენის რეჟიმი</div>
-            
-            <div class="teacher-avatar-wrapper" id="avatar-container">
-                <div class="pulse-rings"></div>
-                <div class="avatar-circle" id="ai-emoji">👨‍🏫</div>
+        <div class="avatar-section">
+            <div class="ai-character" id="ai-avatar">
+                <img src="https://cdn-icons-png.flaticon.com/512/1995/1995574.png" id="avatar-img" alt="Teacher">
             </div>
-
-            <div class="ai-speech-bubble animate__animated animate__fadeIn">
-                <div class="user-echo" id="user-text">...</div>
-                <div id="ai-response" style="font-size: 1.1rem; line-height: 1.5;">
-                    Bonjour ! მე შენი მასწავლებელი ვარ. მითხარი რამე ფრანგულად, რომ დავიწყოთ გაკვეთილი.
-                </div>
-                
-                <div id="correction-box" class="correction-card">
-                    💡 <b>რჩევა:</b> <span id="correction-text"></span>
-                </div>
-            </div>
+            <p id="status" style="margin-top:10px; color:#888; font-size:0.8rem;">მზად ვარ გისმინო</p>
         </div>
 
-        <div class="mic-section">
-            <button class="master-mic-btn" id="mic-trigger" onclick="toggleListening()">
-                🎤
-            </button>
-            <p style="margin-top:10px; color:#636e72; font-size:0.8rem;">დააჭირე და ისაუბრე</p>
+        <div class="chat-container" id="chat-box">
+            <div class="message ai-msg">Bonjour ! მე შენი მასწავლებელი ვარ. დააჭირე მიკროფონს და მითხარი რამე ფრანგულად.</div>
+        </div>
+
+        <div class="input-area">
+            <button class="mic-btn" id="mic-btn" onclick="startRecognition()">🎤</button>
         </div>
     </div>
 
     <script>
-        const aiResponse = document.getElementById('ai-response');
-        const aiEmoji = document.getElementById('ai-emoji');
-        const userText = document.getElementById('user-text');
-        const avatarCont = document.getElementById('avatar-container');
-        const correctionBox = document.getElementById('correction-box');
-        const correctionText = document.getElementById('correction-text');
+        const chatBox = document.getElementById('chat-box');
+        const avatarImg = document.getElementById('avatar-img');
+        const micBtn = document.getElementById('mic-btn');
 
-        // AI-ს გრამატიკული და ლოგიკური ბაზა
-        const rules = [
-            { wrong: "je est", right: "je suis", tip: "ზმნა 'être' პირველ პირში არის 'suis'." },
-            { wrong: "tu suis", right: "tu es", tip: "'Tu'-სთან გამოიყენება 'es'." },
-            { wrong: "il suis", right: "il est", tip: "'Il/Elle'-სთან გამოიყენება 'est'." },
-            { wrong: "je ai", right: "j'ai", tip: "ფრანგულში 'je' და 'ai' ერთდება: j'ai." }
-        ];
-
-        const chatLogic = {
-            "bonjour": "Bonjour ! Comment allez-vous ? (გამარჯობა! როგორ ბრძანდებით?)",
-            "ça va": "Ça va très bien, merci ! Et vous ? (ძალიან კარგად, გმადლობთ! თქვენ?)",
-            "merci": "Je vous en prie ! (არაფრის, ჩემო კარგო!)",
-            "au revoir": "Au revoir ! À bientôt ! (ნახვამდის! მალე შეხვედრამდე!)",
-            "je m'appelle": "C'est un enchantement ! Vous parlez bien. (სასიამოვნოა! კარგად საუბრობთ.)"
+        // AI ლოგიკა და ცოდნა
+        const responses = {
+            "bonjour": "Bonjour ! Comment ça va aujourd'hui ?",
+            "ça va": "Très bien ! Qu'est-ce que vous voulez apprendre ?",
+            "merci": "De rien, mon ami !",
+            "je suis": "C'est bien ! Continuez à pratiquer.",
+            "comment": "C'est une bonne question !"
         };
 
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         const rec = new SpeechRecognition();
         rec.lang = 'fr-FR';
 
-        function toggleListening() {
-            try {
-                rec.start();
-                document.getElementById('mic-trigger').classList.add('active');
-                document.getElementById('ai-mood').innerText = "გისმენთ ყურადღებით...";
-            } catch(e) { console.log("უკვე ჩართულია"); }
+        function startRecognition() {
+            rec.start();
+            micBtn.classList.add('active');
+            document.getElementById('status').innerText = "გისმენთ...";
         }
 
         rec.onresult = (e) => {
             const transcript = e.results[0][0].transcript.toLowerCase();
-            userText.innerText = "თქვენ: " + transcript;
+            addMessage(transcript, 'user');
             processAI(transcript);
         };
 
         rec.onend = () => {
-            document.getElementById('mic-trigger').classList.remove('active');
-            document.getElementById('ai-mood').innerText = "დააჭირე საუბრისთვის";
+            micBtn.classList.remove('active');
+            document.getElementById('status').innerText = "დააჭირე და ისაუბრე";
         };
 
-        function processAI(text) {
-            let finalResponse = "C'est intéressant ! Dites-en plus. (საინტერესოა, განაგრძეთ...)";
-            let hasError = false;
+        function addMessage(text, sender) {
+            const div = document.createElement('div');
+            div.className = `message ${sender === 'ai' ? 'ai-msg' : 'user-msg'}`;
+            div.innerText = text;
+            chatBox.appendChild(div);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
 
-            // 1. გრამატიკის შემოწმება
-            correctionBox.style.display = "none";
-            rules.forEach(rule => {
-                if (text.includes(rule.wrong)) {
-                    finalResponse = `Attention ! არ დაიბნეთ. უნდა გეთქვათ "${rule.right}".`;
-                    correctionText.innerText = rule.tip;
-                    correctionBox.style.display = "block";
-                    hasError = true;
-                    aiEmoji.innerText = "👨‍🏫";
-                }
-            });
-
-            // 2. თუ გრამატიკა სწორია, ვპასუხობთ შინაარსობრივად
-            if (!hasError) {
-                for (let key in chatLogic) {
-                    if (text.includes(key)) {
-                        finalResponse = chatLogic[key];
-                        aiEmoji.innerText = "😊";
-                        break;
-                    }
+        function processAI(userText) {
+            let reply = "Je ne comprends pas bien, mais continuez !"; // Default
+            
+            // გრამატიკის მარტივი კონტროლი
+            if(userText.includes("je est")) reply = "Attention ! On dit 'Je suis', pas 'Je est'.";
+            else {
+                for(let key in responses) {
+                    if(userText.includes(key)) reply = responses[key];
                 }
             }
 
-            // 3. ვიზუალური ეფექტები
-            aiResponse.innerText = finalResponse;
-            avatarCont.classList.add('speaking');
-            speak(finalResponse);
-            
+            // პასუხის გაცემა დროის დაყოვნებით (თითქოს ფიქრობს)
             setTimeout(() => {
-                avatarCont.classList.remove('speaking');
-            }, 3000);
+                addMessage(reply, 'ai');
+                speak(reply);
+            }, 600);
         }
 
-        function speak(msg) {
-            const u = new SpeechSynthesisUtterance(msg);
+        function speak(text) {
+            const u = new SpeechSynthesisUtterance(text);
             u.lang = 'fr-FR';
-            u.pitch = 1;
             u.rate = 0.9;
+            
+            u.onstart = () => avatarImg.classList.add('talking');
+            u.onend = () => avatarImg.classList.remove('talking');
+            
             window.speechSynthesis.speak(u);
         }
     </script>
