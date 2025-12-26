@@ -3,36 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Bonjour - მთავარი</title>
+    <title>Bonjour - Smart Pro</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <style>
+        :root { --main-gradient: linear-gradient(135deg, #002395 0%, #ed2939 100%); }
+        
+        body { background-color: #f8f9fd; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+
+        /* Welcome Banner - უფრო დინამიური */
         .welcome-banner {
-            background: linear-gradient(135deg, #002395 0%, #ed2939 100%);
-            padding: 40px 20px; color: white; text-align: center;
-            border-radius: 0 0 40px 40px; margin-bottom: 30px;
+            background: var(--main-gradient);
+            padding: 50px 25px; color: white; text-align: center;
+            border-radius: 0 0 50px 50px; margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(237, 41, 57, 0.2);
+            position: relative; overflow: hidden;
         }
-        .stats-row {
-            display: flex; justify-content: space-around; margin-top: 20px;
-            background: rgba(255,255,255,0.1); padding: 15px; border-radius: 20px;
+
+        .welcome-banner::after {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+            animation: rotate 20s linear infinite;
         }
-        .stat-item span { display: block; font-size: 0.8rem; opacity: 0.8; }
-        
-        .lesson-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 0 20px 40px; }
+
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        /* Search Bar - AI სტილში */
+        .ai-search-container {
+            margin: -25px 25px 25px; position: relative; z-index: 10;
+        }
+        .ai-search-input {
+            width: 100%; padding: 15px 25px; border-radius: 20px; border: none;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1); font-size: 1rem;
+            outline: none; transition: 0.3s;
+        }
+        .ai-search-input:focus { transform: scale(1.02); box-shadow: 0 15px 40px rgba(0,0,0,0.15); }
+
+        /* Lesson Grid */
+        .lesson-grid { 
+            display: grid; grid-template-columns: 1fr 1fr; gap: 18px; padding: 0 20px 100px; 
+            animation: fadeInUp 0.8s ease-out;
+        }
+
         .lesson-card {
-            background: white; padding: 20px; border-radius: 25px;
+            background: white; padding: 22px; border-radius: 30px;
             text-decoration: none; color: #2d3436;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-            transition: 0.3s; display: flex; flex-direction: column; align-items: center;
-            text-align: center; border: 1px solid #eee;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex; flex-direction: column; align-items: center;
+            text-align: center; border: 1px solid rgba(238, 238, 238, 0.5);
+            position: relative; overflow: hidden;
         }
-        .lesson-card:active { transform: scale(0.95); }
+
+        .lesson-card:active { transform: scale(0.92); }
+        .lesson-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.08); }
+
         .icon-circle {
-            width: 60px; height: 60px; border-radius: 20px;
+            width: 65px; height: 65px; border-radius: 22px;
             display: flex; align-items: center; justify-content: center;
-            font-size: 24px; margin-bottom: 15px;
+            font-size: 28px; margin-bottom: 12px; transition: 0.3s;
         }
-        
-        /* ფერების კლასები */
+
+        /* Floating AI Asistant Button */
+        .ai-fab {
+            position: fixed; bottom: 30px; right: 30px;
+            width: 65px; height: 65px; background: var(--main-gradient);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 24px; color: white; cursor: pointer;
+            box-shadow: 0 10px 25px rgba(237, 41, 57, 0.4);
+            z-index: 100; transition: 0.3s;
+        }
+        .ai-fab:active { transform: scale(0.85) rotate(-15deg); }
+
+        /* Stats Badge */
+        .stat-badge {
+            background: rgba(255,255,255,0.2); backdrop-filter: blur(5px);
+            padding: 8px 15px; border-radius: 15px; font-size: 0.85rem;
+        }
+
+        /* Category Colors - შენი ფერები შენარჩუნებულია */
         .bg-blue { background: #eef2ff; color: #002395; }
         .bg-red { background: #fff1f2; color: #ed2939; }
         .bg-green { background: #f0fdf4; color: #22c55e; }
@@ -41,28 +90,36 @@
         .bg-cyan { background: #ecfeff; color: #0891b2; }
         .bg-pink { background: #fdf2f8; color: #db2777; }
 
-        .lesson-card h3 { margin: 0; font-size: 1rem; }
-        .lesson-card p { margin: 5px 0 0; font-size: 0.8rem; color: #636e72; }
+        .lesson-card h3 { margin: 0; font-size: 1.05rem; font-weight: 700; }
+        .lesson-card p { margin: 4px 0 0; font-size: 0.8rem; color: #8e9aaf; }
     </style>
 </head>
-    <script src="logic.js"></script>
 <body>
     <div class="app-container">
-        <div class="welcome-banner">
-            <h1>Bonjour! 🇫🇷</h1>
-            <p>ისწავლე ფრანგული მარტივად</p>
-            <div class="stats-row">
-                <div class="stat-item"><strong>10</strong><span>გაკვეთილი</span></div>
-                <div class="stat-item"><strong>A1</strong><span>დონე</span></div>
-                <div class="stat-item"><strong>100%</strong><span>უფასო</span></div>
+        <div class="welcome-banner animate__animated animate__fadeIn">
+            <h1 class="animate__animated animate__bounceInDown">Bonjour! 🇫🇷</h1>
+            <p>შენი პერსონალური AI მასწავლებელი</p>
+            <div class="stats-row" style="display:flex; justify-content:center; gap:15px; margin-top:20px;">
+                <div class="stat-badge">⚡ 11 გაკვეთილი</div>
+                <div class="stat-badge">🏆 A1 დონე</div>
             </div>
         </div>
 
-        <div class="lesson-grid">
+        <div class="ai-search-container">
+            <input type="text" id="lessonSearch" class="ai-search-input" placeholder="მოძებნე გაკვეთილი (მაგ: ყავა, რიცხვები)..." onkeyup="searchLessons()">
+        </div>
+
+        <div class="lesson-grid" id="lessonGrid">
             <a href="constructor.html" class="lesson-card" style="border: 2px solid #7c3aed;">
                 <div class="icon-circle bg-purple">🧱</div>
                 <h3>კონსტრუქტორი</h3>
                 <p>ააწყვე ფრაზები</p>
+            </a>
+
+            <a href="situations.html" class="lesson-card">
+                <div class="icon-circle bg-green">🌟</div>
+                <h3>სიტუაციები</h3>
+                <p>100 ყოველდღიური ფრაზა</p>
             </a>
 
             <a href="greetings.html" class="lesson-card">
@@ -107,12 +164,6 @@
                 <p>ახლობლები</p>
             </a>
 
-<a href="situations.html" class="lesson-card">
-    <div class="icon-circle bg-green">🌟</div>
-    <h3>სიტუაციები</h3>
-    <p>100 ყოველდღიური ფრაზა</p>
-</a>
-            
             <a href="time.html" class="lesson-card">
                 <div class="icon-circle bg-purple">📅</div>
                 <h3>დრო</h3>
@@ -126,5 +177,37 @@
             </a>
         </div>
     </div>
+
+    <div class="ai-fab" onclick="alert('AI ასისტენტი: რით შემიძლია დაგეხმარო?')">🤖</div>
+
+    <script>
+        // AI Smart Search Logic
+        function searchLessons() {
+            let input = document.getElementById('lessonSearch').value.toLowerCase();
+            let cards = document.getElementsByClassName('lesson-card');
+            
+            for (let i = 0; i < cards.length; i++) {
+                let title = cards[i].getElementsByTagName('h3')[0].innerText.toLowerCase();
+                let desc = cards[i].getElementsByTagName('p')[0].innerText.toLowerCase();
+                
+                if (title.includes(input) || desc.includes(input)) {
+                    cards[i].style.display = "flex";
+                    cards[i].classList.add('animate__animated', 'animate__fadeIn');
+                } else {
+                    cards[i].style.display = "none";
+                }
+            }
+        }
+
+        // Add slight tilt effect on card tap
+        document.querySelectorAll('.lesson-card').forEach(card => {
+            card.addEventListener('touchstart', () => {
+                card.style.transform = "scale(0.95)";
+            });
+            card.addEventListener('touchend', () => {
+                card.style.transform = "translateY(-5px)";
+            });
+        });
+    </script>
 </body>
 </html>
